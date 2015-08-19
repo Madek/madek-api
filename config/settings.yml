@@ -1,0 +1,14 @@
+services:
+
+  api:
+
+    http:
+
+      host: localhost
+      port: 3100
+      context: ""
+      sub_context: /api
+      ssl: false
+
+
+

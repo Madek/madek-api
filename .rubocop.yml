@@ -1,0 +1,16 @@
+AllCops:
+  Exclude:
+    - 'datalayer/**/*'
+
+Style/Documentation:
+  Exclude:
+    - 'spec/config/rails.rb'
+
+Style/FileName:
+  Exclude:
+    - 'spec/resources/media-entry_spec.rb'
+
+Metrics/LineLength:
+  Exclude:
+    - 'Gemfile'
+

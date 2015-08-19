@@ -1,0 +1,12 @@
+*.class
+*.jar
+/.lein-*
+/.nrepl-port
+/checkouts
+/classes
+/config/settings.local.yml
+/log
+/target
+/tmp
+pom.xml
+pom.xml.asc

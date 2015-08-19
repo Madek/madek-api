@@ -1,0 +1,1 @@
+test: <%= Settings.database.to_json %>
