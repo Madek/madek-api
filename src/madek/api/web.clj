@@ -18,6 +18,7 @@
     [json-roa.ring-middleware.request :as json-roa_request]
     [json-roa.ring-middleware.response :as json-roa_response]
     [madek.api.authentication :as authentication]
+    [madek.api.management :as management]
     [madek.api.json-protocol]
     [madek.api.json-roa]
     [madek.api.resources]
@@ -91,6 +92,8 @@
       madek.api.resources/wrap-api-routes
       (wrap-handler-with-logging 'madek.api.web)
       authentication/wrap
+      (wrap-handler-with-logging 'madek.api.web)
+      management/wrap
       (wrap-handler-with-logging 'madek.api.web)
       wrap-static-resources-dispatch
       (wrap-handler-with-logging 'madek.api.web)
