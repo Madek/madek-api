@@ -4,6 +4,7 @@
   :license {:name "GNU GENERAL PUBLIC LICENSE, Version 3"
             :url "https://gnu.org/licenses/gpl-3.0.txt"}
   :dependencies [
+                 [camel-snake-kebab "0.3.2"]
                  [cheshire "5.5.0"]
                  [cider-ci/clj-utils "3.2.0-beta.1"]
                  [cider-ci/open-session "1.1.0"]
@@ -11,9 +12,10 @@
                  [clj-logging-config "1.9.12"]
                  [com.mchange/c3p0 "0.9.5"]
                  [compojure "1.4.0"]
+                 [drtom/honeysql "1.3.0-beta.2"]
                  [drtom/logbug "1.2.6"]
                  [environ "1.0.0"]
-                 [drtom/honeysql "1.3.0-beta.2"]
+                 [inflections "0.9.14"]
                  [json-roa/clj-utils "1.0.0"]
                  [log4j/log4j "1.2.17" :exclusions [javax.mail/mail javax.jms/jms com.sun.jdmk/jmxtools com.sun.jmx/jmxri]]
                  [org.clojars.hozumi/clj-commons-exec "1.2.0"]

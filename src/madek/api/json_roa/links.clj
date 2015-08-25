@@ -8,6 +8,7 @@
     [madek.api.pagination :as pagination]
     ))
 
+
 (defn root
   ([prefix]
    {:name "Root"
@@ -15,6 +16,13 @@
     :relations
     {}}))
 
+
+;### auth-info ####################################################################
+
+(defn auth-info [prefix]
+  {:name "Authentication-Info"
+   :href (str prefix "/auth-info")
+   })
 
 
 ;### media-entries ################################################################
@@ -60,7 +68,6 @@
     {:api-doc
      {:name "API Documentation Meta-Data Media-Entry"
       :href (str "/TODO" "#meta-data")}}}))
-
 
 
 ;### next link #################################################################

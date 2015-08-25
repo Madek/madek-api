@@ -7,6 +7,7 @@
     [drtom.logbug.ring :refer [wrap-handler-with-logging]]
     [madek.api.resources.media-entries :as media-entries]
     [madek.api.resources.meta-data :as meta-data]
+    [madek.api.resources.auth-info :as auth-info]
     [madek.api.resources.shared :as shared]
     ))
 
@@ -15,6 +16,7 @@
   (cpj/routes
     (cpj/ANY "/media-entries/:media_entry_id/meta-data/" _ meta-data/routes)
     (cpj/ANY "/media-entries*" _ media-entries/routes)
+    (cpj/GET "/auth-info" _ auth-info/routes)
     (cpj/ANY "*" _ default-handler)
     ))
 

@@ -90,7 +90,7 @@
       (wrap-handler-with-logging 'madek.api.web)
       madek.api.resources/wrap-api-routes
       (wrap-handler-with-logging 'madek.api.web)
-      ; authentication/wrap
+      authentication/wrap
       (wrap-handler-with-logging 'madek.api.web)
       wrap-static-resources-dispatch
       (wrap-handler-with-logging 'madek.api.web)

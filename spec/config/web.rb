@@ -10,9 +10,9 @@ def api_base_url
   @api_base_url ||= "http://localhost:#{api_port}/api"
 end
 
-def json_roa_client
-  @json_roa_client ||= JSON_ROA::Client.connect api_base_url,
-                                                raise_error: false
+def json_roa_client(&block)
+  JSON_ROA::Client.connect \
+    api_base_url, raise_error: false, &block
 end
 
 def plain_faraday_json_client
