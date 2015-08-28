@@ -1,0 +1,116 @@
+jobs:
+  Tests:
+    run-on:
+    - type: branch
+      include-match: ^.*$
+
+    context:
+      script-defaults:
+        timeout: 300
+
+      _cider-ci_generate-tasks:
+        include-match: spec/.*_spec.rb
+
+      task-defaults:
+
+        traits:
+          bash: true
+          curl: true
+          git: true
+          leiningen: true
+          linux: true
+          maven: true
+          maven3: true
+          openjdk: true
+          postgresql: true
+          rbenv: true
+          ruby: true
+
+        max-auto-trials: 1
+
+        git-options:
+          submodules:
+            clone: True
+            timeout: 60
+
+        environment-variables:
+          RAILS_ENV: test
+
+        trial-attachments:
+          config:
+            glob: 'config/*.yml'
+            content-type: text/yaml
+          logs:
+            glob: 'log/*log'
+            content-type: text/plain
+
+        ports:
+          API_HTTP_PORT:
+            inet_address: "localhost"
+            min: 3100
+            max: 3200
+
+        scripts:
+          configure:
+            body: |
+              #!/usr/bin/env ruby
+              require 'yaml'
+              config = YAML.load_file 'config/settings.yml'
+              db_name = "madek-v3_api-test_#{ENV['CIDER_CI_TRIAL_ID'][0..7]}"
+              db_url = "postgresql://localhost:5432/#{db_name}/?pool=3"
+              config['services']['api']['http']['port']= Integer(ENV['API_HTTP_PORT'])
+              config['database']['url']= db_url
+              config['madek_master_secret']= 'secret'
+              File.open('config/settings.local.yml','w') { |file| file.write config.to_yaml }
+
+              datalayer_db_config= {"test" => "#{db_url}"}
+              File.open('datalayer/config/database.yml','w') { |file| file.write datalayer_db_config.to_yaml }
+
+          bundle-datalayer:
+            exclusive-executor-resource: bundler
+            body: cd datalayer && bundle
+
+          bundle:
+            exclusive-executor-resource: bundler
+            body: bundle
+
+          create-database:
+            start-when:
+            - script: configure
+            - script: bundle-datalayer
+            body: |
+              cd datalayer && \
+              bundle exec rake db:reset
+
+          run-api:
+            start-when:
+            - script: create-database
+            body: lein trampoline run
+
+          api-is-running:
+            body: until curl --silent --fail --user x:secret -I  http://localhost:${API_HTTP_PORT}/api/management/status; do sleep 1; done
+            start-when:
+            - script: run-api
+              states: [executing]
+
+          test:
+            start-when:
+            - script: api-is-running
+            - script: bundle
+            body: bundle exec rspec spec/resources/root_spec.rb
+
+          shutdown:
+            start-when:
+              - script: test
+                states: [aborted, passed, failed, skipped]
+            body: curl -X POST --silent --fail --user x:secret -I  http://localhost:${API_HTTP_PORT}/api/management/shutdown
+
+          delete-database:
+            body: |
+              cd datalayer && \
+              bundle exec rake db:pg:terminate_connections db:drop
+            ignore-state: true
+            start-when:
+            - script: shutdown
+              states: [aborted, passed, failed, skipped]
+
