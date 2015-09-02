@@ -6,8 +6,7 @@
     [clojure.walk :refer [keywordize-keys]]
     [compojure.core :as cpj]
     [drtom.logbug.debug :as debug]
-    [honeysql.core :as hc]
-    [honeysql.helpers :as hh]
+    [honeysql.sql :refer :all]
     ))
 
 (defn page-number [params]
@@ -22,8 +21,8 @@
 (defn add-offset-for-honeysql [query params]
   (let [off (compute-offset params)]
     (-> query
-        (hh/offset off)
-        (hh/limit 10))))
+        (sql-offset off)
+        (sql-limit 10))))
 
 (defn next-page-query-query-params [query-params]
   (let [query-params (keywordize-keys query-params)

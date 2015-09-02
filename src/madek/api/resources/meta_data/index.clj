@@ -10,7 +10,6 @@
     [drtom.logbug.ring :refer [wrap-handler-with-logging]]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
-    [madek.api.sql :refer :all]
     [drtom.logbug.catcher :as catcher]
     ))
 

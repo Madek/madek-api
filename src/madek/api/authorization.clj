@@ -14,7 +14,6 @@
                      boolean)
     false))
 
-
 (defn authorized?! [request resource]
   (or authorized?
       (throw (ex-info "Forbidden"  {:status 403}))))

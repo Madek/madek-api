@@ -1,6 +1,5 @@
 (ns madek.api.resources.media-entries.media-entry
   (:require
-    [madek.api.authorization :as authorization]
     [cider-ci.utils.rdbms :as rdbms]
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
@@ -8,9 +7,8 @@
     [compojure.core :as cpj]
     [drtom.logbug.debug :as debug]
     [drtom.logbug.ring :refer [wrap-handler-with-logging]]
-    [honeysql.format :as hsql-format]
-    [honeysql.types :as hsql-types]
-    [honeysql.helpers :as hsql-helpers]
+    [honeysql.sql :refer :all]
+    [madek.api.authorization :as authorization]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
     ))
@@ -21,11 +19,10 @@
   )
 
 (defn- build-query [id]
-  (-> (hsql-helpers/select :*)
-      (hsql-helpers/from :media_entries)
-      (hsql-helpers/where [:= :id id])
-      hsql-format/format
-      ))
+  (-> (sql-select :*)
+      (sql-from :media_entries)
+      (sql-where [:= :id id])
+      sql-format))
 
 (defn- query-media-entry [params]
   (->> (:id params)
