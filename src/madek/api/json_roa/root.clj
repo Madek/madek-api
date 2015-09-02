@@ -11,5 +11,6 @@
      :self-relation (links/root context)
      :relations {:media-entries (links/media-entries context)
                  :media-entry (links/media-entry context)
+                 :collection (links/collection context)
                  :auth-info (links/auth-info context)
                  }}))

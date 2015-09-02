@@ -58,6 +58,17 @@
      {:name "API Documentation Media-Entry"
       :href (str "/TODO" "#media-entry")}}}))
 
+(defn collection
+  ([prefix]
+   (collection prefix "{id}"))
+  ([prefix id]
+   {:name "Collection"
+    :href (str prefix "/collections/" id)
+    :relations
+    {:api-doc
+     {:name "API Documentation Collection"
+      :href (str "/TODO" "#collection")}}}))
+
 (defn media-entry-meta-data
   ([prefix]
    (media-entry prefix "{id}"))
