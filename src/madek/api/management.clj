@@ -8,7 +8,7 @@
     [compojure.core :as cpj]
     [drtom.logbug.debug :as debug]
     [drtom.logbug.thrown :as thrown]
-    [madek.api.authentication.basic-auth :as basic-auth]
+    [madek.api.authentication.basic :as basic-auth]
     ))
 
 
