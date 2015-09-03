@@ -97,7 +97,7 @@ jobs:
             start-when:
             - script: api-is-running
             - script: bundle
-            body: bundle exec rspec spec/resources/root_spec.rb
+            body: bundle exec rspec ${CIDER_CI_TASK_FILE}
 
           shutdown:
             start-when:
