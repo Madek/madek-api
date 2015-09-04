@@ -2,9 +2,12 @@
 # the following line to use "http://" instead
 source 'https://rubygems.org'
 
+
 gem 'addressable'
 gem 'bcrypt'
 gem 'capybara'
+gem 'cider_ci-open_session', '>= 1.0.0', '< 2.0.0'
+gem 'factory_girl', group: [:test, :development]
 gem 'faker'
 gem 'faraday'
 gem 'git'
@@ -19,4 +22,3 @@ gem 'rest-client'
 gem 'rspec'
 gem 'rubocop'
 gem 'selenium-webdriver'
-gem 'factory_girl', group: [:test, :development]

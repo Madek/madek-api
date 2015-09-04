@@ -7,7 +7,7 @@
                  [camel-snake-kebab "0.3.2"]
                  [cheshire "5.5.0"]
                  [cider-ci/clj-utils "3.2.0-beta.1"]
-                 [cider-ci/open-session "1.1.0"]
+                 [cider-ci/open-session "1.1.2"]
                  [clj-http "2.0.0"]
                  [clj-logging-config "1.9.12"]
                  [com.mchange/c3p0 "0.9.5"]

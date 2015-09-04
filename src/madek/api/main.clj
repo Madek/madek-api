@@ -12,6 +12,7 @@
     [drtom.logbug.catcher :as catcher]
     ))
 
+
 (defn -main []
   (drtom.logbug.thrown/reset-ns-filter-regex #".*cider.ci.*")
   (catcher/wrap-with-log-warn

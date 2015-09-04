@@ -8,6 +8,7 @@
     [drtom.logbug.thrown :as thrown]
     [inflections.core :refer :all]
     [madek.api.authentication.basic :as basic-auth]
+    [madek.api.authentication.session :as session-auth]
     ))
 
 (defn- add-www-auth-header-if-401 [response]
@@ -16,9 +17,10 @@
     response))
 
 (defn wrap [handler]
-  (fn [request]
-    (let [response (basic-auth/handle request handler)]
-      (add-www-auth-header-if-401 response))))
+  (let [handler (session-auth/wrap handler)]
+    (fn [request]
+      (let [response (basic-auth/handle request handler)]
+        (add-www-auth-header-if-401 response)))))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

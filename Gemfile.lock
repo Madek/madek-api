@@ -59,6 +59,7 @@ GEM
       xpath (~> 2.0)
     childprocess (0.5.6)
       ffi (~> 1.0, >= 1.0.11)
+    cider_ci-open_session (1.0.0)
     coderay (1.1.0)
     diff-lcs (1.2.5)
     domain_name (0.5.24)
@@ -191,6 +192,7 @@ DEPENDENCIES
   addressable
   bcrypt
   capybara
+  cider_ci-open_session (>= 1.0.0, < 2.0.0)
   factory_girl
   faker
   faraday
