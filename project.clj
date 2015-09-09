@@ -20,7 +20,6 @@
                  [log4j/log4j "1.2.17" :exclusions [javax.mail/mail javax.jms/jms com.sun.jdmk/jmxtools com.sun.jmx/jmxri]]
                  [org.clojars.hozumi/clj-commons-exec "1.2.0"]
                  [org.clojure/clojure "1.6.0"]
-                 [org.clojure/clojure "1.6.0"]
                  [org.clojure/java.jdbc "0.4.1"]
                  [org.clojure/tools.logging "0.3.1"]
                  [org.postgresql/postgresql "9.4-1201-jdbc41"]
@@ -29,6 +28,7 @@
                  [ring-basic-authentication "1.0.5"]
                  [ring/ring-jetty-adapter "1.4.0"]
                  [ring/ring-json "0.4.0"]
+                 [wit/duckling "0.3.10"]
                  ]
   :aot [madek.api.main]
   :main madek.api.main

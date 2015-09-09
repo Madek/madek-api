@@ -14,7 +14,7 @@ describe 'Getting a collection resource without authentication' do
   end
 
   include_context :check_collection_resource_via_any,
-    :check_not_authenticated_without_public_permission
+                  :check_not_authenticated_without_public_permission
 end
 
 describe 'Getting a collection resource with authentication' do

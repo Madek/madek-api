@@ -6,6 +6,7 @@ source 'https://rubygems.org'
 gem 'addressable'
 gem 'bcrypt'
 gem 'capybara'
+gem 'chronic_duration'
 gem 'cider_ci-open_session', '>= 1.0.0', '< 2.0.0'
 gem 'factory_girl', group: [:test, :development]
 gem 'faker'
@@ -22,3 +23,5 @@ gem 'rest-client'
 gem 'rspec'
 gem 'rubocop'
 gem 'selenium-webdriver'
+gem 'timecop'
+
