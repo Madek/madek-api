@@ -15,7 +15,8 @@
     [duckling.core :as duckling]
     ))
 
-(duckling/load!)
+
+(duckling/load! {:en$core {:corpus ["en.numbers"] :rules ["en.numbers" "en.duration"]}})
 
 (defn- get-session-secret []
   (-> (get-config) :madek_master_secret))
@@ -53,9 +54,15 @@
       (time/before? (time/now)
                     (time/plus issued-at (time/seconds validity-duration-secs))))))
 
+(defn- session-enbabled? []
+  (-> (get-config) :madek_api_session_enabled boolean))
+
+(defn- get-cookie-value [request]
+  (-> request keywordize-keys :cookies
+      (get (get-madek-session-cookie-name)) :value))
+
 (defn- handle [request handler]
-  (if-let [cookie-value (-> request keywordize-keys :cookies
-                            (get (get-madek-session-cookie-name)) :value)]
+  (if-let [cookie-value (and (session-enbabled?) (get-cookie-value request))]
     (if-let [session-object (decrypt-cookie cookie-value)]
       (if-let [user (-> session-object :user_id get-user)]
         (if (session-signature-valid? user session-object)
@@ -76,4 +83,4 @@
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
-(debug/debug-ns *ns*)
+;(debug/debug-ns *ns*)
