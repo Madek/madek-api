@@ -13,20 +13,6 @@
     [drtom.logbug.catcher :as catcher]
     ))
 
-(defn get-media-resource
-  ([request]
-   (catcher/wrap-with-log-error
-     (or (get-media-resource request :media_entry_id "media_entries" "MediaEntry")
-         (get-media-resource request :collection_id "collections" "Collection")
-         (get-media-resource request :filter_set_id "filter_sets" "FilterSet"))))
-  ([request id-key table-name type]
-   (when-let [id (-> request :params id-key)]
-     (when-let [resource (-> (jdbc/query (get-ds)
-                                         [(str "SELECT * FROM " table-name "
-                                               WHERE id = ?") id]) first)]
-         (assoc resource :type type)))))
-
-
 (defn get-meta-data [media-resource]
   (case (:type media-resource)
     "MediaEntry" (jdbc/query (get-ds)
@@ -36,16 +22,13 @@
 
 
 (defn get-index [request]
-  (if-let [media-resource (get-media-resource request)]
-    (if (authorization/authorized? request media-resource)
-      (let [meta-data (get-meta-data media-resource)]
-        {:body
-         (conj
-           {:meta-data meta-data}
-           (case (:type media-resource)
-             "MediaEntry" {:media_entry_id (:id media-resource)}))})
-      {:status 403})
-    {:status 404}))
+  (if-let [media-resource (:media-resource request)]
+    (let [meta-data (get-meta-data media-resource)]
+      {:body
+       (conj
+         {:meta-data meta-data}
+         (case (:type media-resource)
+           "MediaEntry" {:media_entry_id (:id media-resource)}))})))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

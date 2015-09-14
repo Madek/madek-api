@@ -14,7 +14,6 @@ jobs:
       task-defaults:
 
         traits:
-          cislave1: true
           bash: true
           curl: true
           git: true
