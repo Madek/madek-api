@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'set'
-require "#{Rails.root}/spec/resources/media-entry/shared.rb"
+require Pathname(File.expand_path('..', __FILE__)).join('media-entry', 'shared')
+
 
 shared_examples :check_data_includes_excatly_the_keys do |keys|
   it "the data includes exactly the keys #{keys}" do

@@ -1,5 +1,5 @@
 require 'spec_helper'
-require "#{Rails.root}/spec/resources/media-entry/shared.rb"
+require Pathname(File.expand_path('..', __FILE__)).join('shared')
 
 describe 'Getting a media-entry resource without authentication' do
   before :example do

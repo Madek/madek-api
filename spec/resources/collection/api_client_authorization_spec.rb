@@ -1,5 +1,5 @@
 require 'spec_helper'
-require "#{Rails.root}/spec/resources/collection/shared.rb"
+require Pathname(File.expand_path('..', __FILE__)).join('shared')
 
 describe 'Getting a collection resource with authentication' do
   before :example do
