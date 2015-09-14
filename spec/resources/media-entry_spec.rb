@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'set'
 require Pathname(File.expand_path('..', __FILE__)).join('media-entry', 'shared')
 
-
 shared_examples :check_data_includes_excatly_the_keys do |keys|
   it "the data includes exactly the keys #{keys}" do
     expect(Set.new(data.keys.map(&:to_sym))).to \

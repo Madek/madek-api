@@ -19,9 +19,9 @@ end
 
 describe 'Getting a media-entry resource with authentication' do
   before :example do
-    @media_entry = FactoryGirl.create(:media_entry,
-                                      get_metadata_and_previews: false,
-                                      responsible_user: FactoryGirl.create(:user))
+    @media_entry = FactoryGirl.create(
+      :media_entry, get_metadata_and_previews: false,
+                    responsible_user: FactoryGirl.create(:user))
     @entity = FactoryGirl.create(:user, password: 'password')
   end
 

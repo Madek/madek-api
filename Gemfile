@@ -2,7 +2,6 @@
 # the following line to use "http://" instead
 source 'https://rubygems.org'
 
-
 gem 'addressable'
 gem 'bcrypt'
 gem 'capybara'
@@ -24,4 +23,3 @@ gem 'rspec'
 gem 'rubocop'
 gem 'selenium-webdriver'
 gem 'timecop'
-

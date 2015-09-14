@@ -14,3 +14,13 @@ Metrics/LineLength:
   Exclude:
     - 'Gemfile'
 
+Style/FileName:
+  Exclude:
+    - 'spec/authentication/basic-auth_spec.rb'
+    - 'spec/authentication/session-auth_spec.rb'
+    - 'spec/resources/media-entry/meta-data_spec.rb'
+    - 'spec/resources/media-entry_spec.rb'
+
+Style/RescueModifier:
+  Exclude:
+    - 'spec/authentication/session-auth_spec.rb'

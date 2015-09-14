@@ -19,9 +19,9 @@ end
 
 describe 'Getting a collection resource with authentication' do
   before :example do
-    @collection = FactoryGirl.create(:collection,
-                                     get_metadata_and_previews: false,
-                                     responsible_user: FactoryGirl.create(:user))
+    @collection = FactoryGirl.create(
+      :collection, get_metadata_and_previews: false,
+                   responsible_user: FactoryGirl.create(:user))
     @entity = FactoryGirl.create(:user, password: 'password')
   end
 
