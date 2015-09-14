@@ -2,7 +2,7 @@
   (:require
     [cider-ci.open-session.encryptor :refer [decrypt]]
     [cider-ci.open-session.signature :refer [valid?]]
-    [cider-ci.utils.config :as config :refer [get-config]]
+    [cider-ci.utils.config :refer [get-config parse-config-duration-to-seconds]]
     [cider-ci.utils.rdbms :as rdbms]
     [clj-time.core :as time]
     [clj-time.format :as time-format]
@@ -14,9 +14,6 @@
     [drtom.logbug.thrown :as thrown]
     [duckling.core :as duckling]
     ))
-
-
-(duckling/load! {:en$core {:corpus ["en.numbers"] :rules ["en.numbers" "en.duration"]}})
 
 (defn- get-session-secret []
   (-> (get-config) :madek_master_secret))
@@ -42,11 +39,9 @@
 
 (defn- get-validity-duration-secs []
   (or (catcher/wrap-with-suppress-and-log-warn
-        ((memoize
-           (fn [] (-> (get-config) :madek_session_validity_duration
-                      (#(duckling/parse :en$core % [:duration]))
-                      first :value :normalized :value)))))
-      0))
+        ((memoize #(parse-config-duration-to-seconds
+                     :madek_session_validity_duration))))
+      3))
 
 (defn- session-not-expired? [session-object]
   (when-let [issued-at (-> session-object :issued_at time-format/parse)]
