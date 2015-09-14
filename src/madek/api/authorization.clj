@@ -8,16 +8,16 @@
     [drtom.logbug.catcher :as catcher]
     [honeysql.sql :refer :all]
     [madek.api.resources.media-entries.permissions
-     :as media-entry-perms :only [viewable-by-auth-entity]]
+     :as media-entry-perms :only [viewable-by-auth-entity?]]
     [madek.api.resources.collections.permissions
-     :as collection-perms :only [viewable-by-auth-entity]]
+     :as collection-perms :only [viewable-by-auth-entity?]]
     ))
 
 (defn authorized? [auth-entity resource]
   (case (:type resource)
-    "MediaEntry" (media-entry-perms/viewable-by-auth-entity
+    "MediaEntry" (media-entry-perms/viewable-by-auth-entity?
                    resource auth-entity)
-    "Collection" (collection-perms/viewable-by-auth-entity
+    "Collection" (collection-perms/viewable-by-auth-entity?
                    resource auth-entity)
     false))
 

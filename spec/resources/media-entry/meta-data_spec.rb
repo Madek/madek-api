@@ -1,4 +1,5 @@
 require 'spec_helper'
+require Pathname(File.expand_path('..', __FILE__)).join('shared')
 
 context 'A media-entry resource with get_metadata_and_previews permission' do
   before :each do
@@ -19,6 +20,35 @@ context 'A media-entry resource with get_metadata_and_previews permission' do
 
       it 'belongs to the media-entry' do
         expect(@media_entry.meta_data).to include @meta_datum_text
+      end
+    end
+
+    describe 'resource' do
+      include_context :media_entry_resource_via_json_roa
+      it 'has a meta-data relation' do
+        expect(resource.relation('meta-data')).to be_a JSON_ROA::Client::Relation
+      end
+
+      describe 'get meta-data relation' do
+        let :get_meta_data_relation do
+          resource.relation('meta-data').get
+        end
+
+        it 'is a resource' do
+          expect(get_meta_data_relation).to be_a JSON_ROA::Client::Resource
+        end
+
+        describe 'meta_data the resource' do
+          let :meta_data_resource do
+            get_meta_data_relation
+          end
+
+          describe 'the response' do
+            it 'the status code indicates success' do
+              expect(meta_data_resource.response.status).to be == 200
+            end
+          end
+        end
       end
     end
   end

@@ -4,12 +4,13 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
-    [drtom.logbug.thrown :as thrown]
     [drtom.logbug.catcher :as catcher]
+    [drtom.logbug.debug :as debug]
+    [drtom.logbug.thrown :as thrown]
     [honeysql.sql :refer :all]
     ))
 
-(defn build-api-client-permissions-query
+(defn- build-api-client-permissions-query
   [media-resource-id api-client-id & {:keys [mr-type]}]
   (-> (sql-select :*)
       (sql-from (keyword (str mr-type "_api_client_permissions")))
@@ -17,7 +18,7 @@
                  [:= :api_client_id api-client-id])
       (sql-format)))
 
-(defn build-user-permissions-query
+(defn- build-user-permissions-query
   [media-resource-id user-id & {:keys [mr-type]}]
   (-> (sql-select :*)
       (sql-from (keyword (str mr-type "_user_permissions")))
@@ -32,11 +33,11 @@
       (sql-where [:= :groups_users.user_id user-id])
       (sql-format)))
 
-(defn query-user-groups [user-id]
+(defn- query-user-groups [user-id]
   (->> (build-user-groups-query user-id)
        (jdbc/query (rdbms/get-ds))))
 
-(defn build-group-permissions-query
+(defn- build-group-permissions-query
   [media-resource-id group-ids & {:keys [mr-type]}]
   (-> (sql-select :*)
       (sql-from (keyword (str mr-type "_group_permissions")))
@@ -46,35 +47,40 @@
 
 ; ============================================================
 
-(defn query-api-client-permissions
+(defn- query-api-client-permissions
   [resource api-client-id & {:keys [mr-type]}]
   (->> (build-api-client-permissions-query
          (:id resource) api-client-id :mr-type mr-type)
        (jdbc/query (rdbms/get-ds))))
 
-(defn query-user-permissions
+(defn- query-user-permissions
   [resource user-id & {:keys [mr-type]}]
   (->> (build-user-permissions-query
          (:id resource) user-id :mr-type mr-type)
        (jdbc/query (rdbms/get-ds))))
 
-(defn query-group-permissions
+(defn- query-group-permissions
   [resource user-id & {:keys [mr-type]}]
   (if-let [user-groups (seq (query-user-groups user-id))]
     (->> (build-group-permissions-query
            (:id resource) (map :id user-groups) :mr-type mr-type)
          (jdbc/query (rdbms/get-ds)))))
 
-(defn viewable-by-auth-entity [resource auth-entity & {:keys [mr-type]}]
-  (let [entity-id (:id auth-entity)]
-    (case (:type auth-entity)
-      "User" (or (= entity-id (:responsible_user_id resource))
-                 (seq (query-user-permissions
-                        resource entity-id :mr-type mr-type))
-                 (seq (query-group-permissions
-                        resource entity-id :mr-type mr-type)))
-      "ApiClient" (seq (query-api-client-permissions
-                         resource entity-id :mr-type mr-type)))))
+(defn- public-view-permission? [resource]
+  (:get_metadata_and_previews resource))
+
+(defn viewable-by-auth-entity? [resource auth-entity & {:keys [mr-type]}]
+  (or (public-view-permission? resource)
+      (let [entity-id (:id auth-entity)]
+        (-> (case (:type auth-entity)
+              "User" (or (= entity-id (:responsible_user_id resource))
+                         (seq (query-user-permissions
+                                resource entity-id :mr-type mr-type))
+                         (seq (query-group-permissions
+                                resource entity-id :mr-type mr-type)))
+              "ApiClient" (seq (query-api-client-permissions
+                                 resource entity-id :mr-type mr-type)))
+            boolean))))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
