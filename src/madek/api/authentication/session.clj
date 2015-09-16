@@ -26,7 +26,8 @@
 
 (defn- get-madek-session-cookie-name []
   (or (-> (get-config) :madek_session_cookie_name keyword)
-      (throw (IllegalStateException. (" madek_session_cookie_name is not configured")))))
+      (throw (IllegalStateException.
+               ("The  madek_session_cookie_name is not configured.")))))
 
 (defn- session-signature-valid? [user session-object]
   (valid? (-> session-object :signature)
@@ -47,7 +48,8 @@
   (when-let [issued-at (-> session-object :issued_at time-format/parse)]
     (when-let [validity-duration-secs (get-validity-duration-secs)]
       (time/before? (time/now)
-                    (time/plus issued-at (time/seconds validity-duration-secs))))))
+                    (time/plus issued-at
+                               (time/seconds validity-duration-secs))))))
 
 (defn- session-enbabled? []
   (-> (get-config) :madek_api_session_enabled boolean))

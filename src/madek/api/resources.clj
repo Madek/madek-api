@@ -55,7 +55,7 @@
 
 (defn- authorize-request-for-handler [request handler]
   (if-let [media-resource (:media-resource request)]
-    (if (-> media-resource public?)
+    (if (public? media-resource)
       (handler request)
       (if-let [auth-entity (:authenticated-entity request)]
         (if (authorized? auth-entity media-resource)
