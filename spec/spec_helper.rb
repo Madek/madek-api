@@ -7,4 +7,6 @@ require 'config/rails'
 require 'config/database'
 require 'config/web'
 
+require 'shared/clients'
+
 require 'pry'

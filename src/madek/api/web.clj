@@ -69,6 +69,21 @@
 
 ;### routes ###################################################################
 
+(defn- wrap-exception
+  ([handler]
+   (fn [request]
+     (wrap-exception request handler)
+     ))
+  ([request handler]
+   (try
+     (handler request)
+     (catch Exception ex
+       (logging/error "An exception was thrown in the webstack: "  (thrown/stringify ex))
+       {:status 500
+        :body (.getMessage ex)}))))
+
+;### routes ###################################################################
+
 (def ^:private dead-end-handler
   (cpj/routes
     (cpj/ANY "*" _ {:status 404 :body {:message "404 NOT FOUND"}})
@@ -85,6 +100,7 @@
     (cpj/GET "/" _ root )
     (cpj/ANY "*" _ handler)
     ))
+
 
 (defn build-site [context]
   (-> dead-end-handler
@@ -114,6 +130,8 @@
       json-roa_response/wrap
       (wrap-handler-with-logging 'madek.api.web)
       ring.middleware.json/wrap-json-response
+      (wrap-handler-with-logging 'madek.api.web)
+      wrap-exception
       (wrap-handler-with-logging 'madek.api.web)))
 
 

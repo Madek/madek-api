@@ -26,7 +26,8 @@ context 'A media-entry resource with get_metadata_and_previews permission' do
     describe 'resource' do
       include_context :media_entry_resource_via_json_roa
       it 'has a meta-data relation' do
-        expect(resource.relation('meta-data')).to be_a JSON_ROA::Client::Relation
+        expect(resource.relation('meta-data')).to \
+          be_a JSON_ROA::Client::Relation
       end
 
       describe 'get meta-data relation' do

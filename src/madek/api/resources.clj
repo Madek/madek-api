@@ -62,13 +62,15 @@
           (handler request)
           {:status 403})
         {:status 401}))
-    {:status 500 :body "No media-resource in request."}))
+    (let [response  {:status 500 :body "No media-resource in request."}]
+      (logging/warn 'authorize-request-for-handler response [request handler])
+      response)))
 
 (defn- dispatch-authorize [request handler]
   ((cpj/routes
-     (cpj/GET "/media-entries/*" _ #(authorize-request-for-handler % handler))
-     (cpj/GET "/collections/*" _ #(authorize-request-for-handler % handler))
-     (cpj/GET "/filter-sets/*" _ #(authorize-request-for-handler % handler))
+     (cpj/GET "/media-entries/:media_entry_id*" _ #(authorize-request-for-handler % handler))
+     (cpj/GET "/collections/:collection_id*" _ #(authorize-request-for-handler % handler))
+     (cpj/GET "/filter-sets/:filter_set_id*" _ #(authorize-request-for-handler % handler))
      (cpj/ANY "*" _ handler)) request))
 
 (defn- wrap-authorization [handler]
