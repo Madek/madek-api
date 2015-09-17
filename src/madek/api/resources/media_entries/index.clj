@@ -13,15 +13,15 @@
     [honeysql.sql :refer :all]
     ))
 
-(defn build-index-base-query []
+(defn build-index-base-query [{order :order}]
   (-> (sql-select :media_entries.id)
       (sql-from :media_entries)
-      (sql-order-by [:media_entries.created_at :asc])
+      (sql-order-by [:media_entries.created_at (or (keyword order) :asc)])
       (sql-merge-where  [:= :get_metadata_and_previews true])
       (sql-limit 10)))
 
 (defn- index-resources [query-params]
-  (let [query (-> (build-index-base-query)
+  (let [query (-> (build-index-base-query query-params)
                   (pagination/add-offset-for-honeysql query-params)
                   sql-format)]
     (logging/info query)
