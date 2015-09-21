@@ -20,7 +20,6 @@
                                    "  WHERE media_entry_id = ? ")
                               (:id media-resource)])))
 
-
 (defn get-index [request]
   (if-let [media-resource (:media-resource request)]
     (let [meta-data (get-meta-data media-resource)]

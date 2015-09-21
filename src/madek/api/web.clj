@@ -82,6 +82,7 @@
        {:status 500
         :body (.getMessage ex)}))))
 
+
 ;### routes ###################################################################
 
 (def ^:private dead-end-handler
@@ -100,7 +101,6 @@
     (cpj/GET "/" _ root )
     (cpj/ANY "*" _ handler)
     ))
-
 
 (defn build-site [context]
   (-> dead-end-handler
@@ -138,6 +138,7 @@
 ;### server ###################################################################
 
 (defonce server (atom nil))
+
 (defn start-server [& [port]]
   (catcher/wrap-with-log-error
     (when @server
@@ -150,7 +151,6 @@
       (reset! server
               (jetty/run-jetty (build-site)
                                {:port port :join? false})))))
-
 
 (defn initialize []
   (let [http-conf (-> (get-config) :services :api :http)

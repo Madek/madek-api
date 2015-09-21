@@ -16,6 +16,7 @@
     [madek.api.resources.shared :as shared]
     ))
 
+
 ;### wrap media resource ######################################################
 
 (defn- get-media-resource
@@ -48,6 +49,43 @@
   (fn [request]
     (add-media-resource request handler)))
 
+;### wrap meta-datum with media-resource#######################################
+
+(defn query-meta-datum [request]
+  (let [id (-> request :params :meta_datum_id)]
+    (or (-> (jdbc/query (get-ds)
+                        [(str "SELECT * FROM meta_data "
+                              "WHERE id = ? ") id])
+            first)
+        (throw (IllegalStateException. (str "We expected to find a MetaDatum for "
+                                            id " but did not."))))))
+
+(defn- query-media-resource-for-meta-datum [meta-datum]
+  (or (when-let [id (:media_entry_id meta-datum)]
+        (get-media-resource {:params {:media_entry_id id}}
+                            :media_entry_id "media_entries" "MediaEntry"))
+      (throw (IllegalStateException. (str "Getting the resource for "
+                                          meta-datum "
+                                          is not implemented yet.")))))
+
+(def ^:private query-meta-datum-dispatcher
+  (cpj/routes
+    (cpj/GET "/meta-data/:meta_datum_id*" [meta_datum_id] query-meta-datum)))
+
+(defn- add-meta-datum-with-media-resource [request handler]
+  (if-let [meta-datum (query-meta-datum-dispatcher request)]
+    (let [media-resource (query-media-resource-for-meta-datum meta-datum)]
+      (handler (assoc request
+                      :meta-datum meta-datum
+                      :media-resource media-resource)))
+    (handler request)))
+
+(defn- wrap-add-meta-datum-with-media-resource [handler]
+  (fn [request]
+    (add-meta-datum-with-media-resource request handler)))
+
+
+
 ;### wrap authorize ###########################################################
 
 (defn- public? [resource]
@@ -71,6 +109,7 @@
      (cpj/GET "/media-entries/:media_entry_id*" _ #(authorize-request-for-handler % handler))
      (cpj/GET "/collections/:collection_id*" _ #(authorize-request-for-handler % handler))
      (cpj/GET "/filter-sets/:filter_set_id*" _ #(authorize-request-for-handler % handler))
+     (cpj/GET "/meta-data/:meta_datum_id*" _ #(authorize-request-for-handler % handler))
      (cpj/ANY "*" _ handler)) request))
 
 (defn- wrap-authorization [handler]
@@ -82,12 +121,14 @@
 (defn wrap-api-routes [default-handler]
   (-> (cpj/routes
         (cpj/ANY "/media-entries/:media_entry_id/meta-data/" _ meta-data/routes)
+        (cpj/ANY "/meta-data/:meta_datum_id" _ meta-data/routes)
         (cpj/ANY "/media-entries*" _ media-entries/routes)
         (cpj/ANY "/collections*" _ collections/routes)
         (cpj/GET "/auth-info" _ auth-info/routes)
         (cpj/ANY "*" _ default-handler))
       wrap-authorization
-      wrap-add-media-resource))
+      wrap-add-media-resource
+      wrap-add-meta-datum-with-media-resource))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

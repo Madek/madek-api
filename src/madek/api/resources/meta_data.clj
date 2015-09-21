@@ -9,11 +9,13 @@
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
     [madek.api.resources.meta-data.index :as meta-data.index]
+    [madek.api.resources.meta-data.meta-datum :as meta-datum]
     ))
 
 (def routes
   (cpj/routes
     (cpj/GET "/media-entries/:media_entry_id/meta-data/" _ meta-data.index/get-index)
+    (cpj/GET "/meta-data/:meta_datum_id" _ meta-datum/get-meta-datum)
     (cpj/ANY "*" _ shared/dead-end-handler)
     ))
 

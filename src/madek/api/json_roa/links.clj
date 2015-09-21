@@ -24,6 +24,12 @@
    :href (str prefix "/auth-info")
    })
 
+;### meta data ####################################################################
+
+(defn meta-datum [prefix media-resource meta-datum]
+  {:href (str prefix "/meta-data/" (:id meta-datum))
+   :name (str "Meta-Datum of " (:meta_key_id meta-datum))
+   })
 
 ;### media-entries ################################################################
 
@@ -93,4 +99,10 @@
   {:next {:href
           (link-builder (pagination/next-page-query-query-params
                           query-params))}})
+
+
+;### Debug ####################################################################
+;(logging-config/set-logger! :level :debug)
+;(logging-config/set-logger! :level :info)
+;(debug/debug-ns *ns*)
 
