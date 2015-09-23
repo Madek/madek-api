@@ -26,10 +26,15 @@
 
 ;### meta data ####################################################################
 
-(defn meta-datum [prefix media-resource meta-datum]
-  {:href (str prefix "/meta-data/" (:id meta-datum))
-   :name (str "Meta-Datum of " (:meta_key_id meta-datum))
-   })
+(defn meta-datum
+  ([prefix]
+   (meta-datum prefix {:id "{id}"}))
+  ([prefix meta-datum]
+   {:href (str prefix "/meta-data/" (:id meta-datum))
+    :name (str "Meta-Datum"
+               (when-let [meta-key-id (:meta_key_id meta-datum)]
+                 (str " of " meta-key-id)))}))
+
 
 ;### media-entries ################################################################
 

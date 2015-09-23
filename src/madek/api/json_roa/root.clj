@@ -9,8 +9,9 @@
   (let [context (:context request)]
     {:name "Root"
      :self-relation (links/root context)
-     :relations {:media-entries (links/media-entries context)
-                 :media-entry (links/media-entry context)
+     :relations {:auth-info (links/auth-info context)
                  :collection (links/collection context)
-                 :auth-info (links/auth-info context)
+                 :meta-datum (links/meta-datum context)
+                 :media-entries (links/media-entries context)
+                 :media-entry (links/media-entry context)
                  }}))

@@ -64,6 +64,12 @@
   (or (when-let [id (:media_entry_id meta-datum)]
         (get-media-resource {:params {:media_entry_id id}}
                             :media_entry_id "media_entries" "MediaEntry"))
+      (when-let [id (:collection_id meta-datum)]
+        (get-media-resource {:params {:collection_id id}}
+                            :collection_id "collections" "Collection"))
+      (when-let [id (:filter_set_id meta-datum)]
+        (get-media-resource {:params {:filter_set_id id}}
+                            :filter_set_id "filter_sets" "FilterSet"))
       (throw (IllegalStateException. (str "Getting the resource for "
                                           meta-datum "
                                           is not implemented yet.")))))

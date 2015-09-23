@@ -41,4 +41,3 @@ describe 'ordering media entries by created_at' do
     end
   end
 end
-

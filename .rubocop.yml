@@ -20,6 +20,8 @@ Style/FileName:
     - 'spec/authentication/session-auth_spec.rb'
     - 'spec/resources/media-entry/meta-data_spec.rb'
     - 'spec/resources/media-entry_spec.rb'
+    - 'spec/resources/media_entries/index-order-by_spec.rb'
+    - 'spec/resources/meta-data/meta-datum-text_spec.rb'
 
 Style/RescueModifier:
   Exclude:
