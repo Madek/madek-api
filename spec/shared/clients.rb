@@ -1,3 +1,11 @@
+shared_context :json_roa_client_for_authenticated_entity do
+  let :client do
+    json_roa_client do |conn|
+      conn.basic_auth(entity.login, entity.password)
+    end
+  end
+end
+
 shared_context :json_roa_client_for_authenticated_user do |ctx|
   let :user do
     FactoryGirl.create :user, password: 'TOPSECRET'
@@ -7,13 +15,25 @@ shared_context :json_roa_client_for_authenticated_user do |ctx|
     user
   end
 
-  let :client do
-    json_roa_client do |conn|
-      conn.basic_auth(entity.login, entity.password)
-    end
-  end
+  include_context :json_roa_client_for_authenticated_entity
 
   describe 'JSON-ROA `client` for authenticated `user`' do
+    include_context ctx if ctx
+  end
+end
+
+shared_context :json_roa_client_for_authenticated_api_client do |ctx|
+  let :api_client do
+    FactoryGirl.create :api_client, password: 'TOPSECRET'
+  end
+
+  let :entity do
+    api_client
+  end
+
+  include_context :json_roa_client_for_authenticated_entity
+
+  describe 'JSON-ROA `client` for authenticated `api_client`' do
     include_context ctx if ctx
   end
 end

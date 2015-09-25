@@ -12,7 +12,7 @@
                  [clj-logging-config "1.9.12"]
                  [com.mchange/c3p0 "0.9.5"]
                  [compojure "1.4.0"]
-                 [drtom/honeysql "1.3.0-beta.2"]
+                 [nimaai/honeysql "1.3.0-beta.4"]
                  [drtom/logbug "1.3.0"]
                  [environ "1.0.1"]
                  [inflections "0.9.14"]
