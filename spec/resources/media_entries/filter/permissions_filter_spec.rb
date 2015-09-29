@@ -1,5 +1,5 @@
 require 'spec_helper'
-require Pathname(File.expand_path('..', __FILE__)).join('shared')
+require Pathname(File.expand_path('../../', __FILE__)).join('shared')
 
 describe 'filtering media entries' do
   include_context :bunch_of_media_entries

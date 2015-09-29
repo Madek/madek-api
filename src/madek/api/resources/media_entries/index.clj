@@ -14,11 +14,20 @@
     [madek.api.resources.shared :as shared]
     ))
 
+(defn- sql-collection-id
+  [sqlmap {:keys [collection_id] :as query-params-with-auth-entity}]
+  (cond-> sqlmap
+    (seq collection_id)
+    (-> (sql-merge-join [:collection_media_entry_arcs :cmea]
+                        [:= :cmea.media_entry_id :me.id])
+        (sql-merge-where [:= :cmea.collection_id collection_id]))))
+
 (defn build-index-base-query
   [{:keys [order] :or {order :asc} :as query-params-with-auth-entity}]
   (-> (sql-select :me.id, :me.created_at)
       (sql-merge-modifiers :distinct)
       (sql-from [:media-entries :me])
+      (sql-collection-id query-params-with-auth-entity)
       (permissions-sql/sql-public-get-metadata-and-previews
         query-params-with-auth-entity)
       (permissions-sql/sql-public-get-full-size

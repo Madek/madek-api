@@ -44,7 +44,13 @@
   ([prefix query-params]
    (str prefix "/media-entries/"
         (if (empty? query-params)
-          "{?order,public_get_metadata_and_previews,public_get_full_size,me_get_metadata_and_previews,me_get_full_size}"
+          (str "{?"
+               "order,"
+               "public_get_metadata_and_previews,"
+               "public_get_full_size,"
+               "me_get_metadata_and_previews,"
+               "me_get_full_size,"
+               "collection_id}")
           (str "?" (http-client/generate-query-string query-params))))))
 
 (defn media-entries
