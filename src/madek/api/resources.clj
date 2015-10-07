@@ -11,6 +11,7 @@
     [madek.api.authorization :refer [authorized?]]
     [madek.api.resources.auth-info :as auth-info]
     [madek.api.resources.collections :as collections]
+    [madek.api.resources.media-files :as media-files]
     [madek.api.resources.media-entries :as media-entries]
     [madek.api.resources.meta-data :as meta-data]
     [madek.api.resources.shared :as shared]
@@ -129,6 +130,7 @@
         (cpj/ANY "/media-entries/:media_entry_id/meta-data/" _ meta-data/routes)
         (cpj/ANY "/meta-data/:meta_datum_id" _ meta-data/routes)
         (cpj/ANY "/media-entries*" _ media-entries/routes)
+        (cpj/ANY "/media-files/:media_file_id*" _ media-files/routes)
         (cpj/ANY "/collections*" _ collections/routes)
         (cpj/GET "/auth-info" _ auth-info/routes)
         (cpj/ANY "*" _ default-handler))

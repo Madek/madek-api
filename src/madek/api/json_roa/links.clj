@@ -98,6 +98,18 @@
       :href (str "/TODO" "#meta-data")}}}))
 
 
+
+;### media-file(s) #############################################################
+
+(defn media-file
+  ([prefix]
+   (media-file prefix "{id}"))
+  ([prefix id]
+   {:name "Media-File"
+    :href (str prefix "/media-files/" id)
+    :relations {} }))
+
+
 ;### next link #################################################################
 
 (defn next-link [url-path query-params]

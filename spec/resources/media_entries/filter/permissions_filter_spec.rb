@@ -16,9 +16,9 @@ describe 'filtering media entries' do
   context 'permission params checks' do
     include_context :json_roa_client_for_authenticated_user do
       it 'returns 422 for multiple permission params sent' do
-        perms = ['public_get_metadata_and_previews',
-                 'public_get_full_size',
-                 'me_get_metadata_and_previews']
+        perms = %w(public_get_metadata_and_previews
+                   public_get_full_size
+                   me_get_metadata_and_previews)
         perms_to_send = \
           perms.sample(2).map { |p| [p, [true, false].sample] }.to_h
         response = media_entries_relation.get(perms_to_send).response
@@ -28,7 +28,7 @@ describe 'filtering media entries' do
       it 'returns 422 if some \'me_\' not true' do
         response = \
           media_entries_relation.get('me_get_metadata_and_previews' => false)
-            .response
+          .response
         expect(response.status).to be == 422
       end
     end
@@ -62,9 +62,11 @@ describe 'filtering media entries' do
     context 'me_get_metadata_and_previews for a user' do
       include_context :json_roa_client_for_authenticated_user do
         it '200 for public permissions' do
-          10.times { FactoryGirl.create(:media_entry,
-                                        get_metadata_and_previews: true,
-                                        get_full_size: false) }
+          10.times {
+            FactoryGirl.create(:media_entry,
+                               get_metadata_and_previews: true,
+                               get_full_size: false)
+          }
 
           get_media_entries('me_get_metadata_and_previews' => 'true')
             .each do |me|
@@ -74,10 +76,12 @@ describe 'filtering media entries' do
         end
 
         it '200 for responsible user' do
-          10.times { FactoryGirl.create(:media_entry,
-                                        responsible_user: user,
-                                        get_metadata_and_previews: false,
-                                        get_full_size: false) }
+          10.times {
+            FactoryGirl.create(:media_entry,
+                               responsible_user: user,
+                               get_metadata_and_previews: false,
+                               get_full_size: false)
+          }
 
           get_media_entries('me_get_metadata_and_previews' => 'true')
             .each do |me|
@@ -128,9 +132,11 @@ describe 'filtering media entries' do
     context 'me_get_full_size for a user' do
       include_context :json_roa_client_for_authenticated_user do
         it '200 for public permissions' do
-          10.times { FactoryGirl.create(:media_entry,
-                                        get_metadata_and_previews: false,
-                                        get_full_size: true) }
+          10.times {
+            FactoryGirl.create(:media_entry,
+                               get_metadata_and_previews: false,
+                               get_full_size: true)
+          }
 
           get_media_entries('me_get_full_size' => 'true')
             .each do |me|
@@ -140,10 +146,12 @@ describe 'filtering media entries' do
         end
 
         it '200 for responsible user' do
-          10.times { FactoryGirl.create(:media_entry,
-                                        responsible_user: user,
-                                        get_metadata_and_previews: false,
-                                        get_full_size: false) }
+          10.times {
+            FactoryGirl.create(:media_entry,
+                               responsible_user: user,
+                               get_metadata_and_previews: false,
+                               get_full_size: false)
+          }
 
           get_media_entries('me_get_full_size' => 'true')
             .each do |me|
@@ -194,9 +202,11 @@ describe 'filtering media entries' do
     context 'me_get_metadata_and_previews for an api_client' do
       include_context :json_roa_client_for_authenticated_api_client do
         it '200 for public permissions' do
-          10.times { FactoryGirl.create(:media_entry,
-                                        get_metadata_and_previews: true,
-                                        get_full_size: false) }
+          10.times {
+            FactoryGirl.create(:media_entry,
+                               get_metadata_and_previews: true,
+                               get_full_size: false)
+          }
 
           get_media_entries('me_get_metadata_and_previews' => 'true')
             .each do |me|
@@ -228,9 +238,11 @@ describe 'filtering media entries' do
     context 'me_get_metadata_and_previews for an api_client' do
       include_context :json_roa_client_for_authenticated_api_client do
         it '200 for public permissions' do
-          10.times { FactoryGirl.create(:media_entry,
-                                        get_metadata_and_previews: false,
-                                        get_full_size: true) }
+          10.times {
+            FactoryGirl.create(:media_entry,
+                               get_metadata_and_previews: false,
+                               get_full_size: true)
+          }
 
           get_media_entries('me_get_full_size' => 'true')
             .each do |me|

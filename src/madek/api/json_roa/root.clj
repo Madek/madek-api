@@ -14,4 +14,5 @@
                  :meta-datum (links/meta-datum context)
                  :media-entries (links/media-entries context)
                  :media-entry (links/media-entry context)
+                 :media-file (links/media-file context)
                  }}))
