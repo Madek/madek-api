@@ -3,7 +3,7 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
-    [drtom.logbug.debug :as debug]
+    [logbug.debug :as debug]
     ))
 
 

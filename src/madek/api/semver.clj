@@ -1,14 +1,14 @@
 (ns madek.api.semver
-  (:require 
+  (:require
     [clj-commons-exec :as commons-exec]
-    [drtom.logbug.debug :as debug]
-    [drtom.logbug.catcher :as catcher]
+    [logbug.debug :as debug]
+    [logbug.catcher :as catcher]
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     ))
 
 (defn get-git-commit-id []
-  (try 
+  (try
     (catcher/wrap-with-log-warn
       (-> (commons-exec/sh ["git" "log" "-n" "1" "--format=%h"])
           deref

@@ -2,8 +2,8 @@
   (:require
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
-    [drtom.logbug.thrown :as thrown]
-    [drtom.logbug.catcher :as catcher]
+    [logbug.thrown :as thrown]
+    [logbug.catcher :as catcher]
     [madek.api.resources.media-resources.permissions :as mr-permissions]
     ))
 

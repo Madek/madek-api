@@ -3,8 +3,8 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
-    [drtom.logbug.debug :as debug]
-    [drtom.logbug.ring :refer [wrap-handler-with-logging]]
+    [logbug.debug :as debug]
+    [logbug.ring :refer [wrap-handler-with-logging]]
     ))
 
 (def uuid-matcher #"[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}" )

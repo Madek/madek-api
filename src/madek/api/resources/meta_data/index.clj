@@ -6,11 +6,11 @@
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
-    [drtom.logbug.debug :as debug]
-    [drtom.logbug.ring :refer [wrap-handler-with-logging]]
+    [logbug.debug :as debug]
+    [logbug.ring :refer [wrap-handler-with-logging]]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
-    [drtom.logbug.catcher :as catcher]
+    [logbug.catcher :as catcher]
     ))
 
 (defn get-meta-data [media-resource]

@@ -5,16 +5,16 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
-    [drtom.logbug.debug :as debug]
+    [logbug.debug :as debug]
     [madek.api.web]
     [pg-types.all]
-    [drtom.logbug.thrown]
-    [drtom.logbug.catcher :as catcher]
+    [logbug.thrown]
+    [logbug.catcher :as catcher]
     ))
 
 
 (defn -main []
-  (drtom.logbug.thrown/reset-ns-filter-regex #".*cider.ci.*")
+  (logbug.thrown/reset-ns-filter-regex #".*cider.ci.*")
   (catcher/wrap-with-log-warn
     (logging/info 'madek.api.main "initializing ...")
     (cider-ci.utils.config/initialize

@@ -1,6 +1,6 @@
 (ns madek.api.json-roa
   (:require
-    [drtom.logbug.debug :as debug]
+    [logbug.debug :as debug]
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]

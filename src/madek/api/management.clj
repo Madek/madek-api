@@ -6,8 +6,8 @@
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
-    [drtom.logbug.debug :as debug]
-    [drtom.logbug.thrown :as thrown]
+    [logbug.debug :as debug]
+    [logbug.thrown :as thrown]
     [madek.api.authentication.basic :as basic-auth]
     ))
 

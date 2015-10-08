@@ -2,7 +2,7 @@
   (:require
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
-    [drtom.logbug.debug :as debug]
+    [logbug.debug :as debug]
     [madek.api.json-roa.links :as links]
     [madek.api.pagination :as pagination]
     ))

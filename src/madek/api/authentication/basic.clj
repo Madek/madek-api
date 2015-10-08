@@ -7,8 +7,8 @@
     [clojure.data.codec.base64 :as base64]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
-    [drtom.logbug.debug :as debug]
-    [drtom.logbug.thrown :as thrown]
+    [logbug.debug :as debug]
+    [logbug.thrown :as thrown]
     [inflections.core :refer :all]
     ))
 

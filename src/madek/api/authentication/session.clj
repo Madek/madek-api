@@ -9,9 +9,9 @@
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [clojure.walk :refer [keywordize-keys]]
-    [drtom.logbug.catcher :as catcher]
-    [drtom.logbug.debug :as debug]
-    [drtom.logbug.thrown :as thrown]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
+    [logbug.thrown :as thrown]
     [duckling.core :as duckling]
     ))
 

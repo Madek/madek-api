@@ -1,7 +1,7 @@
 (ns madek.api.json-roa.links
   (:require
     [clj-http.client :as http-client]
-    [drtom.logbug.debug :as debug]
+    [logbug.debug :as debug]
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [ring.util.codec :refer [form-encode]]

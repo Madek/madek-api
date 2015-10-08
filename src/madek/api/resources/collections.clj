@@ -5,7 +5,7 @@
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
-    [drtom.logbug.debug :as debug]
+    [logbug.debug :as debug]
     [madek.api.pagination :as pagination]
     ; [madek.api.resources.collections :refer [get-index]]
     [madek.api.resources.collections.collection :refer [get-collection]]

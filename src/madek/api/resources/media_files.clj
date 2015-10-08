@@ -5,8 +5,8 @@
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
-    [drtom.logbug.catcher :as catcher]
-    [drtom.logbug.debug :as debug]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
     [madek.api.resources.media-files.authorize :as media-files.authorize]
     [madek.api.resources.shared :as shared]
     ))

@@ -5,7 +5,7 @@
     [clojure.tools.logging :as logging]
     [clojure.walk :refer [keywordize-keys]]
     [compojure.core :as cpj]
-    [drtom.logbug.debug :as debug]
+    [logbug.debug :as debug]
     [honeysql.sql :refer :all]
     ))
 
