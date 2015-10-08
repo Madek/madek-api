@@ -7,7 +7,6 @@
     [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [logbug.ring :refer [wrap-handler-with-logging]]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
     [honeysql.sql :refer :all]

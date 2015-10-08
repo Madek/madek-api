@@ -7,7 +7,6 @@
     [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [logbug.ring :refer [wrap-handler-with-logging]]
     [madek.api.authorization :refer [authorized?]]
     [madek.api.resources.auth-info :as auth-info]
     [madek.api.resources.collections :as collections]

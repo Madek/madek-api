@@ -7,7 +7,6 @@
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
     [logbug.debug :as debug]
-    [logbug.ring :refer [wrap-handler-with-logging]]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
     [logbug.catcher :as catcher]
