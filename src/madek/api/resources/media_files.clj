@@ -7,15 +7,11 @@
     [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [madek.api.resources.media-files.authorization :as media-files.authorize]
+    [logbug.ring]
+    [madek.api.resources.media-files.authorization :as media-files.authorization]
+    [madek.api.resources.media-files.media-file :as media-file]
     [madek.api.resources.shared :as shared]
     ))
-
-(defn- get-media-file [request]
-  (when-let [media-file (:media-file request)]
-    {:status 200
-     :body (select-keys media-file [:id :size :created_at :updated_at
-                                    :media_entry_id :filename])}))
 
 ;##############################################################################
 
@@ -38,11 +34,15 @@
 ;##############################################################################
 
 (def routes
-  (-> (cpj/routes
-        (cpj/GET "/media-files/:media_file_id" _ #'get-media-file)
-        (cpj/ANY "*" _ shared/dead-end-handler))
-      media-files.authorize/wrap-authorize
-      wrap-find-and-add-media-file))
+  (logbug.ring/->
+    (cpj/routes
+      (cpj/GET "/media-files/:media_file_id" _
+               #'media-file/get-media-file-row)
+      (cpj/GET "/media-files/:media_file_id/data-stream" _
+               #'media-file/get-media-file-data-stream)
+      (cpj/ANY "*" _ shared/dead-end-handler))
+    media-files.authorization/wrap-authorize
+    wrap-find-and-add-media-file))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

@@ -109,6 +109,14 @@
     :href (str prefix "/media-files/" id)
     :relations {} }))
 
+(defn media-file-data-stream
+  ([prefix]
+   (media-file-data-stream prefix "{id}"))
+  ([prefix id]
+   {:name "Media-File"
+    :href (str prefix "/media-files/" id "/data-stream")
+    :relations {} }))
+
 
 ;### next link #################################################################
 

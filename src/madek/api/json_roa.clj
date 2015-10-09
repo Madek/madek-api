@@ -6,6 +6,7 @@
     [compojure.core :as cpj]
     [madek.api.json-roa.root :as root]
     [madek.api.json-roa.media-entries :as media-entries]
+    [madek.api.json-roa.media-files :as media-files]
     [madek.api.json-roa.meta-data :as meta-data]
     ))
 
@@ -30,6 +31,7 @@
     (cpj/GET "/media-entries/" request (media-entries/index request json-response))
     (cpj/GET "/media-entries/:id" request (media-entries/media-entry request json-response))
     (cpj/GET "/media-entries/:id/meta-data/" request (meta-data/index request json-response))
+    (cpj/GET "/media-files/:id" request (media-files/media-file request json-response))
     ))
 
 (defn handler [request response]
