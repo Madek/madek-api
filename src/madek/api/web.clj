@@ -13,7 +13,7 @@
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
-    [logbug.ring :refer [wrap-handler-with-logging]]
+    [logbug.ring]
     [environ.core :refer [env]]
     [json-roa.ring-middleware.request :as json-roa_request]
     [json-roa.ring-middleware.response :as json-roa_response]
@@ -103,36 +103,22 @@
 
 
 (defn build-site [context]
-  (-> dead-end-handler
-      wrap-handler-with-logging
-      madek.api.resources/wrap-api-routes
-      wrap-handler-with-logging
-      authentication/wrap
-      wrap-handler-with-logging
-      management/wrap
-      wrap-handler-with-logging
-      wrap-static-resources-dispatch
-      wrap-handler-with-logging
-      wrap-public-routes
-      wrap-handler-with-logging
-      wrap-keywordize-request
-      wrap-handler-with-logging
-      (json-roa_request/wrap madek.api.json-roa/handler)
-      wrap-handler-with-logging
-      ring.middleware.json/wrap-json-params
-      wrap-handler-with-logging
-      cors/wrap
-      wrap-handler-with-logging
-      site
-      wrap-handler-with-logging
-      (wrap-context context)
-      wrap-handler-with-logging
-      json-roa_response/wrap
-      wrap-handler-with-logging
-      ring.middleware.json/wrap-json-response
-      wrap-handler-with-logging
-      wrap-exception
-      wrap-handler-with-logging))
+  (logbug.ring/->
+    dead-end-handler
+    madek.api.resources/wrap-api-routes
+    authentication/wrap
+    management/wrap
+    wrap-static-resources-dispatch
+    wrap-public-routes
+    wrap-keywordize-request
+    (json-roa_request/wrap madek.api.json-roa/handler)
+    ring.middleware.json/wrap-json-params
+    cors/wrap
+    site
+    (wrap-context context)
+    json-roa_response/wrap
+    ring.middleware.json/wrap-json-response
+    wrap-exception))
 
 
 ;### server ###################################################################
@@ -156,7 +142,6 @@
   (let [http-conf (-> (get-config) :services :api :http)
         context (str (:context http-conf) (:sub_context http-conf))]
     (http-server/start http-conf (build-site context))))
-
 
 
 

@@ -16,7 +16,7 @@
                  [inflections "0.9.14"]
                  [json-roa/clj-utils "1.0.0"]
                  [log4j/log4j "1.2.17" :exclusions [javax.mail/mail javax.jms/jms com.sun.jdmk/jmxtools com.sun.jmx/jmxri]]
-                 [logbug "2.0.0-beta.2"]
+                 [logbug "2.0.0-beta.4"]
                  [nimaai/honeysql "1.3.0-beta.4"]
                  [org.clojars.hozumi/clj-commons-exec "1.2.0"]
                  [org.clojure/clojure "1.6.0"]
