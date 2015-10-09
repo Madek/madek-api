@@ -1,10 +1,11 @@
 require 'spec_helper'
 require Pathname(File.expand_path('..', __FILE__)).join('shared')
 
-describe 'Getting a media-entry resource without authentication' do
+describe 'Getting a media-file resource without authentication' do
   before :example do
-    @media_entry = FactoryGirl.create(:media_entry,
-                                      get_metadata_and_previews: false)
+    @media_entry = FactoryGirl.create(:media_entry_with_image_media_file,
+                                      get_full_size: false)
+    @media_file = @media_entry.media_file
   end
 
   shared_context :check_not_authenticated_without_public_permission do
@@ -13,31 +14,33 @@ describe 'Getting a media-entry resource without authentication' do
     end
   end
 
-  include_context :check_media_entry_resource_via_any,
+  include_context :check_media_file_resource_via_any,
                   :check_not_authenticated_without_public_permission
 end
 
-describe 'Getting a media-entry resource with authentication' do
+describe 'Getting a media-file resource with authentication' do
   before :example do
-    @media_entry = FactoryGirl.create(
-      :media_entry, get_metadata_and_previews: false,
-                    responsible_user: FactoryGirl.create(:user))
+    @media_entry = \
+      FactoryGirl.create(:media_entry_with_image_media_file,
+                         get_full_size: false,
+                         responsible_user: FactoryGirl.create(:user))
+    @media_file = @media_entry.media_file
     @entity = FactoryGirl.create(:user, password: 'password')
   end
 
-  include_context :auth_media_entry_resource_via_json_roa
+  include_context :auth_media_file_resource_via_json_roa
 
   context :check_forbidden_without_required_permission do
     before :example do
       @media_entry.user_permissions << \
         FactoryGirl.create(:media_entry_user_permission,
-                           get_metadata_and_previews: false,
+                           get_full_size: false,
                            user: @entity)
       group = FactoryGirl.create(:group)
       @entity.groups << group
       @media_entry.group_permissions << \
         FactoryGirl.create(:media_entry_group_permission,
-                           get_metadata_and_previews: false,
+                           get_full_size: false,
                            group: group)
     end
     it 'is forbidden 403' do
@@ -59,7 +62,7 @@ describe 'Getting a media-entry resource with authentication' do
     before :example do
       @media_entry.user_permissions << \
         FactoryGirl.create(:media_entry_user_permission,
-                           get_metadata_and_previews: true,
+                           get_full_size: true,
                            user: @entity)
     end
 
@@ -74,7 +77,7 @@ describe 'Getting a media-entry resource with authentication' do
       @entity.groups << group
       @media_entry.group_permissions << \
         FactoryGirl.create(:media_entry_group_permission,
-                           get_metadata_and_previews: true,
+                           get_full_size: true,
                            group: group)
     end
 

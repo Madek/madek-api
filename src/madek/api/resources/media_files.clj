@@ -7,7 +7,7 @@
     [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [madek.api.resources.media-files.authorize :as media-files.authorize]
+    [madek.api.resources.media-files.authorization :as media-files.authorize]
     [madek.api.resources.shared :as shared]
     ))
 
@@ -47,4 +47,4 @@
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
-(debug/debug-ns *ns*)
+;(debug/debug-ns *ns*)

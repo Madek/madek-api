@@ -1,20 +1,21 @@
 require 'spec_helper'
 require Pathname(File.expand_path('..', __FILE__)).join('shared')
 
-describe 'Getting a collection resource with authentication' do
+describe 'Getting a media-file resource with authentication' do
   before :example do
-    @collection = FactoryGirl.create(:collection,
-                                     get_metadata_and_previews: false)
+    @media_entry = FactoryGirl.create(:media_entry_with_image_media_file,
+                                      get_full_size: false)
+    @media_file = @media_entry.media_file
     @entity = FactoryGirl.create(:api_client, password: 'password')
   end
 
-  include_context :auth_collection_resource_via_json_roa
+  include_context :auth_media_file_resource_via_json_roa
 
   context :check_forbidden_without_required_permission do
     before :example do
-      @collection.api_client_permissions << \
-        FactoryGirl.create(:collection_api_client_permission,
-                           get_metadata_and_previews: false,
+      @media_entry.api_client_permissions << \
+        FactoryGirl.create(:media_entry_api_client_permission,
+                           get_full_size: false,
                            api_client: @entity)
     end
     it 'is forbidden 403' do
@@ -24,9 +25,9 @@ describe 'Getting a collection resource with authentication' do
 
   context :check_allowed_if_api_client_permission do
     before :example do
-      @collection.api_client_permissions << \
-        FactoryGirl.create(:collection_api_client_permission,
-                           get_metadata_and_previews: true,
+      @media_entry.api_client_permissions << \
+        FactoryGirl.create(:media_entry_api_client_permission,
+                           get_full_size: true,
                            api_client: @entity)
     end
 

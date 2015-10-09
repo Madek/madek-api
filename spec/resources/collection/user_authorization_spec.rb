@@ -28,6 +28,18 @@ describe 'Getting a collection resource with authentication' do
   include_context :auth_collection_resource_via_json_roa
 
   context :check_forbidden_without_required_permission do
+    before :example do
+      @collection.user_permissions << \
+        FactoryGirl.create(:collection_user_permission,
+                           get_metadata_and_previews: false,
+                           user: @entity)
+      group = FactoryGirl.create(:group)
+      @entity.groups << group
+      @collection.group_permissions << \
+        FactoryGirl.create(:collection_group_permission,
+                           get_metadata_and_previews: false,
+                           group: group)
+    end
     it 'is forbidden 403' do
       expect(response.status).to be == 403
     end
@@ -46,7 +58,9 @@ describe 'Getting a collection resource with authentication' do
   context :check_allowed_if_user_permission do
     before :example do
       @collection.user_permissions << \
-        FactoryGirl.create(:collection_user_permission, user: @entity)
+        FactoryGirl.create(:collection_user_permission,
+                           get_metadata_and_previews: true,
+                           user: @entity)
     end
 
     it 'is allowed 200' do
@@ -59,7 +73,9 @@ describe 'Getting a collection resource with authentication' do
       group = FactoryGirl.create(:group)
       @entity.groups << group
       @collection.group_permissions << \
-        FactoryGirl.create(:collection_group_permission, group: group)
+        FactoryGirl.create(:collection_group_permission,
+                           get_metadata_and_previews: true,
+                           group: group)
     end
 
     it 'is allowed 200' do
