@@ -1,6 +1,8 @@
 (ns madek.api.json-roa.media-entries
   (:require
+    [cider-ci.utils.rdbms :as rdbms]
     [clj-logging-config.log4j :as logging-config]
+    [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
     [madek.api.json-roa.links :as links]
@@ -30,15 +32,24 @@
                (links/media-entries-path context query-params))
              query-params)))})))
 
+(defn get-first-media-file-id [media-entry-id]
+  (-> (jdbc/query
+        (rdbms/get-ds)
+        [(str "SELECT id FROM media_files WHERE media_entry_id = ?"
+              " ORDER BY created_at ASC LIMIT 1") media-entry-id])
+      first :id))
+
 (defn media-entry [request response]
   (let [context (:context request)
-        params (:params request)]
+        params (:params request)
+        media-entry-id (:id params)]
     {:name "Media-Entry"
-     :self-relation (links/media-entry context (:id params))
-     :relations
-     {:root (links/root context)
-      :meta-data (links/media-entry-meta-data context (:id params))
-      }}))
+     :self-relation (links/media-entry context media-entry-id)
+     :relations (merge {:root (links/root context)
+                        :meta-data (links/media-entry-meta-data context media-entry-id)}
+                       (if-let [media-file-id (get-first-media-file-id media-entry-id)]
+                         {:media-file (links/media-file context media-file-id) } {})
+                       )}))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

@@ -59,10 +59,7 @@
   ([prefix query-params]
    {:name "Media-Entries"
     :href (media-entries-path prefix query-params)
-    :relations
-    {:api-doc
-     {:name "API Documentation Media-Entries"
-      :href (str "/TODO" "#media-entries")}}}))
+    :relations {} }))
 
 (defn media-entry
   ([prefix]
@@ -70,10 +67,7 @@
   ([prefix id]
    {:name "Media-Entry"
     :href (str prefix "/media-entries/" id)
-    :relations
-    {:api-doc
-     {:name "API Documentation Media-Entry"
-      :href (str "/TODO" "#media-entry")}}}))
+    :relations {} }))
 
 (defn collection
   ([prefix]
@@ -81,22 +75,15 @@
   ([prefix id]
    {:name "Collection"
     :href (str prefix "/collections/" id)
-    :relations
-    {:api-doc
-     {:name "API Documentation Collection"
-      :href (str "/TODO" "#collection")}}}))
+    :relations {} }))
 
 (defn media-entry-meta-data
   ([prefix]
    (media-entry prefix "{id}"))
   ([prefix id]
-   {:name "Media-Entry"
+   {:name "MetaData"
     :href (str prefix "/media-entries/" id "/meta-data/")
-    :relations
-    {:api-doc
-     {:name "API Documentation Meta-Data Media-Entry"
-      :href (str "/TODO" "#meta-data")}}}))
-
+    :relations {} }))
 
 
 ;### media-file(s) #############################################################

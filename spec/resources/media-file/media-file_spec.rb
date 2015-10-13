@@ -18,16 +18,32 @@ describe 'MediaFile Resource' do
   end
 
   describe 'the image media file' do
-    let :media_file do
+    let :media_entry do
       media_entry = FactoryGirl.create :media_entry,
-                                      get_full_size: true,
-                                      responsible_user: user
-      FactoryGirl.create :media_file_for_image,
-                         media_entry: media_entry
+                                       get_full_size: true,
+                                       get_metadata_and_previews: true
+    end
+
+    let :media_file do
+      FactoryGirl.create :media_file_for_image, media_entry: media_entry
     end
 
     it do
       expect(media_file).to be
+    end
+
+    describe 'the media-entry resource' do
+      let :media_entry_resource do
+        authenticated_json_roa_client.get.relation('media-entry')
+          .get('id' => media_file.media_entry.id)
+      end
+      it 'has a media-file relation' do
+        expect(media_entry_resource.relation('media-file')).to be_a JSON_ROA::Client::Relation
+      end
+      it 'links to the media-file resource' do
+        expect(media_entry_resource.relation('media-file').data['href']).to \
+          match %r{.*/media-files/#{media_file.id}}
+      end
     end
 
     describe 'the media-file resource' do
