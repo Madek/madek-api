@@ -13,6 +13,8 @@
     [madek.api.resources.media-files :as media-files]
     [madek.api.resources.media-entries :as media-entries]
     [madek.api.resources.meta-data :as meta-data]
+    [madek.api.resources.meta-keys :as meta-keys]
+    [madek.api.resources.people :as people]
     [madek.api.resources.shared :as shared]
     ))
 
@@ -131,6 +133,8 @@
         (cpj/ANY "/media-entries*" _ media-entries/routes)
         (cpj/ANY "/media-files/:media_file_id*" _ media-files/routes)
         (cpj/ANY "/collections*" _ collections/routes)
+        (cpj/ANY "/people*" _ people/routes)
+        (cpj/ANY "/meta-keys*" _ meta-keys/routes)
         (cpj/GET "/auth-info" _ auth-info/routes)
         (cpj/ANY "*" _ default-handler))
       wrap-authorization

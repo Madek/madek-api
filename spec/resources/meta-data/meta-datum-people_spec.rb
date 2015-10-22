@@ -4,9 +4,9 @@ require Pathname(File.expand_path('..', __FILE__)).join('shared')
 describe 'generated runs' do
   (1..ROUNDS).each do |round|
     describe "ROUND #{round}" do
-      describe 'meta_datum_text_for_random_resource_type' do
+      describe 'meta_datum_people_for_random_resource_type' do
         include_context :meta_datum_for_random_resource_type
-        let(:meta_datum_text) { meta_datum('text') }
+        let(:meta_datum_people) { meta_datum('people') }
 
         describe 'authenticated_json_roa_client' do
           include_context :authenticated_json_roa_client
@@ -27,7 +27,7 @@ describe 'generated runs' do
             describe 'the meta-data resource' do
               let :resource do
                 authenticated_json_roa_client.get.relation('meta-datum') \
-                  .get('id' => meta_datum_text.id)
+                  .get('id' => meta_datum_people.id)
               end
 
               let :response do
@@ -40,9 +40,32 @@ describe 'generated runs' do
                   (media_resource.get_metadata_and_previews ? 200 : 403)
               end
 
-              it 'holds the proper text value when the response is 200' do
-                if response.status == 200
-                  expect(resource.data['value']).to be == meta_datum_text.string
+              context 'if the response is 200' do
+                let(:value) { resource.data['value'] }
+
+                it 'it holds the proper uuid array value' do
+                  if response.status == 200
+                    value.each do |person_id|
+                      expect(
+                        MetaDatum::Person.find_by(meta_datum_id: resource.data['id'],
+                                                  person_id: person_id)
+                      ).to be
+                    end
+                  end
+                end
+
+                it 'it provides valid collection and relations' do
+                  if response.status == 200
+                    resource.collection.each do |c_entry|
+                      expect(c_entry.get.response.status).to be == 200
+                      expect(value).to include c_entry.get.data['id']
+                    end
+
+                    expect(resource.relation('meta-key').get.response.status)
+                      .to be == 200
+                    expect(resource.relation('media-entry').get.response.status)
+                      .to be == 200
+                  end
                 end
               end
             end

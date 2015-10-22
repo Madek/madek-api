@@ -7,18 +7,21 @@
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
     [logbug.debug :as debug]
+    [honeysql.sql :refer :all]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
+    [madek.api.resources.people.index :as people]
     [logbug.catcher :as catcher]
     ))
 
 (defn- prepare-meta-datum [meta-datum]
   (merge (select-keys meta-datum [:id :meta_key_id :type])
-         (case (:type meta-datum)
-           "MetaDatum::Text" {:value (:string meta-datum)})
-          (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
-               (filter (fn [[k v]] v))
-               (into {}))))
+         {:value (case (:type meta-datum)
+                   "MetaDatum::Text" (:string meta-datum)
+                   "MetaDatum::People" (map :id (people/get-index meta-datum)))}
+         (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
+              (filter (fn [[k v]] v))
+              (into {}))))
 
 (defn get-meta-datum [request]
   (let [meta-datum (:meta-datum request)]

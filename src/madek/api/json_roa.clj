@@ -8,6 +8,8 @@
     [madek.api.json-roa.media-entries :as media-entries]
     [madek.api.json-roa.media-files :as media-files]
     [madek.api.json-roa.meta-data :as meta-data]
+    [madek.api.json-roa.meta-keys :as meta-keys]
+    [madek.api.json-roa.people :as people]
     ))
 
 (def about
@@ -32,6 +34,9 @@
     (cpj/GET "/media-entries/:id" request (media-entries/media-entry request json-response))
     (cpj/GET "/media-entries/:id/meta-data/" request (meta-data/index request json-response))
     (cpj/GET "/media-files/:id" request (media-files/media-file request json-response))
+    (cpj/GET "/meta-data/:id" request (meta-data/meta-datum request json-response))
+    (cpj/GET "/meta-keys/:id" request (meta-keys/meta-key request json-response))
+    (cpj/GET "/people/:id" request (people/person request json-response))
     ))
 
 (defn handler [request response]

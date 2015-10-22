@@ -25,10 +25,25 @@
                         (when-let [meta-data (-> response :body :meta-data)]
                           (->> meta-data
                                (map #(build-meta-datum-collection-item request %))
-                               (into {}))))}
+                               (into {}))))}}))
 
-
-     }))
+(defn meta-datum [request response]
+  (let [context (:context request)
+        meta-datum-type (-> response :body :type)]
+    (conj {:name "Meta-Datum"
+           :relations {:root (links/root context)
+                       :meta-key (links/meta-key
+                                   context (-> response :body :meta_key_id))
+                       :media-entry (links/media-entry
+                                      context (-> response :body :media_entry_id))}}
+          (when-not (or (= meta-datum-type "MetaDatum::Text")
+                        (= meta-datum-type "MetaDatum::TextDate"))
+            {:collection
+             {:relations
+              (into {}
+                    (map #(hash-map % (case meta-datum-type
+                                        "MetaDatum::People" (links/person context %)))
+                         (-> response :body :value)))}}))))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

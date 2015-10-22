@@ -104,6 +104,25 @@
     :href (str prefix "/media-files/" id "/data-stream")
     :relations {} }))
 
+;### meta-key(s) ###############################################################
+
+(defn meta-key
+  ([prefix]
+   (meta-key prefix "{id}"))
+  ([prefix id]
+   {:name "Meta-Key"
+    :href (str prefix "/meta-keys/" id)
+    :relations {} }))
+
+;### meta-key(s) ###############################################################
+
+(defn person
+  ([prefix]
+   (person prefix "{id}"))
+  ([prefix id]
+   {:name "Person"
+    :href (str prefix "/people/" id)
+    :relations {} }))
 
 ;### next link #################################################################
 
