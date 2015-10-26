@@ -45,11 +45,10 @@ describe 'generated runs' do
 
                 it 'it holds the proper uuid array value' do
                   if response.status == 200
-                    value.each do |person_id|
-                      expect(
-                        MetaDatum::Person.find_by(meta_datum_id: resource.data['id'],
-                                                  person_id: person_id)
-                      ).to be
+                    value.map { |v| v['id'] }.each do |person_id|
+                      expect(MetaDatum::Person.find_by(meta_datum_id: resource.data['id'],
+                                                       person_id: person_id))
+                        .to be
                     end
                   end
                 end
@@ -58,7 +57,7 @@ describe 'generated runs' do
                   if response.status == 200
                     resource.collection.each do |c_entry|
                       expect(c_entry.get.response.status).to be == 200
-                      expect(value).to include c_entry.get.data['id']
+                      expect(value.map { |v| v['id'] }).to include c_entry.get.data['id']
                     end
 
                     expect(resource.relation('meta-key').get.response.status)

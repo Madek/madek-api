@@ -15,19 +15,22 @@
     ))
 
 (defn- prepare-meta-datum [meta-datum]
-  (merge (select-keys meta-datum [:id :meta_key_id :type])
-         {:value (case (:type meta-datum)
-                   "MetaDatum::Text" (:string meta-datum)
-                   "MetaDatum::People" (map :id (people/get-index meta-datum)))}
-         (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
-              (filter (fn [[k v]] v))
-              (into {}))))
+  (debug/identity-with-logging
+    'madek.api.resources.meta-data.meta-datum
+    (merge (select-keys meta-datum [:id :meta_key_id :type])
+           {:value (case (:type meta-datum)
+                     "MetaDatum::Text" (:string meta-datum)
+                     "MetaDatum::People" (map #(select-keys % [:id])
+                                              (people/get-index meta-datum)))}
+           (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
+                (filter (fn [[k v]] v))
+                (into {})))))
 
 (defn get-meta-datum [request]
   (let [meta-datum (:meta-datum request)]
     {:body (prepare-meta-datum meta-datum)}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
+(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

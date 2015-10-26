@@ -43,7 +43,7 @@
               (into {}
                     (map #(hash-map % (case meta-datum-type
                                         "MetaDatum::People" (links/person context %)))
-                         (-> response :body :value)))}}))))
+                         (map :id (-> response :body :value))))}}))))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
