@@ -15,6 +15,7 @@
     [madek.api.resources.meta-data :as meta-data]
     [madek.api.resources.meta-keys :as meta-keys]
     [madek.api.resources.keywords :as keywords]
+    [madek.api.resources.licenses :as licenses]
     [madek.api.resources.people :as people]
     [madek.api.resources.shared :as shared]
     ))
@@ -137,6 +138,7 @@
         (cpj/ANY "/people*" _ people/routes)
         (cpj/ANY "/keywords*" _ keywords/routes)
         (cpj/ANY "/meta-keys*" _ meta-keys/routes)
+        (cpj/ANY "/licenses*" _ licenses/routes)
         (cpj/GET "/auth-info" _ auth-info/routes)
         (cpj/ANY "*" _ default-handler))
       wrap-authorization
