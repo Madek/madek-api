@@ -1,0 +1,20 @@
+default_storage_dir: {{CIDER_CI_WORKING_DIR}}/tmp/storage
+
+madek_master_secret: secret
+madek_session_cookie_name: madek-session
+database:
+  url: "{{API_DATABASE_URL}}"
+
+services:
+
+  api:
+
+    http:
+
+      host: localhost
+      port: {{API_HTTP_PORT}}
+      context: ""
+      sub_context: /api
+      ssl: false
+
+

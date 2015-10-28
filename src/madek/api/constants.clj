@@ -42,6 +42,11 @@
            (or (:thumbnail_storage_dir (get-config))
                (clojure.string/join (java.io.File/separator)
                                     [DEFAULT_STORAGE_DIR "thumbnails"])))))
+
+  (logging/info
+    {:DEFAULT_STORAGE_DIR DEFAULT_STORAGE_DIR
+     :FILE_STORAGE_DIR FILE_STORAGE_DIR
+     :THUMBNAILS_STORAGE_DIR THUMBNAILS_STORAGE_DIR})
   )
 
 

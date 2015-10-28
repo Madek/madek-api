@@ -6,12 +6,31 @@ jobs:
 
     context:
       script-defaults:
+        environment-variables_process-templates: true
         timeout: 300
 
       _cider-ci_generate-tasks:
         include-match: spec/.*_spec.rb
 
+#      tasks:
+#        spec/features/admin/repositories_spec.rb:
+#          environment-variables:
+#            CIDER_CI_TASK_FILE: spec/resources/media-file/media-file_spec.rb:92
+
       task-defaults:
+
+        environment-variables:
+          RAILS_ENV: test
+          DATABASE_NAME: "madek-v3_api-{{RAILS_ENV}}_{{CIDER_CI_TRIAL_ID}}"
+          API_DATABASE_URL: "postgresql://localhost:5432/{{DATABASE_NAME}}?pool=3"
+
+        templates:
+          - src: [cider-ci, templates, settings.yml]
+            dest: [config, settings.local.yml]
+          - src: [cider-ci, templates, settings.yml]
+            dest: [datalayer, config, settings.local.yml]
+          - src: [cider-ci, templates, database.yml]
+            dest: [datalayer, config, database.yml]
 
         traits:
           bash: true
@@ -33,12 +52,13 @@ jobs:
             clone: True
             timeout: 60
 
-        environment-variables:
-          RAILS_ENV: test
 
         trial-attachments:
           config:
             glob: 'config/*.yml'
+            content-type: text/yaml
+          datalayer_config:
+            glob: 'datalayer/config/*.yml'
             content-type: text/yaml
           logs:
             glob: 'log/*log'
@@ -51,20 +71,6 @@ jobs:
             max: 3200
 
         scripts:
-          configure:
-            body: |
-              #!/usr/bin/env ruby
-              require 'yaml'
-              config = YAML.load_file 'config/settings.yml'
-              db_name = "madek-v3_api-test_#{ENV['CIDER_CI_TRIAL_ID'][0..7]}"
-              db_url = "postgresql://localhost:5432/#{db_name}/?pool=3"
-              config['services']['api']['http']['port']= Integer(ENV['API_HTTP_PORT'])
-              config['database']['url']= db_url
-              config['madek_master_secret']= 'secret'
-              File.open('config/settings.local.yml','w') { |file| file.write config.to_yaml }
-
-              datalayer_db_config= {"test" => "#{db_url}"}
-              File.open('datalayer/config/database.yml','w') { |file| file.write datalayer_db_config.to_yaml }
 
           bundle-datalayer:
             exclusive-executor-resource: bundler
@@ -76,11 +82,11 @@ jobs:
 
           create-database:
             start-when:
-            - script: configure
             - script: bundle-datalayer
             body: |
-              cd datalayer && \
-              bundle exec rake db:reset
+              set -eux
+              cd datalayer
+              bundle exec rake db:reset --trace
 
           run-api:
             start-when:
@@ -107,7 +113,8 @@ jobs:
 
           delete-database:
             body: |
-              cd datalayer && \
+              set -eux
+              cd datalayer
               bundle exec rake db:pg:terminate_connections db:drop
             ignore-state: true
             start-when:
