@@ -43,7 +43,8 @@
               (into {}
                     (map #(hash-map % ((case meta-datum-type
                                          "MetaDatum::People" links/person
-                                         "MetaDatum::Keywords" links/keyword-term)
+                                         "MetaDatum::Keywords" links/keyword-term
+                                         "MetaDatum::Licenses" links/license)
                                        context %))
                          (map :id (-> response :body :value))))}}))))
 

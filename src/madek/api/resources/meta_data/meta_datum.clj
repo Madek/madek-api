@@ -12,6 +12,7 @@
     [madek.api.resources.shared :as shared]
     [madek.api.resources.keywords.index :as keywords]
     [madek.api.resources.people.index :as people]
+    [madek.api.resources.licenses.index :as licenses]
     [logbug.catcher :as catcher]
     ))
 
@@ -25,7 +26,8 @@
                        (map #(select-keys % [:id])
                             ((case meta-datum-type
                                "MetaDatum::People" people/get-index
-                               "MetaDatum::Keywords" keywords/get-index)
+                               "MetaDatum::Keywords" keywords/get-index
+                               "MetaDatum::Licenses" licenses/get-index)
                              meta-datum))))}
            (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
                 (filter (fn [[k v]] v))

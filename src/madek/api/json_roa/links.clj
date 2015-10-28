@@ -134,6 +134,16 @@
     :href (str prefix "/keywords/" id)
     :relations {} }))
 
+;### license(s) ################################################################
+
+(defn license
+  ([prefix]
+   (license prefix "{id}"))
+  ([prefix id]
+   {:name "License"
+    :href (str prefix "/licenses/" id)
+    :relations {} }))
+
 ;### next link #################################################################
 
 (defn next-link [url-path query-params]
