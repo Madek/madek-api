@@ -6,7 +6,7 @@ describe 'generated runs' do
     describe "ROUND #{round}" do
       describe 'meta_datum_text_for_random_resource_type' do
         include_context :meta_datum_for_random_resource_type
-        let(:meta_datum_text) { meta_datum('text') }
+        let(:meta_datum_text) { meta_datum ['text', 'text_date'].sample }
 
         describe 'authenticated_json_roa_client' do
           include_context :authenticated_json_roa_client

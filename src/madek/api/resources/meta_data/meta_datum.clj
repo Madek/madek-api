@@ -21,7 +21,8 @@
     'madek.api.resources.meta-data.meta-datum
     (merge (select-keys meta-datum [:id :meta_key_id :type])
            {:value (let [meta-datum-type (:type meta-datum)]
-                     (if (= meta-datum-type "MetaDatum::Text")
+                     (if (or (= meta-datum-type "MetaDatum::Text")
+                             (= meta-datum-type "MetaDatum::TextDate"))
                        (:string meta-datum)
                        (map #(select-keys % [:id])
                             ((case meta-datum-type
@@ -38,6 +39,6 @@
     {:body (prepare-meta-datum meta-datum)}))
 
 ;### Debug ####################################################################
-(logging-config/set-logger! :level :debug)
+;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
