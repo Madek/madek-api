@@ -10,6 +10,7 @@
     [madek.api.json-roa.meta-data :as meta-data]
     [madek.api.json-roa.meta-keys :as meta-keys]
     [madek.api.json-roa.people :as people]
+    [madek.api.json-roa.keywords :as keywords]
     ))
 
 (def about
@@ -37,6 +38,7 @@
     (cpj/GET "/meta-data/:id" request (meta-data/meta-datum request json-response))
     (cpj/GET "/meta-keys/:id" request (meta-keys/meta-key request json-response))
     (cpj/GET "/people/:id" request (people/person request json-response))
+    (cpj/GET "/keywords/:id" request (keywords/keyword-term request json-response))
     ))
 
 (defn handler [request response]

@@ -114,7 +114,7 @@
     :href (str prefix "/meta-keys/" id)
     :relations {} }))
 
-;### meta-key(s) ###############################################################
+;### person(s) #################################################################
 
 (defn person
   ([prefix]
@@ -122,6 +122,16 @@
   ([prefix id]
    {:name "Person"
     :href (str prefix "/people/" id)
+    :relations {} }))
+
+;### keyword(s) ################################################################
+
+(defn keyword-term
+  ([prefix]
+   (keyword-term prefix "{id}"))
+  ([prefix id]
+   {:name "Keyword"
+    :href (str prefix "/keywords/" id)
     :relations {} }))
 
 ;### next link #################################################################

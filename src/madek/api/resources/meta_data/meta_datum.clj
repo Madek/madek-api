@@ -10,6 +10,7 @@
     [honeysql.sql :refer :all]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
+    [madek.api.resources.keywords.index :as keywords]
     [madek.api.resources.people.index :as people]
     [logbug.catcher :as catcher]
     ))
@@ -18,10 +19,14 @@
   (debug/identity-with-logging
     'madek.api.resources.meta-data.meta-datum
     (merge (select-keys meta-datum [:id :meta_key_id :type])
-           {:value (case (:type meta-datum)
-                     "MetaDatum::Text" (:string meta-datum)
-                     "MetaDatum::People" (map #(select-keys % [:id])
-                                              (people/get-index meta-datum)))}
+           {:value (let [meta-datum-type (:type meta-datum)]
+                     (if (= meta-datum-type "MetaDatum::Text")
+                       (:string meta-datum)
+                       (map #(select-keys % [:id])
+                            ((case meta-datum-type
+                               "MetaDatum::People" people/get-index
+                               "MetaDatum::Keywords" keywords/get-index)
+                             meta-datum))))}
            (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
                 (filter (fn [[k v]] v))
                 (into {})))))
