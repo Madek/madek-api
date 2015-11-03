@@ -1,5 +1,15 @@
 jobs:
-  Tests:
+
+  tests:
+
+    name: Tests
+
+    depends-on:
+    - type: job
+      job: tests
+      submodule: ['datalayer']
+      states: [passed]
+
     run-on:
     - type: branch
       include-match: ^.*$
