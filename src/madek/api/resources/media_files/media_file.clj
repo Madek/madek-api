@@ -4,19 +4,21 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
-    [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
     [madek.api.constants]
-    [ring.util.response]
+    [madek.api.data-streaming :as data-streaming]
+    [madek.api.resources.previews.index :as previews]
     ))
 
 
-(defn- get-media-file-row [request]
+(defn- get-media-file [request]
   (when-let [media-file (:media-file request)]
     {:status 200
-     :body (select-keys media-file [:id :size :created_at :updated_at
-                                    :media_entry_id :filename])}))
+     :body (conj (select-keys media-file [:id :size :created_at :updated_at
+                                          :media_entry_id :filename])
+                 {:previews (map #(select-keys % [:id :thumbnail])
+                                 (previews/get-index media-file))})}))
 
 (defn- media-file-path [media-file]
   (let [id (:guid media-file)
@@ -29,10 +31,8 @@
   (catcher/wrap-with-suppress-and-log-warn
     (when-let [media-file (:media-file request)]
       (when-let [file-path (media-file-path media-file)]
-        (-> (ring.util.response/file-response file-path)
-            (ring.util.response/header "X-Sendfile" file-path)
-            (ring.util.response/header "content-type"
-                                       (:content_type media-file)))))))
+        (data-streaming/respond-with-file file-path
+                                          (:content_type media-file))))))
 
 
 ;### Debug ####################################################################

@@ -7,11 +7,18 @@
     [madek.api.pagination :as pagination]
     ))
 
+(defn- previews-map [context response]
+  (into {}
+        (map #(hash-map (:id %)
+                        (links/preview context (:id %)))
+             (-> response :body :previews))))
+
 (defn media-file [request response]
   (let [context (:context request)
         params (:params request)]
     {:name "Media-File"
      :self-relation (links/media-file context (:id params))
+     :collection {:relations (previews-map context response)}
      :relations
      {:root (links/root context)
       :data-stream (links/media-file-data-stream context (:id params))

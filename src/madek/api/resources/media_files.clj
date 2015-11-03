@@ -37,7 +37,7 @@
   (logbug.ring/->
     (cpj/routes
       (cpj/GET "/media-files/:media_file_id" _
-               #'media-file/get-media-file-row)
+               #'media-file/get-media-file)
       (cpj/GET "/media-files/:media_file_id/data-stream" _
                #'media-file/get-media-file-data-stream)
       (cpj/ANY "*" _ shared/dead-end-handler))

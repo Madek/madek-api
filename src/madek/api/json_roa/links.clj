@@ -104,6 +104,24 @@
     :href (str prefix "/media-files/" id "/data-stream")
     :relations {} }))
 
+;### preview(s) ################################################################
+
+(defn preview
+  ([prefix]
+   (preview prefix "{id}"))
+  ([prefix id]
+   {:name "Preview"
+    :href (str prefix "/previews/" id)
+    :relations {} }))
+
+(defn preview-file-data-stream
+  ([prefix]
+   (preview-file-data-stream prefix "{id}"))
+  ([prefix id]
+   {:name "Preview-File"
+    :href (str prefix "/previews/" id "/data-stream")
+    :relations {} }))
+
 ;### meta-key(s) ###############################################################
 
 (defn meta-key

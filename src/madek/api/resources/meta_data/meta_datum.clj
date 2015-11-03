@@ -17,22 +17,20 @@
     ))
 
 (defn- prepare-meta-datum [meta-datum]
-  (debug/identity-with-logging
-    'madek.api.resources.meta-data.meta-datum
-    (merge (select-keys meta-datum [:id :meta_key_id :type])
-           {:value (let [meta-datum-type (:type meta-datum)]
-                     (if (or (= meta-datum-type "MetaDatum::Text")
-                             (= meta-datum-type "MetaDatum::TextDate"))
-                       (:string meta-datum)
-                       (map #(select-keys % [:id])
-                            ((case meta-datum-type
-                               "MetaDatum::People" people/get-index
-                               "MetaDatum::Keywords" keywords/get-index
-                               "MetaDatum::Licenses" licenses/get-index)
-                             meta-datum))))}
-           (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
-                (filter (fn [[k v]] v))
-                (into {})))))
+  (merge (select-keys meta-datum [:id :meta_key_id :type])
+         {:value (let [meta-datum-type (:type meta-datum)]
+                   (if (or (= meta-datum-type "MetaDatum::Text")
+                           (= meta-datum-type "MetaDatum::TextDate"))
+                     (:string meta-datum)
+                     (map #(select-keys % [:id])
+                          ((case meta-datum-type
+                             "MetaDatum::People" people/get-index
+                             "MetaDatum::Keywords" keywords/get-index
+                             "MetaDatum::Licenses" licenses/get-index)
+                           meta-datum))))}
+         (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
+              (filter (fn [[k v]] v))
+              (into {}))))
 
 (defn get-meta-datum [request]
   (let [meta-datum (:meta-datum request)]

@@ -5,13 +5,14 @@
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
     [madek.api.json-roa.root :as root]
+    [madek.api.json-roa.keywords :as keywords]
+    [madek.api.json-roa.licenses :as licenses]
     [madek.api.json-roa.media-entries :as media-entries]
     [madek.api.json-roa.media-files :as media-files]
     [madek.api.json-roa.meta-data :as meta-data]
     [madek.api.json-roa.meta-keys :as meta-keys]
     [madek.api.json-roa.people :as people]
-    [madek.api.json-roa.keywords :as keywords]
-    [madek.api.json-roa.licenses :as licenses]
+    [madek.api.json-roa.previews :as previews]
     ))
 
 (def about
@@ -32,6 +33,8 @@
 (defn build-routes-handler [json-response]
   (cpj/routes
     (cpj/GET "/" _ root/build)
+    (cpj/GET "/keywords/:id" request (keywords/keyword-term request json-response))
+    (cpj/GET "/licenses/:id" request (licenses/license request json-response))
     (cpj/GET "/media-entries/" request (media-entries/index request json-response))
     (cpj/GET "/media-entries/:id" request (media-entries/media-entry request json-response))
     (cpj/GET "/media-entries/:id/meta-data/" request (meta-data/index request json-response))
@@ -39,8 +42,7 @@
     (cpj/GET "/meta-data/:id" request (meta-data/meta-datum request json-response))
     (cpj/GET "/meta-keys/:id" request (meta-keys/meta-key request json-response))
     (cpj/GET "/people/:id" request (people/person request json-response))
-    (cpj/GET "/keywords/:id" request (keywords/keyword-term request json-response))
-    (cpj/GET "/licenses/:id" request (licenses/license request json-response))
+    (cpj/GET "/previews/:id" request (previews/preview request json-response))
     ))
 
 (defn handler [request response]

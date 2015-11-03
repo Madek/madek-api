@@ -12,11 +12,13 @@
     [madek.api.resources.collections :as collections]
     [madek.api.resources.media-files :as media-files]
     [madek.api.resources.media-entries :as media-entries]
+    [madek.api.resources.media-entries.media-entry :refer [get-media-entry-for-preview]]
     [madek.api.resources.meta-data :as meta-data]
     [madek.api.resources.meta-keys :as meta-keys]
     [madek.api.resources.keywords :as keywords]
     [madek.api.resources.licenses :as licenses]
     [madek.api.resources.people :as people]
+    [madek.api.resources.previews :as previews]
     [madek.api.resources.shared :as shared]
     ))
 
@@ -40,7 +42,10 @@
   (cpj/routes
     (cpj/GET "/media-entries/:media_entry_id*" _ get-media-resource)
     (cpj/GET "/collections/:collection_id*" _ get-media-resource)
-    (cpj/GET "/filter-sets/:filter_set_id*" _ get-media-resource)))
+    (cpj/GET "/filter-sets/:filter_set_id*" _ get-media-resource)
+    (cpj/GET "/previews/:preview_id*" _ #(assoc (get-media-entry-for-preview %)
+                                                :type "MediaEntry"
+                                                :table-name "media_entries"))))
 
 (defn- add-media-resource [request handler]
   (if-let [media-resource (get-media-resource-dispatcher request)]
@@ -120,6 +125,7 @@
      (cpj/GET "/collections/:collection_id*" _ #(authorize-request-for-handler % handler))
      (cpj/GET "/filter-sets/:filter_set_id*" _ #(authorize-request-for-handler % handler))
      (cpj/GET "/meta-data/:meta_datum_id*" _ #(authorize-request-for-handler % handler))
+     (cpj/GET "/previews/:preview_id*" _ #(authorize-request-for-handler % handler))
      (cpj/ANY "*" _ handler)) request))
 
 (defn- wrap-authorization [handler]
@@ -130,17 +136,19 @@
 
 (defn wrap-api-routes [default-handler]
   (-> (cpj/routes
+        (cpj/GET "/auth-info" _ auth-info/routes)
+        (cpj/ANY "/collections*" _ collections/routes)
+        (cpj/ANY "/licenses/:license_id*" _ licenses/routes)
+        (cpj/ANY "/keywords/:keyword_id*" _ keywords/routes)
         (cpj/ANY "/media-entries/:media_entry_id/meta-data/" _ meta-data/routes)
-        (cpj/ANY "/meta-data/:meta_datum_id" _ meta-data/routes)
         (cpj/ANY "/media-entries*" _ media-entries/routes)
         (cpj/ANY "/media-files/:media_file_id*" _ media-files/routes)
-        (cpj/ANY "/collections*" _ collections/routes)
-        (cpj/ANY "/people*" _ people/routes)
-        (cpj/ANY "/keywords*" _ keywords/routes)
-        (cpj/ANY "/meta-keys*" _ meta-keys/routes)
-        (cpj/ANY "/licenses*" _ licenses/routes)
-        (cpj/GET "/auth-info" _ auth-info/routes)
-        (cpj/ANY "*" _ default-handler))
+        (cpj/ANY "/meta-data/:meta_datum_id" _ meta-data/routes)
+        (cpj/ANY "/meta-keys/:meta_key_id*" _ meta-keys/routes)
+        (cpj/ANY "/people/:person_id*" _ people/routes)
+        (cpj/ANY "/previews/:preview_id*" _ previews/routes)
+        (cpj/ANY "*" _ default-handler)
+        )
       wrap-authorization
       wrap-add-media-resource
       wrap-add-meta-datum-with-media-resource))
