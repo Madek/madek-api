@@ -16,7 +16,7 @@ jobs:
 
     context:
       script-defaults:
-        environment-variables_process-templates: true
+        template-environment-variables: true
         timeout: 300
 
       _cider-ci_generate-tasks:
