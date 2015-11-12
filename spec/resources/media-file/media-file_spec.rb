@@ -76,6 +76,16 @@ describe 'MediaFile Resource' do
             expect(data_stream_resource_response.status).to be == 200
           end
 
+          context 'for not existing file' do
+            let :media_file do
+              FactoryGirl.create :media_file, media_entry: media_entry
+            end
+
+            it 'responds with 404' do
+              expect(data_stream_resource_response.status).to be == 404
+            end
+          end
+
           describe 'the content-type header' do
             let :content_type do
               data_stream_resource_response.headers['content-type']

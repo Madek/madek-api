@@ -9,6 +9,7 @@ require 'config/web'
 
 require 'shared/clients'
 require 'pry'
+require 'uuidtools'
 
 RSpec.configure do |config|
   config.before :all do
