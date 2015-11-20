@@ -31,7 +31,7 @@ jobs:
 
         environment-variables:
           RAILS_ENV: test
-          DATABASE_NAME: "madek-v3_api-{{RAILS_ENV}}_{{CIDER_CI_TRIAL_ID}}"
+          DATABASE_NAME: "madek_api-{{RAILS_ENV}}_{{CIDER_CI_TRIAL_ID}}"
           API_DATABASE_URL: "postgresql://localhost:5432/{{DATABASE_NAME}}?pool=3"
 
         templates:
@@ -130,4 +130,3 @@ jobs:
             start-when:
             - script: shutdown
               states: [aborted, passed, failed, skipped]
-
