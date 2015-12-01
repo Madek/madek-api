@@ -36,13 +36,16 @@
       (permissions-sql/sql-me-permission :me_get_full_size
                                          query-params-with-auth-entity)
       (sql-order-by [:me.created-at (keyword order)])
-      (sql-limit 10)))
+      (sql-limit pagination/LIMIT)))
 
-(defn- index-resources [query-params-with-auth-entity]
-  (let [query (-> (build-index-base-query query-params-with-auth-entity)
-                  (pagination/add-offset-for-honeysql query-params-with-auth-entity)
-                  sql-format)]
-    (jdbc/query (rdbms/get-ds) query)))
+
+(defn- build-query [query-params-with-auth-entity]
+  (-> (build-index-base-query query-params-with-auth-entity)
+      (pagination/add-offset-for-honeysql query-params-with-auth-entity)
+      sql-format))
+
+(defn- query-index-resources [query-params-with-auth-entity]
+  (jdbc/query (rdbms/get-ds) (build-query query-params-with-auth-entity)))
 
 (defn- wrap-permissions-params-combination-check [handler query-params]
   (letfn [(permissions-params-combined? [query-params]
@@ -71,7 +74,7 @@
   (catcher/wrap-with-log-error
     {:body
      {:media-entries
-      (index-resources (into query-params
+      (query-index-resources (into query-params
                              {:auth-entity authenticated-entity}))}}))
 
 (defn get-index [request]

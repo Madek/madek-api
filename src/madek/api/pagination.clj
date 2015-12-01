@@ -9,6 +9,8 @@
     [honeysql.sql :refer :all]
     ))
 
+(def LIMIT 10)
+
 (defn page-number [params]
   (if-let [page-string (-> params keywordize-keys :page)]
     (Integer/parseInt page-string)
@@ -16,13 +18,13 @@
 
 (defn compute-offset [params]
   (let [page (page-number params)]
-    (* 10 page)))
+    (* LIMIT page)))
 
 (defn add-offset-for-honeysql [query params]
   (let [off (compute-offset params)]
     (-> query
         (sql-offset off)
-        (sql-limit 10))))
+        (sql-limit LIMIT))))
 
 (defn next-page-query-query-params [query-params]
   (let [query-params (keywordize-keys query-params)
