@@ -1,16 +1,17 @@
 (ns madek.api.resources.media-files
   (:require
     [cider-ci.utils.rdbms :as rdbms :refer [get-ds]]
-    [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [logbug.ring]
     [madek.api.resources.media-files.authorization :as media-files.authorization]
     [madek.api.resources.media-files.media-file :as media-file]
     [madek.api.resources.shared :as shared]
+
+    [clj-logging-config.log4j :as logging-config]
+    [clojure.tools.logging :as logging]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
+    [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging o->]]
     ))
 
 ;##############################################################################
@@ -34,15 +35,15 @@
 ;##############################################################################
 
 (def routes
-  (logbug.ring/->
-    (cpj/routes
-      (cpj/GET "/media-files/:media_file_id" _
-               #'media-file/get-media-file)
-      (cpj/GET "/media-files/:media_file_id/data-stream" _
-               #'media-file/get-media-file-data-stream)
-      (cpj/ANY "*" _ shared/dead-end-handler))
-    media-files.authorization/wrap-authorize
-    wrap-find-and-add-media-file))
+  ( o-> wrap-handler-with-logging
+        (cpj/routes
+          (cpj/GET "/media-files/:media_file_id" _
+                   #'media-file/get-media-file)
+          (cpj/GET "/media-files/:media_file_id/data-stream" _
+                   #'media-file/get-media-file-data-stream)
+          (cpj/ANY "*" _ shared/dead-end-handler))
+        media-files.authorization/wrap-authorize
+        wrap-find-and-add-media-file))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

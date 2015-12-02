@@ -3,29 +3,31 @@
     [cider-ci.open-session.cors :as cors]
     [cider-ci.utils.config :refer [get-config]]
     [cider-ci.utils.http-server :as http-server]
-    [clj-logging-config.log4j :as logging-config]
+    [clojure.data.json :as json]
     [clojure.java.io :as io]
-    [clojure.tools.logging :as logging]
     [clojure.walk :refer [keywordize-keys]]
     [compojure.core :as cpj :refer [defroutes GET PUT POST DELETE ANY]]
     [compojure.handler :refer [site]]
     [compojure.route :as route]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [logbug.thrown :as thrown]
-    [logbug.ring]
     [environ.core :refer [env]]
     [json-roa.ring-middleware.request :as json-roa_request]
     [json-roa.ring-middleware.response :as json-roa_response]
+    [logbug.thrown :as thrown]
     [madek.api.authentication :as authentication]
-    [madek.api.management :as management]
     [madek.api.json-protocol]
     [madek.api.json-roa]
+    [madek.api.management :as management]
     [madek.api.resources]
     [madek.api.semver :as semver]
     [ring.adapter.jetty :as jetty]
     [ring.middleware.json]
     [ring.middleware.resource :as resource]
+
+    [clj-logging-config.log4j :as logging-config]
+    [clojure.tools.logging :as logging]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
+    [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging o->]]
     ))
 
 ;### helper ###################################################################
@@ -76,10 +78,16 @@
   ([request handler]
    (try
      (handler request)
+     (catch madek.api.WebstackException ex
+       (if-let [status (-> ex ex-data :status)]
+         {:status status
+          :body {:message (.getMessage ex)}}
+         {:status 500
+          :body {:message (.getMessage ex)}}))
      (catch Exception ex
        (logging/error "An exception was thrown in the webstack: "  (thrown/stringify ex))
        {:status 500
-        :body (.getMessage ex)}))))
+        :body {:message (.getMessage ex)}}))))
 
 
 ;### routes ###################################################################
@@ -103,22 +111,23 @@
 
 
 (defn build-site [context]
-  (logbug.ring/->
-    dead-end-handler
-    madek.api.resources/wrap-api-routes
-    authentication/wrap
-    management/wrap
-    wrap-static-resources-dispatch
-    wrap-public-routes
-    wrap-keywordize-request
-    (json-roa_request/wrap madek.api.json-roa/handler)
-    ring.middleware.json/wrap-json-params
-    cors/wrap
-    site
-    (wrap-context context)
-    json-roa_response/wrap
-    ring.middleware.json/wrap-json-response
-    wrap-exception))
+  ( o-> wrap-handler-with-logging
+        dead-end-handler
+        madek.api.resources/wrap-api-routes
+        authentication/wrap
+        management/wrap
+        wrap-static-resources-dispatch
+        wrap-public-routes
+        wrap-keywordize-request
+        (json-roa_request/wrap madek.api.json-roa/handler)
+        ring.middleware.json/wrap-json-params
+        ;wrap-parse-json-query-parameters
+        cors/wrap
+        site
+        (wrap-context context)
+        wrap-exception
+        json-roa_response/wrap
+        ring.middleware.json/wrap-json-response))
 
 
 ;### server ###################################################################

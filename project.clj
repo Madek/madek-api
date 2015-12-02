@@ -4,10 +4,14 @@
   :license {:name "GNU GENERAL PUBLIC LICENSE, Version 3"
             :url "https://gnu.org/licenses/gpl-3.0.txt"}
   :dependencies [
-                 [camel-snake-kebab "0.3.2"]
-                 [cheshire "5.5.0"]
                  [cider-ci/clj-utils "3.2.1"]
                  [cider-ci/open-session "1.1.2"]
+                 [json-roa/clj-utils "1.0.0"]
+                 [logbug "2.0.0-beta.6"]
+                 [nimaai/honeysql "1.3.0-beta.4"]
+
+                 [camel-snake-kebab "0.3.2"]
+                 [cheshire "5.5.0"]
                  [clj-http "2.0.0"]
                  [clj-logging-config "1.9.12"]
                  [com.mchange/c3p0 "0.9.5"]
@@ -15,11 +19,8 @@
                  [environ "1.0.1"]
                  [environ "1.0.1"]
                  [inflections "0.9.14"]
-                 [json-roa/clj-utils "1.0.0"]
                  [log4j/log4j "1.2.17" :exclusions [javax.mail/mail javax.jms/jms com.sun.jdmk/jmxtools com.sun.jmx/jmxri]]
-                 [logbug "2.0.0-beta.4"]
                  [me.raynes/fs "1.4.6"]
-                 [nimaai/honeysql "1.3.0-beta.4"]
                  [org.clojars.hozumi/clj-commons-exec "1.2.0"]
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/java.jdbc "0.4.2"]
@@ -33,5 +34,6 @@
                  ]
   :aot [madek.api.main]
   :main madek.api.main
+  :java-source-paths ["java"]
   ;:source-paths ["src" "tmp/logbug/src"]
   )
