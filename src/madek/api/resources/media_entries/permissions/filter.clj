@@ -50,7 +50,7 @@
   (sql-me-permission-for-user
     sqlmap
     "get_metadata_and_previews"
-    (read-string (:me_get_metadata_and_previews query-params-with-auth-entity))
+    (:me_get_metadata_and_previews query-params-with-auth-entity)
     (:auth-entity query-params-with-auth-entity)))
 
 (defn- sql-me-get-full-size-for-user
@@ -58,7 +58,7 @@
   (sql-me-permission-for-user
     sqlmap
     "get_full_size"
-    (read-string (:me_get_full_size query-params-with-auth-entity))
+    (:me_get_full_size query-params-with-auth-entity)
     (:auth-entity query-params-with-auth-entity)))
 
 (defn- sql-me-get-metadata-and-previews-for-api-client
@@ -66,7 +66,7 @@
   (sql-me-permission-for-api-client
     sqlmap
     "get_metadata_and_previews"
-    (read-string (:me_get_metadata_and_previews query-params-with-auth-entity))
+    (:me_get_metadata_and_previews query-params-with-auth-entity)
     (:auth-entity query-params-with-auth-entity)))
 
 (defn- sql-me-get-full-size-for-api-client
@@ -74,7 +74,7 @@
   (sql-me-permission-for-api-client
     sqlmap
     "get_full_size"
-    (read-string (:me_get_full_size query-params-with-auth-entity))
+    (:me_get_full_size query-params-with-auth-entity)
     (:auth-entity query-params-with-auth-entity)))
 
 ;################################################################
@@ -101,16 +101,16 @@
   (cond-> sqlmap
     public_get_metadata_and_previews
     (sql-merge-where [:= :me.get_metadata_and_previews
-                      (read-string public_get_metadata_and_previews)])))
+                      public_get_metadata_and_previews])))
 
 (defn sql-public-get-full-size
   [sqlmap {:keys [public_get_full_size]}]
   (cond-> sqlmap
     public_get_full_size
-    (sql-merge-where [:= :me.get_full_size
-                      (read-string public_get_full_size)])))
+    (sql-merge-where [:= :me.get_full_size public_get_full_size])))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
+

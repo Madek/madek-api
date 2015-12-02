@@ -61,10 +61,9 @@
 (defn- wrap-permissions-params-false-value-check [handler query-params]
   (letfn [(me-permissions-params-some-false-value? [query-params]
             (not-every? true?
-                        (map read-string
-                             (vals (select-keys query-params
-                                                [:me_get_metadata_and_previews
-                                                 :me_get_full_size])))))]
+                        (vals (select-keys query-params
+                                           [:me_get_metadata_and_previews
+                                            :me_get_full_size]))))]
     (fn [request]
       (if (me-permissions-params-some-false-value? query-params)
         {:status 422 :body {:message "True value must be provided for 'me_' permission parameters"}}

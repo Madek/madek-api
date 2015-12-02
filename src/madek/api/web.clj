@@ -110,6 +110,26 @@
     ))
 
 
+;### warp json encoded query params ###########################################
+
+(defn try-as-json [value]
+  (try (cheshire.core/parse-string value)
+       (catch Exception _
+         value)))
+
+(defn- *wrap-parse-json-query-parameters [request handler]
+  (handler (assoc request :query-params
+                  (->> request :query-params
+                       (map (fn [[k v]] [k (try-as-json v)] ))
+                       (into {})))))
+
+(defn- wrap-parse-json-query-parameters [handler]
+  (fn [request]
+    (*wrap-parse-json-query-parameters request handler)))
+
+;##############################################################################
+
+
 (defn build-site [context]
   ( o-> wrap-handler-with-logging
         dead-end-handler
@@ -121,7 +141,7 @@
         wrap-keywordize-request
         (json-roa_request/wrap madek.api.json-roa/handler)
         ring.middleware.json/wrap-json-params
-        ;wrap-parse-json-query-parameters
+        wrap-parse-json-query-parameters
         cors/wrap
         site
         (wrap-context context)
