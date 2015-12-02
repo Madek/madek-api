@@ -82,7 +82,8 @@
    (media-entry prefix "{id}"))
   ([prefix id]
    {:name "MetaData"
-    :href (str prefix "/media-entries/" id "/meta-data/")
+    :href (str prefix "/media-entries/" id "/meta-data/"
+               "{?meta_keys}")
     :relations {} }))
 
 

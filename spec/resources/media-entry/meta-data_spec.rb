@@ -4,13 +4,13 @@ require Pathname(File.expand_path('..', __FILE__)).join('shared')
 context 'A media-entry resource with get_metadata_and_previews permission' do
   before :each do
     @media_entry = FactoryGirl.create :media_entry,
-                                      get_metadata_and_previews: true
+      get_metadata_and_previews: true
   end
 
   context 'a meta datum of type text' do
     before :each do
       @meta_datum_text = FactoryGirl.create :meta_datum_text,
-                                            media_entry: @media_entry
+        media_entry: @media_entry
     end
 
     describe 'preconditions' do
@@ -50,6 +50,52 @@ context 'A media-entry resource with get_metadata_and_previews permission' do
             end
           end
         end
+      end
+
+      describe 'get meta-data relation with query parameters' do
+        describe 'set meta_keys to some string' do
+          let :get_meta_data_relation do
+            resource.relation('meta-data').get("meta_keys" => "bogus")
+          end
+          describe 'the response' do
+            it '422s' do
+              expect(get_meta_data_relation.response.status).to be == 422
+            end
+          end
+        end
+        describe 'set meta_keys to an json encoded array including the used key' do
+          let :get_meta_data_relation do
+            resource.relation('meta-data') \
+              .get("meta_keys" => [@meta_datum_text.meta_key_id].to_json)
+          end
+          describe 'the response' do
+            it 'succeeds' do
+              expect(get_meta_data_relation.response.status).to be == 200
+            end
+            it 'contains the meta-datum ' do
+              expect(get_meta_data_relation.data['meta-data'].map{|x| x[:id]}).to \
+                include @meta_datum_text.id
+            end
+          end
+        end
+
+        describe 'set meta_keys to an json encoded array excluding the used key' do
+          let :get_meta_data_relation do
+            resource.relation('meta-data') \
+              .get("meta_keys" => ['bogus'].to_json)
+          end
+          describe 'the response' do
+            it 'succeeds' do
+              expect(get_meta_data_relation.response.status).to be == 200
+            end
+            it 'does not contain the meta-datum ' do
+              expect(get_meta_data_relation.data['meta-data'].map{|x| x[:id]}).not_to \
+                include @meta_datum_text.id
+            end
+          end
+        end
+
+
       end
     end
   end

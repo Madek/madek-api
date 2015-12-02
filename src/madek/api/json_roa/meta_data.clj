@@ -10,7 +10,7 @@
 (defn build-meta-datum-collection-item [request meta-datum]
   (let [context (:context request)
         media-resource (:media-resource request)]
-    {(:id meta-datum)
+    {(:meta_key_id meta-datum)
      (links/meta-datum context meta-datum)}))
 
 (defn index [request response]

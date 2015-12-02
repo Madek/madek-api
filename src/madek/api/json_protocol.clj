@@ -1,5 +1,5 @@
 (ns madek.api.json-protocol
-  (:require 
+  (:require
     [clojure.data.json]
     [clj-time.core :as time]
     [clj-time.format :as time-format]
@@ -28,7 +28,10 @@
 
 (cheshire.generate/add-encoder org.joda.time.DateTime
                            (fn [date-time jsonGenerator]
-                             (.writeString jsonGenerator 
+                             (.writeString jsonGenerator
                                            (date-time-to-string date-time))))
 
 ;(cheshire.core/generate-string {:t (time/now)})
+
+
+;(clojure.data.json/write-str ["madek_core:title", "madek_core:subtitle"])

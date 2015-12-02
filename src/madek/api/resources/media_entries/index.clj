@@ -15,6 +15,7 @@
 
 (defn- sql-collection-id
   [sqlmap {:keys [collection_id] :as query-params-with-auth-entity}]
+  (logging/info 'COLLECTION_ID collection_id)
   (cond-> sqlmap
     (seq collection_id)
     (-> (sql-merge-join [:collection_media_entry_arcs :cmea]
