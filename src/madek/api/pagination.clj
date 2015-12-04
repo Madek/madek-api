@@ -12,9 +12,8 @@
 (def LIMIT 10)
 
 (defn page-number [params]
-  (if-let [page-string (-> params keywordize-keys :page)]
-    (Integer/parseInt page-string)
-    0))
+  (or (-> params keywordize-keys :page)
+      0))
 
 (defn compute-offset [params]
   (let [page (page-number params)]
