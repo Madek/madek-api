@@ -24,6 +24,19 @@
    :href (str prefix "/auth-info")
    })
 
+
+;### meta data ####################################################################
+
+(defn collection-meta-data
+  ([prefix]
+   (collection-meta-data prefix "{id}"))
+  ([prefix id]
+   {:name "MetaData"
+    :href (str prefix "/collections/" id "/meta-data/"
+               "{?meta_keys}")
+    :relations {} }))
+
+
 ;### meta data ####################################################################
 
 (defn meta-datum
@@ -79,7 +92,7 @@
 
 (defn media-entry-meta-data
   ([prefix]
-   (media-entry prefix "{id}"))
+   (media-entry-meta-data prefix "{id}"))
   ([prefix id]
    {:name "MetaData"
     :href (str prefix "/media-entries/" id "/meta-data/"

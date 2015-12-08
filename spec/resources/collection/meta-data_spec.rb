@@ -1,16 +1,16 @@
 require 'spec_helper'
 require Pathname(File.expand_path('..', __FILE__)).join('shared')
 
-context 'A media-entry resource with get_metadata_and_previews permission' do
+context 'A collection resource with get_metadata_and_previews permission' do
   before :each do
-    @media_entry = FactoryGirl.create :media_entry,
+    @collection = FactoryGirl.create :collection,
       get_metadata_and_previews: true
   end
 
   context 'a meta datum of type text' do
     before :each do
       @meta_datum_text = FactoryGirl.create :meta_datum_text,
-        media_entry: @media_entry
+        collection: @collection
     end
 
     describe 'preconditions' do
@@ -18,13 +18,13 @@ context 'A media-entry resource with get_metadata_and_previews permission' do
         expect(MetaDatum.find @meta_datum_text.id).to be
       end
 
-      it 'belongs to the media-entry' do
-        expect(@media_entry.meta_data).to include @meta_datum_text
+      it 'belongs to the collection' do
+        expect(@collection.meta_data).to include @meta_datum_text
       end
     end
 
     describe 'resource' do
-      include_context :media_entry_resource_via_json_roa
+      include_context :collection_resource_via_json_roa
       it 'has a meta-data relation' do
         expect(resource.relation('meta-data')).to \
           be_a JSON_ROA::Client::Relation
@@ -100,16 +100,16 @@ context 'A media-entry resource with get_metadata_and_previews permission' do
     end
   end
 
-  context 'A media-entry resource without get_metadata_and_previews permission' do
+  context 'A collection resource without get_metadata_and_previews permission' do
     before :each do
-      @media_entry = FactoryGirl.create :media_entry,
+      @collection = FactoryGirl.create :collection,
         get_metadata_and_previews: false
     end
 
     context 'a meta datum of type text' do
       before :each do
         @meta_datum_text = FactoryGirl.create :meta_datum_text,
-          media_entry: @media_entry
+          collection: @collection
       end
 
       describe 'preconditions' do
@@ -117,13 +117,13 @@ context 'A media-entry resource with get_metadata_and_previews permission' do
           expect(MetaDatum.find @meta_datum_text.id).to be
         end
 
-        it 'belongs to the media-entry' do
-          expect(@media_entry.meta_data).to include @meta_datum_text
+        it 'belongs to the collection' do
+          expect(@collection.meta_data).to include @meta_datum_text
         end
       end
 
       describe 'resource' do
-        include_context :media_entry_resource_via_json_roa
+        include_context :collection_resource_via_json_roa
         it '401s' do
           expect(response.status).to be== 401
         end

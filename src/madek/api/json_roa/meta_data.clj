@@ -18,8 +18,13 @@
         query-params (:query-params request)]
     {:name "Meta-Data"
      :relations (conj {:root (links/root context) }
+                      ; slight duplicative structure here; could be avoided
+                      ; with dynamic resolution via resolve; but not worth yet,
+                      ; maybe when we handle filter-sets too
                       (when-let [id (-> response :body :media_entry_id)]
-                        {:media-entry (links/media-entry context id)}))
+                        {:media-entry (links/media-entry context id)})
+                      (when-let [id (-> response :body :collection_id)]
+                        {:collection (links/collection context id)}))
      :collection
      {:relations (merge {}
                         (when-let [meta-data (-> response :body :meta-data)]

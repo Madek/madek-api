@@ -137,10 +137,10 @@
 (defn wrap-api-routes [default-handler]
   (-> (cpj/routes
         (cpj/GET "/auth-info" _ auth-info/routes)
+        (cpj/ANY "/:media_resource_type/:id/meta-data/" _ meta-data/routes)
         (cpj/ANY "/collections*" _ collections/routes)
         (cpj/ANY "/licenses/:license_id*" _ licenses/routes)
         (cpj/ANY "/keywords/:keyword_id*" _ keywords/routes)
-        (cpj/ANY "/media-entries/:media_entry_id/meta-data/" _ meta-data/routes)
         (cpj/ANY "/media-entries*" _ media-entries/routes)
         (cpj/ANY "/media-files/:media_file_id*" _ media-files/routes)
         (cpj/ANY "/meta-data/:meta_datum_id" _ meta-data/routes)

@@ -22,10 +22,18 @@
     [madek.api WebstackException]
     ))
 
-(defn meta-data-query-for-media-entry [media-entry-id]
+
+(def base-query
   (-> (sql-select :id :type, :meta_key_id)
-      (sql-from :meta_data)
-      (sql-merge-where [:= :meta_data.media-entry-id media-entry-id])))
+      (sql-from :meta_data)))
+
+(defn- meta-data-query-for-media-entry [media-entry-id]
+  (-> base-query
+      (sql-merge-where [:= :meta_data.media_entry_id media-entry-id])))
+
+(defn- meta-data-query-for-collection [collection-id]
+  (-> base-query
+      (sql-merge-where [:= :meta_data.collection_id  collection-id])))
 
 (defn filter-meta-data-by-meta-key-ids [query request]
   (if-let [meta-keys (-> request :query-params :meta_keys)]
@@ -43,20 +51,23 @@
       sql-format))
 
 (defn get-meta-data [request media-resource]
-  (->> (case (:type media-resource)
-         "MediaEntry" (meta-data-query-for-media-entry
-                        (:id media-resource)))
-       (build-query request)
-       (jdbc/query (get-ds))))
+  (when-let [id (:id media-resource)]
+    (->> (case (:type media-resource)
+           "MediaEntry" (meta-data-query-for-media-entry id)
+           "Collection" (meta-data-query-for-collection id))
+         (build-query request)
+         (jdbc/query (get-ds)))))
 
 (defn get-index [request]
   (if-let [media-resource (:media-resource request)]
-    (let [meta-data (get-meta-data request media-resource)]
+    (when-let [meta-data (get-meta-data request media-resource)]
       {:body
        (conj
          {:meta-data meta-data}
          (case (:type media-resource)
-           "MediaEntry" {:media_entry_id (:id media-resource)}))})))
+           "MediaEntry" {:media_entry_id (:id media-resource)}
+           "Collection" {:collection_id (:id media-resource)}
+           ))})))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
