@@ -15,16 +15,6 @@ describe 'filtering media entries' do
 
   context 'permission params checks' do
     include_context :json_roa_client_for_authenticated_user do
-      it 'returns 422 for multiple permission params sent' do
-        perms = %w(public_get_metadata_and_previews
-                   public_get_full_size
-                   me_get_metadata_and_previews)
-        perms_to_send = \
-          perms.sample(2).map { |p| [p, [true, false].sample] }.to_h
-        response = media_entries_relation.get(perms_to_send).response
-        expect(response.status).to be == 422
-      end
-
       it 'returns 422 if some \'me_\' not true' do
         response = \
           media_entries_relation.get('me_get_metadata_and_previews' => false)

@@ -9,81 +9,124 @@
     [logbug.debug :as debug]
     [honeysql.sql :refer :all]
     [madek.api.pagination :as pagination]
-    [madek.api.resources.media-entries.permissions.filter :as permissions-sql]
     [madek.api.resources.shared :as shared]
-    ))
+    )
 
-(defn- sql-collection-id
-  [sqlmap {:keys [collection_id] :as query-params-with-auth-entity}]
-  (logging/info 'COLLECTION_ID collection_id)
+  (:import
+    [madek.api WebstackException]
+    )
+  )
+
+;### permissions ##############################################################
+
+(defn- api-client-authorized-condition [perm id]
+  [:or
+   [:= (keyword (str "mes." perm)) true]
+   [:exists (-> (sql-select 1)
+                (sql-from [:media_entry_api_client_permissions :meacp])
+                (sql-merge-where [:= :meacp.media_entry_id :mes.id])
+                (sql-merge-where [:= (keyword (str "meacp." perm)) true])
+                (sql-merge-where [:= :meacp.api_client_id id]))]])
+
+(defn- user-authorized-condition [perm id]
+  [:or
+   [:= (keyword (str "mes." perm)) true]
+   [:= :mes.responsible_user_id id]
+   [:exists (-> (sql-select 1)
+                (sql-from [:media_entry_user_permissions :meup])
+                (sql-merge-where [:= :meup.media_entry_id :mes.id])
+                (sql-merge-where [:= (keyword (str "meup." perm)) true])
+                (sql-merge-where [:= :meup.user_id id]))]
+   [:exists (-> (sql-select 1)
+                (sql-from [:media_entry_group_permissions :megp])
+                (sql-merge-where [:= :megp.media_entry_id :mes.id])
+                (sql-merge-where [:= (keyword (str "megp." perm)) true])
+                (sql-merge-join :groups
+                                [:= :groups.id :megp.group_id])
+                (sql-merge-join [:groups_users :gu]
+                                [:= :gu.group_id :groups.id])
+                (sql-merge-where [:= :gu.user_id id]))]])
+
+
+(defn- filter-by-permission-for-auth-entity [sqlmap permission authenticated-entity]
+  (case (:type authenticated-entity)
+    "User" (sql-merge-where sqlmap (user-authorized-condition
+                                     permission (:id authenticated-entity)))
+    "ApiClient" (sql-merge-where sqlmap (api-client-authorized-condition
+                                          permission (:id authenticated-entity)))
+    (throw (WebstackException. (str "Filtering for " permission " requires a signed-in entity." )
+                               {:status 422}))))
+
+(defn- filter-by-permissions [sqlmap query-params authenticated-entity]
+
+  (doseq [true_param ["me_get_full_size"  "me_get_metadata_and_previews"]]
+    (when (contains? query-params (keyword true_param))
+      (when (not= (get query-params (keyword true_param)) true)
+        (throw (WebstackException. (str "Value of " true_param " must be true when present." )
+                                   {:status 422})))))
+
+  (cond-> sqlmap
+
+    (:public_get_metadata_and_previews query-params)
+      (sql-merge-where [:= :mes.get_metadata_and_previews true])
+
+    (:public_get_full_size query-params)
+      (sql-merge-where [:= :mes.get_full_size true])
+
+    (= (:me_get_full_size query-params) true)
+      (filter-by-permission-for-auth-entity "get_full_size" authenticated-entity)
+
+    (= (:me_get_metadata_and_previews query-params) true)
+      (filter-by-permission-for-auth-entity "get_metadata_and_previews" authenticated-entity)))
+
+;### collection_id ############################################################
+
+(defn- filter-by-collection-id [sqlmap {:keys [collection_id] :as query-params}]
   (cond-> sqlmap
     (seq collection_id)
     (-> (sql-merge-join [:collection_media_entry_arcs :cmea]
-                        [:= :cmea.media_entry_id :me.id])
+                        [:= :cmea.media_entry_id :mes.id])
         (sql-merge-where [:= :cmea.collection_id collection_id]))))
 
-(defn build-index-base-query
-  [{:keys [order] :or {order :asc} :as query-params-with-auth-entity}]
-  (-> (sql-select :me.id, :me.created_at)
-      (sql-merge-modifiers :distinct)
-      (sql-from [:media-entries :me])
-      (sql-collection-id query-params-with-auth-entity)
-      (permissions-sql/sql-public-get-metadata-and-previews
-        query-params-with-auth-entity)
-      (permissions-sql/sql-public-get-full-size
-        query-params-with-auth-entity)
-      (permissions-sql/sql-me-permission :me_get_metadata_and_previews
-                                         query-params-with-auth-entity)
-      (permissions-sql/sql-me-permission :me_get_full_size
-                                         query-params-with-auth-entity)
-      (sql-order-by [:me.created-at (keyword order)])
-      (sql-limit pagination/LIMIT)))
+
+;### query ####################################################################
+
+(def ^:private base-query
+  (-> (sql-select :mes.id, :mes.created_at)
+      (sql-from [:media-entries :mes])
+      (sql-limit pagination/LIMIT)
+      ))
+
+(defn- set-order [query query-params]
+  (if (some #{"desc"} [(-> query-params :order)])
+    (-> query (sql-order-by [:mes.created-at :desc]))
+    (-> query (sql-order-by [:mes.created-at :asc]))))
+
+(defn- build-query [request]
+  (let [query-params (:query-params request)
+        authenticated-entity (:authenticated-entity request)]
+    (-> base-query
+        (set-order query-params)
+        (filter-by-collection-id query-params)
+        (filter-by-permissions query-params authenticated-entity)
+        sql-format)))
+
+(defn- query-index-resources [request]
+  (jdbc/query (rdbms/get-ds) (build-query request)))
 
 
-(defn- build-query [query-params-with-auth-entity]
-  (-> (build-index-base-query query-params-with-auth-entity)
-      (pagination/add-offset-for-honeysql query-params-with-auth-entity)
-      sql-format))
+;### index ####################################################################
 
-(defn- query-index-resources [query-params-with-auth-entity]
-  (jdbc/query (rdbms/get-ds) (build-query query-params-with-auth-entity)))
-
-(defn- wrap-permissions-params-combination-check [handler query-params]
-  (letfn [(permissions-params-combined? [query-params]
-            (> (count (select-keys query-params [:public_get_metadata_and_previews
-                                                 :public_get_full_size
-                                                 :me_get_metadata_and_previews
-                                                 :me_get_full_size])) 1))]
-    (fn [request]
-      (if (permissions-params-combined? query-params)
-        {:status 422 :body {:message "It is not allowed to combine multiple permission query parameters!"}}
-        (handler request)))))
-
-(defn- wrap-permissions-params-false-value-check [handler query-params]
-  (letfn [(me-permissions-params-some-false-value? [query-params]
-            (not-every? true?
-                        (vals (select-keys query-params
-                                           [:me_get_metadata_and_previews
-                                            :me_get_full_size]))))]
-    (fn [request]
-      (if (me-permissions-params-some-false-value? query-params)
-        {:status 422 :body {:message "True value must be provided for 'me_' permission parameters"}}
-        (handler request)))))
-
-(defn- get-index-base [{:keys [query-params authenticated-entity]}]
+(defn get-index [request]
   (catcher/wrap-with-log-error
     {:body
      {:media-entries
-      (query-index-resources (into query-params
-                             {:auth-entity authenticated-entity}))}}))
+      (query-index-resources request)}}))
 
-(defn get-index [request]
-  (let [{query-params :query-params} request]
-    (-> get-index-base
-        (wrap-permissions-params-false-value-check query-params)
-        (wrap-permissions-params-combination-check query-params))))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
+;(debug/wrap-with-log-debug #'filter-by-permissions)
+;(debug/wrap-with-log-debug #'build-query)

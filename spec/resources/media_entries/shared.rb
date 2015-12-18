@@ -24,4 +24,16 @@ shared_context :bunch_of_media_entries do
                          get_full_size: (rand <= 0.3)
     end
   end
+
+  let :collection do
+    coll = FactoryGirl.create :collection
+    media_entries.each do |me|
+      if (rand <= 0.75)
+        FactoryGirl.create :collection_media_entry_arc,
+          collection: coll, media_entry: me
+      end
+    end
+    coll
+  end
+
 end

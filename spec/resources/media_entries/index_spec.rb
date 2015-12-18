@@ -16,6 +16,7 @@ describe 'a bunch of media entries with different properties' do
           expect(resource.response.status).to be == 200
         end
       end
+
     end
   end
 end
