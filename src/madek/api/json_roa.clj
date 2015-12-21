@@ -30,7 +30,7 @@
   (-> {}
       (assoc-in [:_json-roa] json-roa-data)
       (assoc-in [:_json-roa :about_json-roa] about)
-      (assoc-in [:_json-roa :json-roa_version] "1.0.0")
+      (assoc-in [:_json-roa :version] "1.0.0")
       ))
 
 (defn build-routes-handler [json-response]
