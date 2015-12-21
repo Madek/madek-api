@@ -107,6 +107,7 @@
         authenticated-entity (:authenticated-entity request)]
     (-> base-query
         (set-order query-params)
+        (pagination/add-offset-for-honeysql query-params)
         (filter-by-collection-id query-params)
         (filter-by-permissions query-params authenticated-entity)
         sql-format)))
