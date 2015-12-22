@@ -47,9 +47,15 @@
 (defn- session-not-expired? [session-object]
   (when-let [issued-at (-> session-object :issued_at time-format/parse)]
     (when-let [validity-duration-secs (get-validity-duration-secs)]
-      (time/before? (time/now)
-                    (time/plus issued-at
-                               (time/seconds validity-duration-secs))))))
+      (and (time/before? (time/now)
+                         (time/plus issued-at
+                                    (time/seconds validity-duration-secs)))
+           (if-let [max-duration-secs (:max_duration_secs session-object)]
+             (time/before? (time/now)
+                           (time/plus issued-at
+                                      (time/seconds max-duration-secs)))
+             true
+             )))))
 
 (defn- session-enbabled? []
   (-> (get-config) :madek_api_session_enabled boolean))
