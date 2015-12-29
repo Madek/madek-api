@@ -1,6 +1,4 @@
 (ns madek.api.scratch
-  (:require
-    )
   )
 
 ;(ns-publics 'cheshire.core)

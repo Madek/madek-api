@@ -94,10 +94,16 @@ jobs:
               cd datalayer
               bundle exec rake db:reset --trace
 
+          precompile-api:
+            exclusive-executor-resource: precompile-madek-api
+            body: ./cider-ci/bin/precompile-service.sh
+
           run-api:
-            start-when:
-            - script: create-database
             body: lein trampoline run
+            start-when:
+              - script: create-database
+              - script: precompile-api
+
 
           api-is-running:
             body: until curl --silent --fail --user x:secret -I  http://localhost:${API_HTTP_PORT}/api/management/status; do sleep 1; done

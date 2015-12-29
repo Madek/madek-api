@@ -32,7 +32,8 @@
                  [ring/ring-jetty-adapter "1.4.0"]
                  [ring/ring-json "0.4.0"]
                  ]
-  :aot [madek.api.main]
+  :aot :all
+  ; :aot [madek.api.main]
   :main madek.api.main
   :java-source-paths ["java"]
   ;:source-paths ["src" "tmp/logbug/src"]
