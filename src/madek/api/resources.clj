@@ -27,7 +27,7 @@
 
 (defn- get-media-resource
   ([request]
-   (catcher/wrap-with-log-error
+   (catcher/with-logging {}
      (or (get-media-resource request :media_entry_id "media_entries" "MediaEntry")
          (get-media-resource request :collection_id "collections" "Collection")
          (get-media-resource request :filter_set_id "filter_sets" "FilterSet"))))

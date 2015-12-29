@@ -12,7 +12,6 @@
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
-    [duckling.core :as duckling]
     ))
 
 (defn- get-session-secret []
@@ -35,11 +34,11 @@
           (-> user :password_digest)))
 
 (defn- decrypt-cookie [cookie-value]
-  (catcher/wrap-with-suppress-and-log-warn
+  (catcher/snatch {}
     (decrypt (get-session-secret) cookie-value)))
 
 (defn- get-validity-duration-secs []
-  (or (catcher/wrap-with-suppress-and-log-warn
+  (or (catcher/snatch {}
         ((memoize #(parse-config-duration-to-seconds
                      :madek_session_validity_duration))))
       3))

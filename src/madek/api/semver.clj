@@ -9,7 +9,7 @@
 
 (defn get-git-commit-id []
   (try
-    (catcher/wrap-with-log-warn
+    (catcher/with-logging {}
       (-> (commons-exec/sh ["git" "log" "-n" "1" "--format=%h"])
           deref
           :out

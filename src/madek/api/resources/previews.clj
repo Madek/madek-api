@@ -15,7 +15,7 @@
 (defn- query-preview [preview-id]
   ; we wrap this since badly formated media-file-id strings can cause an
   ; exception, note that 404 is in that case a correct response
-  (catcher/wrap-with-suppress-and-log-warn
+  (catcher/snatch {}
     (-> (jdbc/query
           (get-ds)
           ["SELECT * FROM previews WHERE id = ?" preview-id])

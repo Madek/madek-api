@@ -119,7 +119,7 @@
 ;### index ####################################################################
 
 (defn get-index [request]
-  (catcher/wrap-with-log-error
+  (catcher/with-logging {}
     {:body
      {:media-entries
       (query-index-resources request)}}))

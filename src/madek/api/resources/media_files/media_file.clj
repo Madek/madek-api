@@ -28,7 +28,7 @@
       [madek.api.constants/FILE_STORAGE_DIR first-char id])))
 
 (defn get-media-file-data-stream [request]
-  (catcher/wrap-with-suppress-and-log-warn
+  (catcher/snatch {}
     (when-let [media-file (:media-file request)]
       (when-let [file-path (media-file-path media-file)]
         (data-streaming/respond-with-file file-path

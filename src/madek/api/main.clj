@@ -16,7 +16,7 @@
 
 (defn -main []
   (logbug.thrown/reset-ns-filter-regex #".*madek.*")
-  (catcher/wrap-with-log-warn
+  (catcher/with-logging {}
     (logging/info 'madek.api.main "initializing ...")
     (cider-ci.utils.config/initialize
       ["./config/settings.yml"

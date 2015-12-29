@@ -10,8 +10,8 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging o->]]
+    [logbug.debug :as debug :refer [÷> ÷>>]]
+    [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
     ))
 
 ;##############################################################################
@@ -19,7 +19,7 @@
 (defn- query-media-file [media-file-id]
   ; we wrap this since badly formated media-file-id strings can cause an
   ; exception, note that 404 is in that case a correct response
-  (catcher/wrap-with-suppress-and-log-warn
+  (catcher/snatch {}
     (-> (jdbc/query
           (get-ds)
           ["SELECT * FROM media_files WHERE id = ?" media-file-id])
@@ -35,15 +35,15 @@
 ;##############################################################################
 
 (def routes
-  ( o-> wrap-handler-with-logging
-        (cpj/routes
-          (cpj/GET "/media-files/:media_file_id" _
-                   #'media-file/get-media-file)
-          (cpj/GET "/media-files/:media_file_id/data-stream" _
-                   #'media-file/get-media-file-data-stream)
-          (cpj/ANY "*" _ shared/dead-end-handler))
-        media-files.authorization/wrap-authorize
-        wrap-find-and-add-media-file))
+  (÷>  wrap-handler-with-logging
+      (cpj/routes
+        (cpj/GET "/media-files/:media_file_id" _
+                 #'media-file/get-media-file)
+        (cpj/GET "/media-files/:media_file_id/data-stream" _
+                 #'media-file/get-media-file-data-stream)
+        (cpj/ANY "*" _ shared/dead-end-handler))
+      media-files.authorization/wrap-authorize
+      wrap-find-and-add-media-file))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

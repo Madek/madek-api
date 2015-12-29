@@ -26,8 +26,8 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging o->]]
+    [logbug.debug :as debug :refer [÷> ÷>>]]
+    [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
     ))
 
 ;### helper ###################################################################
@@ -131,23 +131,23 @@
 
 
 (defn build-site [context]
-  ( o-> wrap-handler-with-logging
-        dead-end-handler
-        madek.api.resources/wrap-api-routes
-        authentication/wrap
-        management/wrap
-        wrap-static-resources-dispatch
-        wrap-public-routes
-        wrap-keywordize-request
-        (json-roa_request/wrap madek.api.json-roa/handler)
-        ring.middleware.json/wrap-json-params
-        wrap-parse-json-query-parameters
-        cors/wrap
-        site
-        (wrap-context context)
-        wrap-exception
-        json-roa_response/wrap
-        ring.middleware.json/wrap-json-response))
+  (÷> wrap-handler-with-logging
+      dead-end-handler
+      madek.api.resources/wrap-api-routes
+      authentication/wrap
+      management/wrap
+      wrap-static-resources-dispatch
+      wrap-public-routes
+      wrap-keywordize-request
+      (json-roa_request/wrap madek.api.json-roa/handler)
+      ring.middleware.json/wrap-json-params
+      wrap-parse-json-query-parameters
+      cors/wrap
+      site
+      (wrap-context context)
+      wrap-exception
+      json-roa_response/wrap
+      ring.middleware.json/wrap-json-response))
 
 
 ;### server ###################################################################
@@ -155,7 +155,7 @@
 (defonce server (atom nil))
 
 (defn start-server [& [port]]
-  (catcher/wrap-with-log-error
+  (catcher/with-logging {}
     (when @server
       (.stop @server)
       (reset! server nil))
