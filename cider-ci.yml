@@ -62,16 +62,12 @@ jobs:
             clone: True
             timeout: 60
 
-
         trial-attachments:
           config:
-            glob: 'config/*.yml'
             content-type: text/yaml
-          datalayer_config:
-            glob: 'datalayer/config/*.yml'
-            content-type: text/yaml
+            include-match: config\/.*\.ya?ml$
           logs:
-            glob: 'log/*log'
+            include-match: logs?\/.*\.log$
             content-type: text/plain
 
         ports:
