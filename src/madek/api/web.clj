@@ -142,7 +142,7 @@
       (json-roa_request/wrap madek.api.json-roa/handler)
       ring.middleware.json/wrap-json-params
       wrap-parse-json-query-parameters
-      cors/wrap
+      (cors/wrap :enable (-> (get-config) :services :api :cors_enabled))
       site
       (wrap-context context)
       wrap-exception
