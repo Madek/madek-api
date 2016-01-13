@@ -3,6 +3,7 @@
     [cider-ci.open-session.cors :as cors]
     [cider-ci.utils.config :refer [get-config]]
     [cider-ci.utils.http-server :as http-server]
+    [cider-ci.utils.status :as status]
     [clojure.data.json :as json]
     [clojure.java.io :as io]
     [clojure.walk :refer [keywordize-keys]]
@@ -143,6 +144,7 @@
       ring.middleware.json/wrap-json-params
       wrap-parse-json-query-parameters
       (cors/wrap :enable (-> (get-config) :services :api :cors_enabled))
+      status/wrap
       site
       (wrap-context context)
       wrap-exception
