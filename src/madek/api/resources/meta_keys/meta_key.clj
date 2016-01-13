@@ -8,13 +8,16 @@
     [logbug.debug :as debug]
     ))
 
+(defn build-meta-key-query [id]
+  (-> (sql-select :*)
+      (sql-from :meta-keys)
+      (sql-merge-where
+        [:= :meta-keys.id id])
+      (sql-format)))
+
 (defn get-meta-key [request]
   (let [id (-> request :params :id)
-        query (-> (sql-select :*)
-                  (sql-from :meta-keys)
-                  (sql-merge-where
-                    [:= :meta-keys.id id])
-                  (sql-format))]
+        query (build-meta-key-query id)]
     {:body (select-keys (first (jdbc/query (rdbms/get-ds) query))
                         [:id
                          :description
