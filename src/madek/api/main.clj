@@ -19,10 +19,10 @@
   (catcher/with-logging {}
     (logging/info 'madek.api.main "initializing ...")
     (cider-ci.utils.config/initialize
-      ["./config/settings.yml"
-       "../config/settings.yml"
-       "./config/settings.local.yml"
-       "../config/settings.local.yml"])
+      {:filenames ["./config/settings.yml"
+                   "../config/settings.yml"
+                   "./config/settings.local.yml"
+                   "../config/settings.local.yml"]})
     (rdbms/initialize (config/get-db-spec :api))
     (madek.api.web/initialize)
     (madek.api.constants/initialize (get-config))
