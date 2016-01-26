@@ -11,7 +11,7 @@
   (if-let [auth-entity (:authenticated-entity request)]
     {:body (merge {}
                   (select-keys auth-entity [:type :id :login :created_at])
-                  (select-keys request [:authentication-method]))}
+                  (select-keys request [:authentication-method :session-expiration-seconds]))}
     {:status 401}))
 
 (def routes

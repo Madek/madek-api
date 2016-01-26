@@ -43,18 +43,21 @@
                      :madek_session_validity_duration))))
       3))
 
+(defn session-expiration-time [session-object validity-duration-secs]
+  (if-let [issued-at (-> session-object :issued_at time-format/parse)]
+    (let [valid-for-secs (->> [validity-duration-secs
+                               (:max_duration_secs session-object)]
+                              (filter identity)
+                              (#(if (empty? %) [0] %))
+                              (apply min))]
+      (time/plus issued-at (time/seconds valid-for-secs)))
+    (time/now)))
+
 (defn- session-not-expired? [session-object]
   (when-let [issued-at (-> session-object :issued_at time-format/parse)]
-    (when-let [validity-duration-secs (get-validity-duration-secs)]
-      (and (time/before? (time/now)
-                         (time/plus issued-at
-                                    (time/seconds validity-duration-secs)))
-           (if-let [max-duration-secs (:max_duration_secs session-object)]
-             (time/before? (time/now)
-                           (time/plus issued-at
-                                      (time/seconds max-duration-secs)))
-             true
-             )))))
+    (time/before? (time/now)
+                  (session-expiration-time session-object
+                                           (get-validity-duration-secs)))))
 
 (defn- session-enbabled? []
   (-> (get-config) :madek_api_session_enabled boolean))
@@ -63,17 +66,25 @@
   (-> request keywordize-keys :cookies
       (get (get-madek-session-cookie-name)) :value))
 
+(defn in-seconds [from to]
+  (time/in-seconds (time/interval from to)))
+
 (defn- handle [request handler]
   (if-let [cookie-value (and (session-enbabled?) (get-cookie-value request))]
     (if-let [session-object (decrypt-cookie cookie-value)]
       (if-let [user (-> session-object :user_id get-user)]
-        (if (session-signature-valid? user session-object)
-          (if (session-not-expired? session-object)
-            (handler (assoc request
-                            :authenticated-entity user
-                            :authentication-method "Session"))
-            {:status 401 :body "The session has expired!"})
-          {:status 401 :body "The session is invalid!"})
+        (if-not (session-signature-valid? user session-object)
+          {:status 401 :body "The session is invalid!"}
+          (let [expiration-time (session-expiration-time
+                                  session-object (get-validity-duration-secs))
+                now (time/now)]
+            (if (time/after? now expiration-time)
+              {:status 401 :body "The session has expired!"}
+              (handler (assoc request
+                              :authenticated-entity user
+                              :authentication-method "Session"
+                              :session-expiration-seconds
+                              (in-seconds now expiration-time))))))
         {:status 401 :body "The user was not found!"})
       {:status 401 :body "Decryption of the session cookie failed!"})
     (handler request)))
@@ -85,4 +96,4 @@
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
-;(debug/debug-ns *ns*)
+(debug/debug-ns *ns*)
