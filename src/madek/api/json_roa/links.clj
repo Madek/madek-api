@@ -73,7 +73,9 @@
   ([prefix query-params]
    {:name "Media-Entries"
     :href (media-entries-path prefix query-params)
-    :relations {} }))
+    :relations {:api-docs {:name "API-Doc Media-Entries"
+                           :href "/api/docs/resources/media-entries.html#media-entries"
+                           }}}))
 
 (defn media-entry
   ([prefix]
@@ -81,7 +83,9 @@
   ([prefix id]
    {:name "Media-Entry"
     :href (str prefix "/media-entries/" id)
-    :relations {} }))
+    :relations {:api-docs {:name "API-Doc Media-Entry"
+                           :href "/api/docs/resources/media-entry.html#media-entry"
+                           }}}))
 
 (defn collection
   ([prefix]
