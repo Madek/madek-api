@@ -20,6 +20,7 @@
     [madek.api.resources.people :as people]
     [madek.api.resources.previews :as previews]
     [madek.api.resources.shared :as shared]
+    [madek.api.resources.vocabularies :as vocabularies]
     ))
 
 
@@ -144,9 +145,10 @@
         (cpj/ANY "/media-entries*" _ media-entries/routes)
         (cpj/ANY "/media-files/:media_file_id*" _ media-files/routes)
         (cpj/ANY "/meta-data/:meta_datum_id" _ meta-data/routes)
-        (cpj/ANY "/meta-keys/:meta_key_id*" _ meta-keys/routes)
+        (cpj/ANY "/meta-keys/*" _ meta-keys/routes)
         (cpj/ANY "/people/:person_id*" _ people/routes)
         (cpj/ANY "/previews/:preview_id*" _ previews/routes)
+        (cpj/ANY "/vocabularies/*" _ vocabularies/routes)
         (cpj/ANY "*" _ default-handler)
         )
       wrap-authorization

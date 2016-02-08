@@ -15,4 +15,6 @@
                  :media-entries (links/media-entries context)
                  :media-entry (links/media-entry context)
                  :media-file (links/media-file context)
+                 :meta-keys (links/meta-keys context)
+                 :vocabularies (links/vocabularies context)
                  }}))

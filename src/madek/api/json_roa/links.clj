@@ -1,4 +1,5 @@
 (ns madek.api.json-roa.links
+
   (:require
     [clj-http.client :as http-client]
     [logbug.debug :as debug]
@@ -7,7 +8,6 @@
     [ring.util.codec :refer [form-encode]]
     [madek.api.pagination :as pagination]
     ))
-
 
 (defn root
   ([prefix]
@@ -132,6 +132,7 @@
     :href (str prefix "/media-files/" id "/data-stream")
     :relations {} }))
 
+
 ;### preview(s) ################################################################
 
 (defn preview
@@ -150,6 +151,7 @@
     :href (str prefix "/previews/" id "/data-stream")
     :relations {} }))
 
+
 ;### meta-key(s) ###############################################################
 
 (defn meta-key
@@ -158,7 +160,29 @@
   ([prefix id]
    {:name "Meta-Key"
     :href (str prefix "/meta-keys/" id)
-    :relations {} }))
+    :relations {:api-docs {:name "API-Doc Root"
+                           :href "/api/docs/resources/meta-key.html#meta-key"
+                           }}}))
+
+(defn meta-keys-path
+  ([prefix]
+   (meta-keys-path prefix {}))
+  ([prefix query-params]
+   (str prefix "/meta-keys/"
+        (if (empty? query-params)
+          (str "{?vocabulary}")
+          (str "?" (http-client/generate-query-string query-params))))))
+
+(defn meta-keys
+  ([prefix]
+   (meta-keys prefix {}))
+  ([prefix query-params]
+   {:name "Meta-Keys"
+    :href (meta-keys-path prefix query-params)
+    :relations {:api-docs {:name "API-Doc Root"
+                           :href "/api/docs/resources/meta-keys.html#meta-keys"
+                           }}}))
+
 
 ;### person(s) #################################################################
 
@@ -170,6 +194,7 @@
     :href (str prefix "/people/" id)
     :relations {} }))
 
+
 ;### keyword(s) ################################################################
 
 (defn keyword-term
@@ -180,6 +205,7 @@
     :href (str prefix "/keywords/" id)
     :relations {} }))
 
+
 ;### license(s) ################################################################
 
 (defn license
@@ -189,6 +215,40 @@
    {:name "License"
     :href (str prefix "/licenses/" id)
     :relations {} }))
+
+
+;### vocabulary(s) ###############################################################
+
+(defn vocabulary
+  ([prefix]
+   (vocabulary prefix "{id}"))
+  ([prefix id]
+   {:name "Vocabulary"
+    :href (str prefix "/vocabularies/" id)
+    :relations {:api-docs {:name "API-Doc Root"
+                           :href "/api/docs/resources/vocabulary.html#vocabulary"
+                           }}}))
+
+(defn vocabularies-path
+  ([prefix]
+   (vocabularies-path prefix {}))
+  ([prefix query-params]
+   (str prefix "/vocabularies/"
+        (if (empty? query-params)
+          (str "")
+          (str "?" (http-client/generate-query-string query-params))))))
+
+(defn vocabularies
+  ([prefix]
+   (vocabularies prefix {}))
+  ([prefix query-params]
+   {:name "Vocabularies"
+    :href (vocabularies-path prefix query-params)
+    :relations {:api-docs {:name "API-Doc Root"
+                           :href "/api/docs/resources/vocabularies.html#vocabularies"
+                           }}}))
+
+
 
 ;### next link #################################################################
 
@@ -208,4 +268,3 @@
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
-

@@ -10,6 +10,7 @@
     [madek.api.json-roa.people :as people]
     [madek.api.json-roa.previews :as previews]
     [madek.api.json-roa.root :as root]
+    [madek.api.json-roa.vocabularies :as vocabularies]
 
     [compojure.core :as cpj]
 
@@ -45,8 +46,11 @@
     (cpj/GET "/media-files/:id" request (media-files/media-file request json-response))
     (cpj/GET "/meta-data/:id" request (meta-data/meta-datum request json-response))
     (cpj/GET "/meta-keys/:id" request (meta-keys/meta-key request json-response))
+    (cpj/GET "/meta-keys/" request (meta-keys/index request json-response))
     (cpj/GET "/people/:id" request (people/person request json-response))
     (cpj/GET "/previews/:id" request (previews/preview request json-response))
+    (cpj/GET "/vocabularies/" request (vocabularies/index request json-response))
+    (cpj/GET "/vocabularies/:id" request (vocabularies/vocabulary request json-response))
     ))
 
 (defn handler [request response]

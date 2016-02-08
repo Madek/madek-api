@@ -1,4 +1,4 @@
-(ns madek.api.resources.meta-keys
+(ns madek.api.resources.vocabularies
   (:require
     [cider-ci.utils.rdbms :as rdbms]
     [clj-logging-config.log4j :as logging-config]
@@ -7,15 +7,15 @@
     [compojure.core :as cpj]
     [logbug.debug :as debug]
     [madek.api.pagination :as pagination]
-    [madek.api.resources.meta-keys.meta-key :refer [get-meta-key]]
-    [madek.api.resources.meta-keys.index :refer [get-index]]
+    [madek.api.resources.vocabularies.vocabulary :refer [get-vocabulary]]
+    [madek.api.resources.vocabularies.index :refer [get-index]]
     [madek.api.resources.shared :as shared]
     ))
 
 (def routes
   (cpj/routes
-    (cpj/GET "/meta-keys/" _ get-index)
-    (cpj/GET "/meta-keys/:id" _ get-meta-key)
+    (cpj/GET "/vocabularies/" _ get-index)
+    (cpj/GET "/vocabularies/:id" _ get-vocabulary)
     (cpj/ANY "*" _ shared/dead-end-handler)
     ))
 
