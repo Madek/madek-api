@@ -13,8 +13,9 @@
   ([prefix]
    {:name "Root"
     :href (str prefix "/")
-    :relations
-    {}}))
+    :relations {:api-docs {:name "API-Doc Root"
+                           :href "/api/docs/resources/root.html#root"
+                           }}}))
 
 
 ;### auth-info ####################################################################
@@ -34,7 +35,9 @@
    {:name "MetaData"
     :href (str prefix "/collections/" id "/meta-data/"
                "{?meta_keys}")
-    :relations {} }))
+    :relations {:api-docs {:name "API-Doc Meta-Data"
+                           :href "/api/docs/resources/meta-data.html#meta-data"
+                           }}}))
 
 
 ;### meta data ####################################################################
@@ -46,7 +49,10 @@
    {:href (str prefix "/meta-data/" (:id meta-datum))
     :name (str "Meta-Datum"
                (when-let [meta-key-id (:meta_key_id meta-datum)]
-                 (str " of " meta-key-id)))}))
+                 (str " of " meta-key-id)))
+    :relations {:api-docs {:name "API-Doc Meta-Datum"
+                           :href "/api/docs/resources/meta-datum.html#meta-datum"
+                           }}}))
 
 
 ;### media-entries ################################################################
@@ -102,7 +108,10 @@
    {:name "MetaData"
     :href (str prefix "/media-entries/" id "/meta-data/"
                "{?meta_keys}")
-    :relations {} }))
+    :relations {:api-docs {:name "API-Doc Meta-Data"
+                           :href "/api/docs/resources/meta-data.html#meta-data"
+                           }}
+    }))
 
 
 ;### media-file(s) #############################################################
