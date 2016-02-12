@@ -1,0 +1,18 @@
+task-defaults:
+
+  traits: [bash, ruby, git]
+
+  git-options:
+    submodules:
+      clone: True
+      timeout: 60
+
+task:
+  name: Docs are up to date
+  body: |
+    set -eux
+    cd docs_source
+    bundle
+    bundle exec middleman build
+    cd ../docs
+    git diff --exit-code --ignore-all-space

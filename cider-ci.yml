@@ -1,134 +1,47 @@
 jobs:
 
-  tests:
+  all-tests:
+    run-on:
+    - type: branch
+      include-match: ^.*$
+    name: All Tests
+    depends-on:
+    - type: job
+      job: docs
+      states: [passed]
+    - type: job
+      job: specs
+      states: [passed]
+    - type: job
+      job: tests
+      states: [passed]
+      submodule: ['docs_source']
 
-    name: Tests
+    task: echo 'Yay, all dependencies have passed!'
 
+  docs:
+    name: Docs
+    run-on:
+    - type: branch
+      include-match: ^.*$
+    _cider-ci_include: cider-ci/jobs/docs.yml
+    traits: [bash, ruby, git]
+    git-options:
+      submodules:
+        clone: True
+        timeout: 60
+    task: |
+      set -eux
+
+
+  specs:
+    name: Specs
+    run-on:
+    - type: branch
+      include-match: ^.*$
     depends-on:
     - type: job
       job: tests
       submodule: ['datalayer']
       states: [passed]
-
-    run-on:
-    - type: branch
-      include-match: ^.*$
-
-    context:
-      script-defaults:
-        template-environment-variables: true
-        timeout: 300
-
-      _cider-ci_generate-tasks:
-        include-match: spec/.*_spec.rb
-
-#      tasks:
-#        spec/features/admin/repositories_spec.rb:
-#          environment-variables:
-#            CIDER_CI_TASK_FILE: spec/resources/media-file/media-file_spec.rb:92
-
-      task-defaults:
-
-        environment-variables:
-          RAILS_ENV: test
-          DATABASE_NAME: "madek_api-{{RAILS_ENV}}_{{CIDER_CI_TRIAL_ID}}"
-          API_DATABASE_URL: "postgresql://localhost:5432/{{DATABASE_NAME}}?pool=3"
-
-        templates:
-          - src: [cider-ci, templates, settings.yml]
-            dest: [config, settings.local.yml]
-          - src: [cider-ci, templates, settings.yml]
-            dest: [datalayer, config, settings.local.yml]
-          - src: [cider-ci, templates, database.yml]
-            dest: [datalayer, config, database.yml]
-
-        traits:
-          bash: true
-          curl: true
-          git: true
-          leiningen: true
-          linux: true
-          maven: true
-          maven3: true
-          openjdk: true
-          postgresql: true
-          rbenv: true
-          ruby: true
-
-        max-auto-trials: 1
-
-        git-options:
-          submodules:
-            clone: True
-            timeout: 60
-
-        trial-attachments:
-          config:
-            content-type: text/yaml
-            include-match: config\/.*\.ya?ml$
-          logs:
-            include-match: logs?\/.*\.log$
-            content-type: text/plain
-
-        ports:
-          API_HTTP_PORT:
-            inet_address: "localhost"
-            min: 3100
-            max: 3200
-
-        scripts:
-
-          bundle-datalayer:
-            exclusive-executor-resource: bundler
-            body: cd datalayer && bundle
-
-          bundle:
-            exclusive-executor-resource: bundler
-            body: bundle
-
-          create-database:
-            start-when:
-            - script: bundle-datalayer
-            body: |
-              set -eux
-              cd datalayer
-              bundle exec rake db:reset --trace
-
-          precompile-api:
-            exclusive-executor-resource: precompile-madek-api
-            body: ./cider-ci/bin/precompile-service.sh
-
-          run-api:
-            body: lein trampoline run
-            start-when:
-              - script: create-database
-              - script: precompile-api
-
-
-          api-is-running:
-            body: until curl --silent --fail --user x:secret -I  http://localhost:${API_HTTP_PORT}/api/management/status; do sleep 1; done
-            start-when:
-            - script: run-api
-              states: [executing]
-
-          test:
-            start-when:
-            - script: api-is-running
-            - script: bundle
-            body: bundle exec rspec ${CIDER_CI_TASK_FILE}
-
-          shutdown:
-            start-when:
-              - script: test
-                states: [aborted, passed, failed, skipped]
-            body: curl -X POST --silent --fail --user x:secret -I  http://localhost:${API_HTTP_PORT}/api/management/shutdown
-
-          delete-database:
-            body: |
-              set -eux
-              cd datalayer
-              bundle exec rake db:pg:terminate_connections db:drop
-            ignore-state: true
-            start-when:
-            - script: shutdown
-              states: [aborted, passed, failed, skipped]
+    _cider-ci_include: cider-ci/jobs/specs.yml
