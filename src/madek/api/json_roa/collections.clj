@@ -9,12 +9,14 @@
 
 (defn collection [request response]
   (let [context (:context request)
-        params (:params request)]
+        params (:params request)
+        id (-> response :body :id)]
     {:name "Collection"
      :self-relation (links/collection context (:id params))
      :relations
      {:root (links/root context)
       :meta-data (links/collection-meta-data context (:id params))
+      :media-entries (links/media-entries context {:collection_id id})
       }}))
 
 ;### Debug ####################################################################

@@ -71,7 +71,15 @@
                "me_get_full_size,"
                "filter_by,"
                "collection_id}")
-          (str "?" (http-client/generate-query-string query-params))))))
+          (str "?" (http-client/generate-query-string query-params)
+               (str "{?"
+                    "order,"
+                    "public_get_metadata_and_previews,"
+                    "public_get_full_size,"
+                    "me_get_metadata_and_previews,"
+                    "me_get_full_size,"
+                    "filter_by,"
+                    "collection_id}"))))))
 
 (defn media-entries
   ([prefix ]
