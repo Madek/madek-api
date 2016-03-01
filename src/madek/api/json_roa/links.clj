@@ -62,24 +62,19 @@
    (media-entries-path prefix {}))
   ([prefix query-params]
    (str prefix "/media-entries/"
-        (if (empty? query-params)
-          (str "{?"
-               "order,"
-               "public_get_metadata_and_previews,"
-               "public_get_full_size,"
-               "me_get_metadata_and_previews,"
-               "me_get_full_size,"
-               "filter_by,"
-               "collection_id}")
-          (str "?" (http-client/generate-query-string query-params)
-               (str "{?"
-                    "order,"
-                    "public_get_metadata_and_previews,"
-                    "public_get_full_size,"
-                    "me_get_metadata_and_previews,"
-                    "me_get_full_size,"
-                    "filter_by,"
-                    "collection_id}"))))))
+        (let [template-params (str "{?"
+                                   "order,"
+                                   "public_get_metadata_and_previews,"
+                                   "public_get_full_size,"
+                                   "me_get_metadata_and_previews,"
+                                   "me_get_full_size,"
+                                   "filter_by,"
+                                   "collection_id}")]
+          (if (empty? query-params)
+            template-params
+            (str "?"
+                 (http-client/generate-query-string query-params)
+                 template-params))))))
 
 (defn media-entries
   ([prefix ]
