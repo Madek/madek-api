@@ -1,6 +1,6 @@
 [submodule "resources/browser"]
 	path = resources/browser
-	url = https://github.com/json-roa/json-roa_browser_build
+	url = https://github.com/Madek/madek_api-browser_build.git
 [submodule "datalayer"]
 	path = datalayer
 	url = https://github.com/Madek/madek-datalayer.git
