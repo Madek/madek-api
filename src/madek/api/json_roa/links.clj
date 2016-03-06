@@ -57,11 +57,14 @@
 
 ;### media-entries ################################################################
 
+(defn media-entries-path-base
+  ([prefix] (str prefix "/media-entries/")))
+
 (defn media-entries-path
   ([prefix]
    (media-entries-path prefix {}))
   ([prefix query-params]
-   (str prefix "/media-entries/"
+   (str (media-entries-path-base prefix)
         (let [template-params (str "order,"
                                    "public_get_metadata_and_previews,"
                                    "public_get_full_size,"
@@ -260,12 +263,6 @@
                      (http-client/generate-query-string
                        (pagination/next-page-query-query-params
                          query-params)))}})
-
-(defn next-rel [link-builder query-params]
-  {:next {:href
-          (link-builder (pagination/next-page-query-query-params
-                          query-params))}})
-
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

@@ -27,9 +27,8 @@
                         (links/media-entry context id)])
                      ids))}
          (when (seq ids)
-           (links/next-rel
-             (fn [query-params]
-               (links/media-entries-path context query-params))
+           (links/next-link
+             (links/media-entries-path-base context)
              query-params)))})))
 
 (defn get-first-media-file-id [media-entry-id]
@@ -55,4 +54,3 @@
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
-
