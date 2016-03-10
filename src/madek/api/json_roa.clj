@@ -1,6 +1,7 @@
 (ns madek.api.json-roa
   (:require
     [madek.api.json-roa.collections :as collections]
+    [madek.api.json-roa.filter-sets :as filter-sets]
     [madek.api.json-roa.keywords :as keywords]
     [madek.api.json-roa.licenses :as licenses]
     [madek.api.json-roa.media-entries :as media-entries]
@@ -37,7 +38,9 @@
 (defn build-routes-handler [json-response]
   (cpj/routes
     (cpj/GET "/" _ root/build)
+    (cpj/GET "/collections/" request (collections/index request json-response))
     (cpj/GET "/collections/:id" request (collections/collection request json-response))
+    (cpj/GET "/filter-sets/" request (filter-sets/index request json-response))
     (cpj/GET "/keywords/:id" request (keywords/keyword-term request json-response))
     (cpj/GET "/licenses/:id" request (licenses/license request json-response))
     (cpj/GET "/media-entries/" request (media-entries/index request json-response))
@@ -50,8 +53,8 @@
     (cpj/GET "/people/:id" request (people/person request json-response))
     (cpj/GET "/previews/:id" request (previews/preview request json-response))
     (cpj/GET "/vocabularies/" request (vocabularies/index request json-response))
-    (cpj/GET "/vocabularies/:id" request (vocabularies/vocabulary request json-response))
-    ))
+    (cpj/GET "/vocabularies/:id" request (vocabularies/vocabulary request json-response))))
+    
 
 (defn handler [request response]
   (let [body (:body response)]

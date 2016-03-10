@@ -10,7 +10,9 @@
     {:name "Root"
      :self-relation (links/root context)
      :relations {:auth-info (links/auth-info context)
+                 :collections (links/collections context)
                  :collection (links/collection context)
+                 :filter-sets (links/filter-sets context)
                  :meta-datum (links/meta-datum context)
                  :media-entries (links/media-entries context)
                  :media-entry (links/media-entry context)
