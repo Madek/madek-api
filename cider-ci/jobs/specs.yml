@@ -46,7 +46,7 @@ context:
       linux: true
       maven: true
       maven3: true
-      openjdk: true
+      openjdk-8: true
       postgresql: true
       rbenv: true
       ruby: true
@@ -95,7 +95,11 @@ context:
         body: ./cider-ci/bin/precompile-service.sh
 
       run-api:
-        body: lein trampoline run
+        body: |
+          set -eux
+          export JAVA_HOME=${OPENJDK8_HOME}
+          export PATH=${JAVA_HOME}/bin:${PATH}
+          lein trampoline run
         start-when:
           - script: create-database
           - script: precompile-api

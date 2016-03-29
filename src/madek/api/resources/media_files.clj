@@ -10,7 +10,7 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
-    [logbug.debug :as debug :refer [÷> ÷>>]]
+    [logbug.debug :as debug :refer [I> I>>]]
     [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
     ))
 
@@ -35,7 +35,7 @@
 ;##############################################################################
 
 (def routes
-  (÷>  wrap-handler-with-logging
+  (I>  wrap-handler-with-logging
       (cpj/routes
         (cpj/GET "/media-files/:media_file_id" _
                  #'media-file/get-media-file)

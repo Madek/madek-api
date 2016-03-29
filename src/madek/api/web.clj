@@ -27,7 +27,7 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
-    [logbug.debug :as debug :refer [÷> ÷>>]]
+    [logbug.debug :as debug :refer [I> I>>]]
     [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
     ))
 
@@ -132,7 +132,7 @@
 
 
 (defn build-site [context]
-  (÷> wrap-handler-with-logging
+  (I> wrap-handler-with-logging
       dead-end-handler
       madek.api.resources/wrap-api-routes
       authentication/wrap
