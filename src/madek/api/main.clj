@@ -1,4 +1,5 @@
 (ns madek.api.main
+  (:gen-class)
   (:require
     [cider-ci.utils.config :as config :refer [get-config]]
     [cider-ci.utils.rdbms :as rdbms]

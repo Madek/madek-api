@@ -92,14 +92,15 @@ context:
 
       precompile-api:
         exclusive-executor-resource: precompile-madek-api
-        body: ./cider-ci/bin/precompile-service.sh
+        body: ./cider-ci/bin/compile_uberjar.sh
 
       run-api:
         body: |
           set -eux
           export JAVA_HOME=${OPENJDK8_HOME}
           export PATH=${JAVA_HOME}/bin:${PATH}
-          lein trampoline run
+          export CLASSPATH="../config:target/madek_api.jar"
+          java madek.api.main
         start-when:
           - script: create-database
           - script: precompile-api
