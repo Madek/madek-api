@@ -52,7 +52,6 @@
 (defn- add-media-resource [request handler]
   (if-let [media-resource (get-media-resource-dispatcher request)]
     (let [request-with-media-resource (assoc request :media-resource media-resource)]
-      (logging/info 'request-with-media-resource request-with-media-resource)
       (handler request-with-media-resource))
     (handler request)))
 

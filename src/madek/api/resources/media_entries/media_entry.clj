@@ -20,7 +20,6 @@
                   (sql-merge-join :previews [:= :media_files.id :previews.media_file_id])
                   (sql-merge-where [:= :previews.id preview-id])
                   (sql-format))]
-    (logging/info query)
     (first (jdbc/query (rdbms/get-ds) query))))
 
 (defn get-media-entry [request]

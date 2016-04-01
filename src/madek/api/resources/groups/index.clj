@@ -27,7 +27,6 @@
   (let [query (-> (build-index-query query-params)
                   (pagination/add-offset-for-honeysql query-params)
                   sql-format)]
-    (logging/info query)
     (jdbc/query (rdbms/get-ds) query)))
 
 ;### Debug ####################################################################

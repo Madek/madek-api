@@ -43,7 +43,7 @@
       :filter-sets (links/filter-sets context {:collection_id id})}}))
 
 ;### Debug ####################################################################
-(logging-config/set-logger! :level :debug)
+;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
-(debug/wrap-with-log-debug #'index)
+;(debug/wrap-with-log-debug #'index)
