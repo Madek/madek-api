@@ -30,6 +30,7 @@
                  [ring-basic-authentication "1.0.5"]
                  [ring/ring-jetty-adapter "1.4.0"]
                  [ring/ring-json "0.4.0"]
+                 [uritemplate-clj "1.1.1"]
                  ]
   :aot :all
   ; :aot [madek.api.main]

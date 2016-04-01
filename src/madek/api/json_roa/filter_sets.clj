@@ -24,9 +24,8 @@
                         (links/filter-set context id)])
                      ids))}
          (when (seq ids)
-           (links/next-link
-             (links/filter-sets-path context query-params)
-             query-params)))})))
+           (links/next-link links/filter-sets-path context query-params)
+           ))})))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

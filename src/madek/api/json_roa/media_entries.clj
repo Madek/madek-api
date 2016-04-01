@@ -27,9 +27,8 @@
                         (links/media-entry context id)])
                      ids))}
          (when (seq ids)
-           (links/next-link
-             (links/media-entries-path-base context)
-             query-params)))})))
+           (links/next-link links/media-entries-path context query-params)
+           ))})))
 
 (defn get-first-media-file-id [media-entry-id]
   (-> (jdbc/query

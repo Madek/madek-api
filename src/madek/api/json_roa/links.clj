@@ -1,12 +1,13 @@
 (ns madek.api.json-roa.links
-
   (:require
+    [uritemplate-clj.core :refer [uritemplate]]
     [clj-http.client :as http-client]
-    [logbug.debug :as debug]
+    [madek.api.pagination :as pagination]
+    [ring.util.codec :refer [form-encode]]
+
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
-    [ring.util.codec :refer [form-encode]]
-    [madek.api.pagination :as pagination]
+    [logbug.debug :as debug]
     ))
 
 (defn root
@@ -332,13 +333,18 @@
 
 ;### next link #################################################################
 
-(defn next-link [url-path query-params]
-  {:next {:href (str url-path "?"
-                     (http-client/generate-query-string
-                       (pagination/next-page-query-query-params
-                         query-params)))}})
+(defn next-link
+  "Computes the next-link for a paginated collection by modifying the
+  query-params and passing on the result. `url-fn` must be a function of two
+  arguments: the context and the query-params. `url-fn` may return a templated
+  URL. The result will be piped through uritemplate and the final result will be
+  a non templated URL in accordance with the JSON-ROA specification."
+  [url-fn context query-params]
+  (let [qp (pagination/next-page-query-query-params query-params)]
+    {:next {:href (uritemplate (apply url-fn [context qp]) qp)}}))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
+;(debug/wrap-with-log-debug #'next-link)

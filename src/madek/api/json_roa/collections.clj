@@ -1,10 +1,12 @@
 (ns madek.api.json-roa.collections
   (:require
+    [uritemplate-clj.core :refer [uritemplate]]
+    [madek.api.json-roa.links :as links]
+    [madek.api.pagination :as pagination]
+
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
-    [madek.api.json-roa.links :as links]
-    [madek.api.pagination :as pagination]
     ))
 
 (defn index [request response]
@@ -24,9 +26,8 @@
                         (links/collection context id)])
                      ids))}
          (when (seq ids)
-           (links/next-link
-             (links/collections-path context query-params)
-             query-params)))})))
+           (links/next-link links/collections-path context query-params)
+           ))})))
 
 (defn collection [request response]
   (let [context (:context request)
@@ -42,6 +43,7 @@
       :filter-sets (links/filter-sets context {:collection_id id})}}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
+(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
+(debug/wrap-with-log-debug #'index)
