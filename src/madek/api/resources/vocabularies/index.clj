@@ -7,14 +7,13 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    ))
+    [logbug.debug :as debug]))
 
 (def ^:private base-query
   (-> (sql-select :id)
       (sql-from :vocabularies)
-      sql-format
-      ))
+      (sql-merge-where [:= :vocabularies.enabled_for_public_view true])
+      sql-format))
 
 (defn- query-index-resources [request]
   (jdbc/query (rdbms/get-ds) base-query))

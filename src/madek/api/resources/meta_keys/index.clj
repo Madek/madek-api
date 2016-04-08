@@ -14,8 +14,11 @@
 
 
 (def base-query
-  (-> (sql-select :id)
-      (sql-from :meta_keys)))
+  (-> (sql-select :meta-keys.id)
+      (sql-from :meta_keys)
+      (sql-merge-join :vocabularies
+                      [:= :meta_keys.vocabulary_id :vocabularies.id])
+      (sql-merge-where [:= :vocabularies.enabled_for_public_view true])))
 
 (defn filter-by-vocabulary [query request]
   (if-let [vocabulary (-> request :query-params :vocabulary)]

@@ -12,7 +12,8 @@
   (-> (sql-select :*)
       (sql-from :vocabularies)
       (sql-merge-where
-        [:= :vocabularies.id id])
+        [:= :vocabularies.id id]
+        [:= :vocabularies.enabled_for_public_view true])
       (sql-format)))
 
 (defn get-vocabulary [request]
@@ -24,5 +25,3 @@
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
-
-

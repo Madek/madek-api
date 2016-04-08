@@ -92,32 +92,45 @@
         match))))
 
 (defn- primitive-type? [md-object-type]
-  (or (= md-object-type "MetaDatum::Text" )
+  (or (= md-object-type "MetaDatum::Text")
       (= md-object-type "MetaDatum::TextDate")))
+
+(defn- sql-meta-data-from-public-vocabularies [sqlmap meta-data-alias counter]
+  (let [meta-keys-alias (str "mk" counter)
+        vocabularies-alias (str "v" counter)]
+    (-> sqlmap
+        (sql-merge-join [:meta_keys (keyword meta-keys-alias)]
+                        [:= (keyword (str meta-data-alias ".meta_key_id"))
+                            (keyword (str meta-keys-alias ".id"))])
+        (sql-merge-join [:vocabularies (keyword vocabularies-alias)]
+                        [:and
+                         [:= (keyword (str meta-keys-alias ".vocabulary_id"))
+                             (keyword (str vocabularies-alias ".id"))]
+                         [:= (keyword (str vocabularies-alias ".enabled_for_public_view")) true]]))))
 
 (defn- sql-merge-join-meta-data
   [sqlmap counter md-object-type {meta-key :key
                                   not-meta-key :not_key
                                   match :match}]
   (let [meta-data-alias (str "md" counter)
-        join-conditions
-        (cond-> [:and [:=
-                       (keyword (str meta-data-alias
-                                     ".media_entry_id"))
-                       :mes.id]]
+        join-conditions (cond-> [:and [:=
+                                       (keyword (str meta-data-alias
+                                                     ".media_entry_id"))
+                                       :mes.id]]
 
-          (and (primitive-type? md-object-type) match)
-          (conj (sql-raw-text-search (str meta-data-alias ".string")
-                                     match))
+                          (and (primitive-type? md-object-type) match)
+                          (conj (sql-raw-text-search (str meta-data-alias ".string")
+                                                     match))
 
-          (not= meta-key "any")
-          (conj [(cond meta-key := not-meta-key :!=)
-                 (keyword (str meta-data-alias ".meta_key_id"))
-                 (or meta-key not-meta-key)]))]
+                          (not= meta-key "any")
+                          (conj [(cond meta-key := not-meta-key :!=)
+                                 (keyword (str meta-data-alias ".meta_key_id"))
+                                 (or meta-key not-meta-key)]))]
 
-    (sql-merge-join sqlmap
-                    [:meta_data (keyword meta-data-alias)]
-                    join-conditions)))
+    (-> (sql-merge-join sqlmap
+                        [:meta_data (keyword meta-data-alias)]
+                        join-conditions)
+        (sql-meta-data-from-public-vocabularies meta-data-alias counter))))
 
 (defn sql-search-through-all [sqlmap search-string]
   (cond-> sqlmap
