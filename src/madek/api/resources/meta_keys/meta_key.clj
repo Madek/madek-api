@@ -18,11 +18,17 @@
 (defn get-meta-key [request]
   (let [id (-> request :params :id)
         query (build-meta-key-query id)]
-    {:body (select-keys (first (jdbc/query (rdbms/get-ds) query))
-                        [:id
-                         :description
-                         :label
-                         :vocabulary_id])}))
+    (if (re-find #".+:.+" id)
+      (if-let [meta-key (first
+                          (jdbc/query (rdbms/get-ds)
+                                      (debug/identity-with-logging query)))]
+        {:body (select-keys meta-key [:id
+                                      :description
+                                      :label
+                                      :vocabulary_id])}
+        {:status 404 :body {:message "Meta-Key could not be found!"}})
+      {:status 422
+       :body {:message "Wrong meta_key_id format! See documentation."}})))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
