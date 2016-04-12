@@ -1,18 +1,3 @@
-GIT
-  remote: https://github.com/DrTom/rails_config.git
-  revision: 1c277ea9ef06dcd3c5a258805ecadab7884e6a16
-  ref: master
-  specs:
-    rails_config (0.5.0.beta1)
-      activesupport (>= 3.0)
-
-GIT
-  remote: https://github.com/DrTom/textacular.git
-  revision: 778fd0952f949f64eba3ff03e6b97b247dc54d40
-  specs:
-    textacular (3.2.1)
-      activerecord (>= 3.0, < 5.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -78,6 +63,8 @@ GEM
     diff-lcs (1.2.5)
     domain_name (0.5.25)
       unf (>= 0.0.5, < 1.0.0)
+    drtom-textacular (4.0.0.alpha.20160302)
+      activerecord (>= 3.0, <= 5.0)
     erubis (2.7.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -236,6 +223,7 @@ DEPENDENCIES
   chronic_duration
   cider_ci-open_session (>= 1.0.0, < 2.0.0)
   cider_ci-support (= 3.2)
+  drtom-textacular (= 4.0.0.alpha.20160302)
   factory_girl
   faker
   faraday
@@ -248,14 +236,12 @@ DEPENDENCIES
   pry-nav
   pry-rails
   rails (>= 4.2.5, < 5)
-  rails_config!
   rest-client
   rspec
   rspec-rails (~> 3.1)
   rubocop (= 0.29.1)
   selenium-webdriver
   strong_password
-  textacular!
   timecop
   uuidtools
 
