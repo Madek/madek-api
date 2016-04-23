@@ -26,7 +26,7 @@
                  [org.clojure/java.jdbc "0.5.0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [org.slf4j/slf4j-log4j12 "1.7.19"]
-                 [pg-types "2.1.2"]
+                 [pg-types "2.2.0"]
                  [ring-basic-authentication "1.0.5"]
                  [ring/ring-jetty-adapter "1.4.0"]
                  [ring/ring-json "0.4.0"]
