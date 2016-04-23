@@ -33,7 +33,7 @@
                  [uritemplate-clj "1.1.1"]
                  ]
   :aot :all
-  :uberjar-name "madek_api.jar"
+  :uberjar-name "api.jar"
   :main madek.api.main
   :java-source-paths ["java"]
   ;:source-paths ["src" "tmp/logbug/src"]

@@ -99,7 +99,7 @@ context:
           set -eux
           export JAVA_HOME=${OPENJDK8_HOME}
           export PATH=${JAVA_HOME}/bin:${PATH}
-          export CLASSPATH="../config:target/madek_api.jar"
+          export CLASSPATH="../config:target/api.jar"
           java madek.api.main
         start-when:
           - script: create-database

@@ -9,7 +9,7 @@ if [ -f "${LEIN_UBERJAR_FILE}" ];then
   echo "${LEIN_UBERJAR_FILE} exists"
 else
   lein uberjar
-  mv "target/madek_api.jar" "${LEIN_UBERJAR_FILE}"
+  mv "target/api.jar" "${LEIN_UBERJAR_FILE}"
 fi
 mkdir -p target
-ln -s "$LEIN_UBERJAR_FILE" "target/madek_api.jar"
+ln -s "$LEIN_UBERJAR_FILE" "target/api.jar"
