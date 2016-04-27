@@ -74,21 +74,17 @@ context:
 
     scripts:
 
-      bundle-datalayer:
-        exclusive-executor-resource: bundler
-        body: cd datalayer && bundle
-
       bundle:
         exclusive-executor-resource: bundler
         body: bundle
 
       create-database:
-        start-when:
-        - script: bundle-datalayer
         body: |
+          #!/usr/bin/env bash
           set -eux
           cd datalayer
-          bundle exec rake db:reset --trace
+          createdb "${DATABASE_NAME}"
+          psql -d "${DATABASE_NAME}" -f db/structure.sql
 
       precompile-api:
         exclusive-executor-resource: precompile-madek-api
@@ -127,9 +123,7 @@ context:
       delete-database:
         body: |
           set -eux
-          cd datalayer
-          bundle exec rake db:pg:terminate_connections db:drop
-        ignore-state: true
+          dropdb "${DATABASE_NAME}"
         start-when:
         - script: shutdown
           states: [aborted, passed, failed, skipped]
