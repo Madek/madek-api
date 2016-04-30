@@ -241,7 +241,7 @@
   ([prefix id]
    {:name "Meta-Key"
     :href (str prefix "/meta-keys/" id)
-    :relations {:api-docs {:name "API-Doc Root"
+    :relations {:api-docs {:name "API-Doc Meta-Key"
                            :href "/api/docs/resources/meta-key.html#meta-key"
                            }}}))
 
@@ -260,7 +260,7 @@
   ([prefix query-params]
    {:name "Meta-Keys"
     :href (meta-keys-path prefix query-params)
-    :relations {:api-docs {:name "API-Doc Root"
+    :relations {:api-docs {:name "API-Doc Meta-Keys"
                            :href "/api/docs/resources/meta-keys.html#meta-keys"
                            }}}))
 
@@ -306,7 +306,7 @@
   ([prefix id]
    {:name "Vocabulary"
     :href (str prefix "/vocabularies/" id)
-    :relations {:api-docs {:name "API-Doc Root"
+    :relations {:api-docs {:name "API-Doc Vocabulary"
                            :href "/api/docs/resources/vocabulary.html#vocabulary"
                            }}}))
 
@@ -325,7 +325,7 @@
   ([prefix query-params]
    {:name "Vocabularies"
     :href (vocabularies-path prefix query-params)
-    :relations {:api-docs {:name "API-Doc Root"
+    :relations {:api-docs {:name "API-Doc Vocabularies"
                            :href "/api/docs/resources/vocabularies.html#vocabularies"
                            }}}))
 
