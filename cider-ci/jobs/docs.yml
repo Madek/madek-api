@@ -1,14 +1,17 @@
 task-defaults:
 
-  traits: [bash, ruby, git]
+  traits: [bash, ruby, git, rbenv]
+  environment-variables: { RBENV_VERSION: '2.2.4' }
 
   git-options:
     submodules:
       clone: True
       timeout: 60
 
+
 task:
   name: Docs are up to date
+  exclusive-executor-resource: 'bundler_rbenv_2.2.4'
   body: |
     set -eux
     cd docs_source

@@ -25,11 +25,6 @@ context:
 
   task-defaults:
 
-    environment-variables:
-      RAILS_ENV: test
-      DATABASE_NAME: "madek_api-{{RAILS_ENV}}_{{CIDER_CI_TRIAL_ID}}"
-      API_DATABASE_URL: "postgresql://localhost:5432/{{DATABASE_NAME}}?pool=3"
-
     templates:
       - src: [cider-ci, templates, settings.yml]
         dest: [config, settings.local.yml]
@@ -48,8 +43,14 @@ context:
       maven3: true
       openjdk-8: true
       postgresql: true
-      rbenv: true
       ruby: true
+      rbenv: true
+
+    environment-variables:
+      RAILS_ENV: test
+      DATABASE_NAME: "madek_api-{{RAILS_ENV}}_{{CIDER_CI_TRIAL_ID}}"
+      API_DATABASE_URL: "postgresql://localhost:5432/{{DATABASE_NAME}}?pool=3"
+      RBENV_VERSION: '2.2.4'
 
     max-auto-trials: 1
 
@@ -75,7 +76,7 @@ context:
     scripts:
 
       bundle:
-        exclusive-executor-resource: bundler
+        exclusive-executor-resource: 'bundler_rbenv_2.2.4'
         body: bundle
 
       create-database:
