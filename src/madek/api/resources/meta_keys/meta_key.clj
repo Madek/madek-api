@@ -20,8 +20,7 @@
         query (build-meta-key-query id)]
     (if (re-find #".+:.+" id)
       (if-let [meta-key (first
-                          (jdbc/query (rdbms/get-ds)
-                                      (debug/identity-with-logging query)))]
+                          (jdbc/query (rdbms/get-ds) query))]
         {:body (select-keys meta-key [:id
                                       :description
                                       :label
