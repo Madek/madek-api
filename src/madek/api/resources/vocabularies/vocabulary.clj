@@ -19,7 +19,9 @@
 (defn get-vocabulary [request]
   (let [id (-> request :params :id)
         query (build-vocabulary-query id)]
-    {:body (first (jdbc/query (rdbms/get-ds) query))}))
+    (if-let [vocabulary (first (jdbc/query (rdbms/get-ds) query))]
+      {:body vocabulary}
+      {:status 404 :body {:message "Vocabulary could not be found!"}})))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
