@@ -1,5 +1,6 @@
 (ns madek.api.json-roa
   (:require
+    [madek.api.json-roa.auth-info :as auth-info]
     [madek.api.json-roa.collections :as collections]
     [madek.api.json-roa.filter-sets :as filter-sets]
     [madek.api.json-roa.keywords :as keywords]
@@ -38,6 +39,7 @@
 (defn build-routes-handler [json-response]
   (cpj/routes
     (cpj/GET "/" _ root/build)
+    (cpj/GET "/auth-info" request (auth-info/auth-info request))
     (cpj/GET "/collections/" request (collections/index request json-response))
     (cpj/GET "/collections/:id" request (collections/collection request json-response))
     (cpj/GET "/filter-sets/" request (filter-sets/index request json-response))
