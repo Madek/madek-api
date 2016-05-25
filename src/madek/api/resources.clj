@@ -59,6 +59,23 @@
   (fn [request]
     (add-media-resource request handler)))
 
+(defn- wrap-check-uuid-syntax-conformity [handler]
+  (letfn [(return-422-if-not-uuid-conform [request]
+            (if (re-find shared/uuid-matcher (-> request :params :resource_id))
+              handler
+              {:status 422
+               :body {:message "The format of the id must be that of an UUID!"}}))]
+    (cpj/routes
+      (cpj/ANY "/media-entries/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/collections/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/filter-sets/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/previews/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/media-files/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/meta-data/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/people/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/keywords/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "*" _ handler))))
+
 ;### wrap meta-datum with media-resource#######################################
 
 (defn query-meta-datum [request]
@@ -154,9 +171,11 @@
         )
       wrap-authorization
       wrap-add-media-resource
-      wrap-add-meta-datum-with-media-resource))
+      wrap-add-meta-datum-with-media-resource
+      wrap-check-uuid-syntax-conformity
+      ))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
+(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
