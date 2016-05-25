@@ -60,19 +60,15 @@
     (add-media-resource request handler)))
 
 (defn- wrap-check-uuid-syntax-conformity [handler]
-  (letfn [(return-422-if-not-uuid-conform [resource-id]
-            (if (re-find shared/uuid-matcher resource-id)
+  (letfn [(return-422-if-not-uuid-conform [request]
+            (if (re-find shared/uuid-matcher (-> request :params :resource_id))
               handler
               {:status 422}))]
     (cpj/routes
-      (cpj/ANY "/media-entries/:media_entry_id*"
-               [media_entry_id] (return-422-if-not-uuid-conform media_entry_id))
-      (cpj/ANY "/collections/:collection_id*"
-               [collection_id] (return-422-if-not-uuid-conform collection_id))
-      (cpj/ANY "/filter-sets/:filter_set_id*"
-               [filter_set_id] (return-422-if-not-uuid-conform filter_set_id))
-      (cpj/ANY "/previews/:preview_id*"
-               [preview_id] (return-422-if-not-uuid-conform preview_id))
+      (cpj/ANY "/media-entries/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/collections/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/filter-sets/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/previews/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "*" _ handler))))
 
 ;### wrap meta-datum with media-resource#######################################
