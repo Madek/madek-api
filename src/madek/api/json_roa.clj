@@ -60,7 +60,7 @@
 
 (defn handler [request response]
   (let [body (:body response)]
-    (if-not (and body (map? body))
+    (if-not (and (= (:status response) 200) body (map? body))
       response
       (let [json-roa-handler (build-routes-handler response)
             json-roa-data (select-keys (json-roa-handler request) [:self-relation :relations :collection :name])
