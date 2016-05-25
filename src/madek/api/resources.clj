@@ -69,6 +69,10 @@
       (cpj/ANY "/collections/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/filter-sets/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/previews/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/media-files/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/meta-data/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/people/:resource_id*" _ return-422-if-not-uuid-conform)
+      (cpj/ANY "/keywords/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "*" _ handler))))
 
 ;### wrap meta-datum with media-resource#######################################
