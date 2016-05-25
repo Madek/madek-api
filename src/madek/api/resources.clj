@@ -59,6 +59,22 @@
   (fn [request]
     (add-media-resource request handler)))
 
+(defn- wrap-check-uuid-syntax-conformity [handler]
+  (letfn [(return-422-if-not-uuid-conform [resource-id]
+            (if (re-find shared/uuid-matcher resource-id)
+              handler
+              {:status 422}))]
+    (cpj/routes
+      (cpj/ANY "/media-entries/:media_entry_id*"
+               [media_entry_id] (return-422-if-not-uuid-conform media_entry_id))
+      (cpj/ANY "/collections/:collection_id*"
+               [collection_id] (return-422-if-not-uuid-conform collection_id))
+      (cpj/ANY "/filter-sets/:filter_set_id*"
+               [filter_set_id] (return-422-if-not-uuid-conform filter_set_id))
+      (cpj/ANY "/previews/:preview_id*"
+               [preview_id] (return-422-if-not-uuid-conform preview_id))
+      (cpj/ANY "*" _ handler))))
+
 ;### wrap meta-datum with media-resource#######################################
 
 (defn query-meta-datum [request]
@@ -154,9 +170,11 @@
         )
       wrap-authorization
       wrap-add-media-resource
-      wrap-add-meta-datum-with-media-resource))
+      wrap-add-meta-datum-with-media-resource
+      wrap-check-uuid-syntax-conformity
+      ))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
+(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
