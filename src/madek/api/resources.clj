@@ -63,7 +63,8 @@
   (letfn [(return-422-if-not-uuid-conform [request]
             (if (re-find shared/uuid-matcher (-> request :params :resource_id))
               handler
-              {:status 422}))]
+              {:status 422
+               :body {:message "The format of the id must be that of an UUID!"}}))]
     (cpj/routes
       (cpj/ANY "/media-entries/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/collections/:resource_id*" _ return-422-if-not-uuid-conform)
