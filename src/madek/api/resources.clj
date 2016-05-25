@@ -53,7 +53,12 @@
   (if-let [media-resource (get-media-resource-dispatcher request)]
     (let [request-with-media-resource (assoc request :media-resource media-resource)]
       (handler request-with-media-resource))
-    (handler request)))
+    (let [response-for-not-found-media-resource {:status 404}]
+      ((cpj/routes
+         (cpj/ANY "/media-entries/:id*" _ response-for-not-found-media-resource)
+         (cpj/ANY "/collections/:id*" _ response-for-not-found-media-resource)
+         (cpj/ANY "/filter-sets/:id*" _ response-for-not-found-media-resource)
+         (cpj/ANY "*" _ handler)) request))))
 
 (defn- wrap-add-media-resource [handler]
   (fn [request]
@@ -176,6 +181,6 @@
       ))
 
 ;### Debug ####################################################################
-(logging-config/set-logger! :level :debug)
+;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
