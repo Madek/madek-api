@@ -14,6 +14,8 @@
     [madek.api.json-roa.root :as root]
     [madek.api.json-roa.vocabularies :as vocabularies]
 
+    [madek.api.json-roa.links :as links :refer [root]]
+
     [compojure.core :as cpj]
 
     [logbug.debug :as debug]
@@ -62,8 +64,11 @@
   (let [body (:body response)]
     (if-not (and body (map? body))
       response
-      (let [json-roa-handler (build-routes-handler response)
-            json-roa-data (select-keys (json-roa-handler request) [:self-relation :relations :collection :name])
+      (let [json-roa-handler (if (< (:status response) 400) (build-routes-handler response))
+            json-roa-data (select-keys (if json-roa-handler
+                                         (json-roa-handler request)
+                                         {:relations {:root (links/root (:context request))}})
+                                       [:self-relation :relations :collection :name])
             amended-json-roa-data (amend-json-roa request json-roa-data)]
         (update-in response
                    [:body]
