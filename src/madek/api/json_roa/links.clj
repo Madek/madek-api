@@ -197,13 +197,13 @@
 
 ;### media-file(s) #############################################################
 
-(defn media-file
+(defn media-entry-media-files
   ([prefix]
-   (media-file prefix "{id}"))
+   (media-entry-media-files prefix "{id}"))
   ([prefix id]
-   {:name "Media-File"
-    :href (str prefix "/media-files/" id)
-    :relations {} }))
+   {:name "Media-Files"
+    :href (str prefix "/media-entries/" id "/media-files/")
+    :relations {}}))
 
 (defn media-file-data-stream
   ([prefix]

@@ -46,7 +46,7 @@
      :relations (merge {:root (links/root context)
                         :meta-data (links/media-entry-meta-data context media-entry-id)}
                        (if-let [media-file-id (get-first-media-file-id media-entry-id)]
-                         {:media-file (links/media-file context media-file-id) } {})
+                         {:media-files (links/media-entry-media-files context media-entry-id) } {})
                        )}))
 
 ;### Debug ####################################################################

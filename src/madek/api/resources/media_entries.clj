@@ -9,6 +9,7 @@
     [madek.api.pagination :as pagination]
     [madek.api.resources.media-entries.index :refer [get-index]]
     [madek.api.resources.media-entries.media-entry :refer [get-media-entry]]
+    [madek.api.resources.media-files.index :as media-files-index :only [get-index]]
     [madek.api.resources.shared :as shared]
     ))
 
@@ -17,6 +18,7 @@
   (cpj/routes
     (cpj/GET "/media-entries/" _ get-index)
     (cpj/GET "/media-entries/:id" _ get-media-entry)
+    (cpj/GET "/media-entries/:media_entry_id/media-files/" _ media-files-index/get-index)
     (cpj/ANY "*" _ shared/dead-end-handler)
     ))
 
