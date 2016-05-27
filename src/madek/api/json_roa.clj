@@ -49,6 +49,7 @@
     (cpj/GET "/licenses/:id" request (licenses/license request json-response))
     (cpj/GET "/media-entries/" request (media-entries/index request json-response))
     (cpj/GET "/media-entries/:id" request (media-entries/media-entry request json-response))
+    (cpj/GET "/media-entries/:media_entry_id/media-files/" request (media-files/index request json-response))
     (cpj/GET "/:media_resource_type/:id/meta-data/" request (meta-data/index request json-response))
     (cpj/GET "/media-files/:id" request (media-files/media-file request json-response))
     (cpj/GET "/meta-data/:id" request (meta-data/meta-datum request json-response))

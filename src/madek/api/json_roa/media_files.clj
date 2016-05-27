@@ -13,6 +13,34 @@
                         (links/preview context (:id %)))
              (-> response :body :previews))))
 
+(defn index [request response]
+  (logging/debug request)
+  (let [context (:context request)
+        media-entry-id (-> request :params :media_entry_id)
+        query-params (:query-params request)]
+    (logging/debug media-entry-id)
+    (let [ids (->> response :body :media-files (map :id))]
+      {:name "Media-Files"
+       :self-relation (links/media-entry-media-files context media-entry-id)
+       :collection {:relations
+                    (into {} (map-indexed
+                               (fn [i id]
+                                 [(+ 1 i (pagination/compute-offset query-params))
+                                  (links/media-file context id)])
+                               ids))}
+       :relations {:root (links/root context)
+                   :media-entry (links/media-entry context media-entry-id)}
+       ; (conj
+       ;   {:relations
+       ;    (into {} (map-indexed
+       ;               (fn [i id]
+       ;                 [(+ 1 i (pagination/compute-offset query-params))
+       ;                  (links/media-file context id)])
+       ;               ids))}
+       ;   (when (seq ids)
+       ;     (links/next-link links/media-files-path context query-params)))
+       })))
+
 (defn media-file [request response]
   (let [context (:context request)
         params (:params request)]
