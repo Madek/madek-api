@@ -22,23 +22,17 @@
     (let [ids (->> response :body :media-files (map :id))]
       {:name "Media-Files"
        :self-relation (links/media-entry-media-files context media-entry-id)
-       :collection {:relations
-                    (into {} (map-indexed
-                               (fn [i id]
-                                 [(+ 1 i (pagination/compute-offset query-params))
-                                  (links/media-file context id)])
-                               ids))}
+       :collection
+       (conj {:relations
+              (into {} (map-indexed
+                         (fn [i id]
+                           [(+ 1 i (pagination/compute-offset query-params))
+                            (links/media-file context id)])
+                         ids))}
+             (when (seq ids)
+               (links/next-link links/media-entry-media-files-path context query-params)))
        :relations {:root (links/root context)
                    :media-entry (links/media-entry context media-entry-id)}
-       ; (conj
-       ;   {:relations
-       ;    (into {} (map-indexed
-       ;               (fn [i id]
-       ;                 [(+ 1 i (pagination/compute-offset query-params))
-       ;                  (links/media-file context id)])
-       ;               ids))}
-       ;   (when (seq ids)
-       ;     (links/next-link links/media-files-path context query-params)))
        })))
 
 (defn media-file [request response]

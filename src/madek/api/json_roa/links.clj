@@ -205,13 +205,25 @@
     :href (str prefix "/media-files/" id)
     :relations {} }))
 
+(defn- media-entry-media-files-path-base [prefix id]
+  (str prefix "/media-entries/" id "/media-files/"))
+
 (defn media-entry-media-files
   ([prefix]
    (media-entry-media-files prefix "{id}"))
   ([prefix id]
    {:name "Media-Files"
-    :href (str prefix "/media-entries/" id "/media-files/")
+    :href (media-entry-media-files-path-base prefix id)
     :relations {}}))
+
+(defn media-entry-media-files-path
+  ([prefix id]
+   (media-entry-media-files-path prefix id {}))
+  ([prefix id query-params]
+   (str (media-entry-media-files-path-base prefix id)
+        (if-not (empty? query-params)
+          (str "?"
+               (http-client/generate-query-string query-params))))))
 
 (defn media-file-data-stream
   ([prefix]
