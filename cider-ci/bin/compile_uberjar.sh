@@ -3,7 +3,11 @@ set -eux
 export JAVA_HOME=${OPENJDK8_HOME}
 export PATH=${JAVA_HOME}/bin:${PATH}
 rm -rf target
-DIGEST=$(git log -n 1 HEAD --pretty=%T)
+
+DIGEST=$(git ls-tree HEAD --\
+  cider-ci.yml cider-ci Gemfile.lock src project.clj\
+  | openssl dgst -sha1 | cut -d ' ' -f 2)
+
 LEIN_UBERJAR_FILE="/tmp/madek_api_${DIGEST}.jar"
 if [ -f "${LEIN_UBERJAR_FILE}" ];then
   echo "${LEIN_UBERJAR_FILE} exists"

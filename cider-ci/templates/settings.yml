@@ -2,8 +2,15 @@ default_storage_dir: {{CIDER_CI_WORKING_DIR}}/tmp/storage
 
 madek_master_secret: secret
 madek_session_cookie_name: madek-session
+
 database:
-  url: "{{API_DATABASE_URL}}"
+  adapter: "postgresql"
+  classname: "org.postgresl.Driver"
+  subname: '//localhost:REPLACE_WITH_PGPORT/{{DATABASE}}'
+  subprotocol: "postgresql"
+  user: REPLACE_WITH_PGUSER
+  password: REPLACE_WITH_PGPASSWORD
+  max_pool_size: 3
 
 services:
 

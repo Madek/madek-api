@@ -1,0 +1,57 @@
+task_defaults:
+
+  environment_variables:
+    RUBY_ENGINE: ruby
+    RUBY_VERSION: 2.2.4
+    RUBY: '{{RUBY_ENGINE}}-{{RUBY_VERSION}}'
+    WORKING_DIR: '{{CIDER_CI_WORKING_DIR}}/docs_source'
+
+  git_options:
+    submodules:
+      include_match: .*docs.*|datalayer
+
+  scripts:
+
+    env:
+      body: env | sort
+
+
+    bundle:
+      exclusive_executor_resource: ruby-install_{{$RUBY}}
+      timeout: 20 Minutes
+      body: |
+        #!/usr/bin/env bash
+        set -eux
+        export PATH=~/.rubies/$RUBY/bin:$PATH
+
+        cd ${WORKING_DIR}
+
+        rm -f .bundle/config
+
+        if [ ! -d ~/.rubies/$RUBY ]; then
+          ruby-install --no-install-deps $RUBY_ENGINE $RUBY_VERSION
+        fi
+
+        if [ ! -f ~/.rubies/$RUBY/bin/bundle ]; then
+          gem install bundler
+        fi
+
+        bundle install
+
+
+tasks:
+  docs:
+    name: Docs are up to date
+    scripts:
+      test:
+        start_when:
+          bundled:
+            script_key: bundle
+        body: |
+          #!/usr/bin/env bash
+          set -eux
+          export PATH=~/.rubies/$RUBY/bin:$PATH
+          cd ${WORKING_DIR}
+          bundle exec middleman build
+          cd ../docs
+          git diff --exit-code --ignore-all-space

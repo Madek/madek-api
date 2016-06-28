@@ -1,1 +1,11 @@
-{{RAILS_ENV}}: "{{API_DATABASE_URL}}"
+{{RAILS_ENV}}:
+  adapter: postgresql
+  host: localhost
+  port: REPLACE_WITH_PGPORT
+  pool: 3
+  encoding: unicode
+  username: REPLACE_WITH_PGUSER
+  password: REPLACE_WITH_PGPASSWORD
+  database: {{DATABASE}}
+
+

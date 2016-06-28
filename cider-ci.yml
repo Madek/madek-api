@@ -1,47 +1,52 @@
 jobs:
 
   all-tests:
-    run-on:
-    - type: branch
-      include-match: ^.*$
     name: All Tests
-    depends-on:
-    - type: job
-      job: docs
-      states: [passed]
-    - type: job
-      job: specs
-      states: [passed]
-    - type: job
-      job: tests
-      states: [passed]
-      submodule: ['docs_source']
+    description: |
+      This job depends on all other tests and checks
+      and it will pass if and only if all dependencies have passed.
+    priority: 999 # "empty" job = high priority
+    depends_on:
+      rspec tests: { type: job, job_key: rspec-tests, states: [passed]}
+      all-tests of the datalayer: {job_key: all-tests, type: job, submodule: [datalayer], states: [passed]}
+    run_when: &DEFAULT_TRIGGERS
+      any branch matches:
+        type: branch
+        include_match: ^.+$
+    context:
+      task: "echo '✔︎ All dependencies have passed' ; exit 0"
 
-    task: echo 'Yay, all dependencies have passed!'
+  rspec-tests:
+    name: "RSpec Tests"
+    run_when: *DEFAULT_TRIGGERS
+    context:
+      include: cider-ci/rspec-tests.yml
 
-  docs:
-    name: Docs
-    run-on:
-    - type: branch
-      include-match: ^.*$
-    _cider-ci_include: cider-ci/jobs/docs.yml
-    traits: [bash, ruby, git]
-    git-options:
-      submodules:
-        clone: True
-        timeout: 60
-    task: |
-      set -eux
+  meta-checks:
+    name: Meta
+    description: |
+      Tasks that rely on external (out-of-repository) state.
+      Their state is not as fixed as in the other Jobs, so it might change over time.
+    priority: 3 # "I don't always run this, but when I do, it should be fast"
+    run_when: *DEFAULT_TRIGGERS
+    context:
+      include:
+        - path: cider-ci/contexts/meta-checks.yml
+          submodule: [datalayer]
+      task_defaults:
+        environment_variables:
+          GIT_LINEAR_HISTORY_CHECK_START_SHA: d9b3e6a1d0397d7294e85a4a189d86aa843f1dfc
 
-
-  specs:
-    name: Specs
-    run-on:
-    - type: branch
-      include-match: ^.*$
-    depends-on:
-    - type: job
-      job: tests
-      submodule: ['datalayer']
-      states: [passed]
-    _cider-ci_include: cider-ci/jobs/specs.yml
+  good-to-merge:
+    name: "Good To Merge"
+    description: |
+      This job depends on all jobs that need to pass for "Delivery".
+      It is depended upon by GitHub's branch protection (for `master`)!
+    priority: 999 # "empty" job = high priority
+    context:
+      task: "echo '✔︎ All dependencies have passed' ; exit 0"
+    run_when: *DEFAULT_TRIGGERS
+    depends_on:
+      all-tests: {job_key: all-tests, type: job, states: [passed]}
+      meta-checks: {job_key: meta-checks, type: job, states: [passed]}
+      good to merge of the datalayer: {job_key: good-to-merge, type: job, submodule: [datalayer], states: [passed]}
