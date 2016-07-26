@@ -167,7 +167,9 @@
                              3100))]
       (reset! server
               (jetty/run-jetty (build-site)
-                               {:port port :join? false})))))
+                               {:port port
+                                :host "localhost"
+                                :join? false})))))
 
 (defn initialize []
   (let [http-conf (-> (get-config) :services :api :http)
