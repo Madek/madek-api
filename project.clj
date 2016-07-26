@@ -4,7 +4,8 @@
   :license {:name "GNU GENERAL PUBLIC LICENSE, Version 3"
             :url "https://gnu.org/licenses/gpl-3.0.txt"}
   :dependencies [
-                 [cider-ci/clj-utils "8.3.0"]
+                 [cider-ci/clj-utils "8.3.0" :exclusions [danlentz/clj-uuid]]
+                 [drtom/clj-uuid  "0.1.7"]
                  [cider-ci/open-session "1.2.0"]
                  [json-roa/clj-utils "1.0.0"]
                  [logbug "4.0.0"]
