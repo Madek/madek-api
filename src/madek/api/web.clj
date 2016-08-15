@@ -1,5 +1,14 @@
 (ns madek.api.web
   (:require
+    [madek.api.authentication :as authentication]
+    [madek.api.json-protocol]
+    [madek.api.json-roa]
+    [madek.api.management :as management]
+    [madek.api.resources]
+    [madek.api.semver :as semver]
+    [madek.api.web.browser :as web.browser]
+
+
     [cider-ci.open-session.cors :as cors]
     [cider-ci.utils.config :refer [get-config]]
     [cider-ci.utils.http-server :as http-server]
@@ -13,22 +22,15 @@
     [environ.core :refer [env]]
     [json-roa.ring-middleware.request :as json-roa_request]
     [json-roa.ring-middleware.response :as json-roa_response]
-    [logbug.thrown :as thrown]
-    [madek.api.authentication :as authentication]
-    [madek.api.json-protocol]
-    [madek.api.json-roa]
-    [madek.api.management :as management]
-    [madek.api.resources]
-    [madek.api.semver :as semver]
     [ring.adapter.jetty :as jetty]
     [ring.middleware.json]
-    [ring.middleware.resource :as resource]
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug :refer [I> I>>]]
     [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
+    [logbug.thrown :as thrown]
     ))
 
 ;### helper ###################################################################
@@ -52,21 +54,6 @@
 (defn get-context []
   (or (env :api-context) "/api"))
 
-
-;### static resources #########################################################
-
-(defn static-resources-handler [request]
-  (let [context (:context request)
-        context-lenth (count context)
-        wo-prefix-request (assoc request
-                                 :uri (subs (:uri request) context-lenth))]
-    (logging/debug wo-prefix-request)
-    (resource/resource-request wo-prefix-request "")))
-
-(defn wrap-static-resources-dispatch [default-handler]
-  (cpj/routes
-    (cpj/GET "/browser*" request static-resources-handler)
-    (cpj/ANY "*" request default-handler)))
 
 
 ;### routes ###################################################################
@@ -137,7 +124,7 @@
       madek.api.resources/wrap-api-routes
       authentication/wrap
       management/wrap
-      wrap-static-resources-dispatch
+      web.browser/wrap
       wrap-public-routes
       wrap-keywordize-request
       (json-roa_request/wrap madek.api.json-roa/handler)
