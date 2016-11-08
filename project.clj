@@ -1,4 +1,4 @@
-(defproject madek-api "1.0.0-ALPHA.0"
+(defproject madek-api "1.0.0-PRE.0"
   :description "The Madek API providing JSON and JSON-ROA."
   :url "https://github.com/Madek/madek-api"
   :license {:name "GNU GENERAL PUBLIC LICENSE, Version 3"

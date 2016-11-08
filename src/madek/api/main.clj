@@ -1,23 +1,30 @@
 (ns madek.api.main
   (:gen-class)
   (:require
+    [madek.api.constants]
+    [madek.api.web]
+
     [cider-ci.utils.config :as config :refer [get-config]]
     [cider-ci.utils.rdbms :as rdbms]
-    [clj-logging-config.log4j :as logging-config]
+    [cider-ci.utils.nrepl :as nrepl]
+
     [clojure.java.jdbc :as jdbc]
+    [pg-types.all]
+
+    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
     [logbug.thrown]
-    [madek.api.constants]
-    [madek.api.web]
-    [pg-types.all]
     ))
 
 
 (defn -main []
   (logbug.thrown/reset-ns-filter-regex #".*madek.*")
-  (catcher/with-logging {}
+  (catcher/snatch
+    {:level :fatal
+     :throwable Throwable
+     :return-fn (fn [e] (System/exit -1))}
     (logging/info 'madek.api.main "initializing ...")
     (cider-ci.utils.config/initialize
       {:filenames ["./config/settings.yml"
@@ -25,6 +32,7 @@
                    "./config/settings.local.yml"
                    "../config/settings.local.yml"]})
     (rdbms/initialize (config/get-db-spec :api))
+    (nrepl/initialize (-> (get-config) :services :api :nrepl))
     (madek.api.web/initialize)
     (madek.api.constants/initialize (get-config))
     (logging/info 'madek.api.main "... initialized")))

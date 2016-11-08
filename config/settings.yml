@@ -21,5 +21,9 @@ services:
       sub_context: /api
       ssl: false
 
+    nrepl:
+      port: 7802
+      bind: "127.0.0.1"
+      enabled: false
 
 
