@@ -20,7 +20,7 @@
                          :first_name
                          :last_name
                          :pseudonym
-                         :is_bunch
+                         :subtype
                          :date_of_birth
                          :date_of_death])}))
 
