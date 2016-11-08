@@ -40,9 +40,10 @@
         (cpj/GET "/media-files/:media_file_id" _
                  #'media-file/get-media-file)
         (cpj/GET "/media-files/:media_file_id/data-stream" _
-                 #'media-file/get-media-file-data-stream)
+                 (media-files.authorization/wrap-authorize
+                   #'media-file/get-media-file-data-stream :get_full_size))
         (cpj/ANY "*" _ shared/dead-end-handler))
-      media-files.authorization/wrap-authorize
+      (media-files.authorization/wrap-authorize :get_metadata_and_previews)
       wrap-find-and-add-media-file))
 
 ;### Debug ####################################################################

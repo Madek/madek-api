@@ -11,20 +11,25 @@
     [madek.api.resources.shared :as shared]
     ))
 
-(defn wrap-authorize
-  ([handler] #(wrap-authorize % handler))
-  ([request handler]
-   (let [media-entry-id (get-in request [:media-file :media_entry_id])
-         media-entry (-> (jdbc/query (get-ds)
-                                     [(str "SELECT * FROM media_entries WHERE id = ?")
-                                      media-entry-id]) first)]
-     (if (:get_full_size media-entry)
-       (handler request)
-       (if-let [auth-entity (:authenticated-entity request)]
-         (if (me-permissions/downloadable-by-auth-entity? media-entry auth-entity)
-           (handler request)
-           {:status 403})
-         {:status 401})))))
+(defn- authorize [request handler scope]
+  (let [media-entry-id (get-in request [:media-file :media_entry_id])
+        media-entry (-> (jdbc/query (get-ds)
+                                    [(str "SELECT * FROM media_entries WHERE id = ?")
+                                     media-entry-id]) first)]
+    (if (:get_metadata_and_previews media-entry)
+      (handler request)
+      (if-let [auth-entity (:authenticated-entity request)]
+        (if (case scope
+              :get_metadata_and_previews (me-permissions/viewable-by-auth-entity?
+                                           media-entry auth-entity)
+              :get_full_size (me-permissions/downloadable-by-auth-entity?
+                               media-entry auth-entity))
+          (handler request)
+          {:status 403})
+        {:status 401}))))
+
+(defn wrap-authorize [handler scope]
+  (fn [request] (authorize request handler scope)))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

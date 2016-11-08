@@ -24,6 +24,7 @@ shared_context :auth_collection_resource_via_json_roa do
   end
 end
 
+
 shared_context :collection_resource_via_plain_json do
   let :response do
     plain_faraday_json_client.get("/api/collections/#{@collection.id}")

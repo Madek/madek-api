@@ -63,6 +63,7 @@ describe 'Getting a media-file resource with authentication' do
       @media_entry.user_permissions << \
         FactoryGirl.create(:media_entry_user_permission,
                            get_full_size: true,
+                           get_metadata_and_previews: true,
                            user: @entity)
     end
 
@@ -78,6 +79,7 @@ describe 'Getting a media-file resource with authentication' do
       @media_entry.group_permissions << \
         FactoryGirl.create(:media_entry_group_permission,
                            get_full_size: true,
+                           get_metadata_and_previews: true,
                            group: group)
     end
 
