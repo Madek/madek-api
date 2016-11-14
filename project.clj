@@ -8,7 +8,7 @@
                  [drtom/clj-uuid  "0.1.7"]
                  [cider-ci/open-session "1.2.0"]
                  [json-roa/clj-utils "1.0.0"]
-                 [logbug "4.0.0"]
+                 [logbug "4.2.2"]
                  [nimaai/honeysql "1.3.0-beta.4"]
 
                  [camel-snake-kebab "0.3.2"]
