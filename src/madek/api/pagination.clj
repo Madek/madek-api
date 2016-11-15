@@ -9,7 +9,7 @@
     [honeysql.sql :refer :all]
     ))
 
-(def LIMIT 10)
+(def LIMIT 100)
 
 (defn page-number [params]
   (or (-> params keywordize-keys :page)
