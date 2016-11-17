@@ -1,5 +1,6 @@
 require 'spec_helper'
 require Pathname(File.expand_path('..', __FILE__)).join('shared')
+require Pathname(File.expand_path('datalayer/spec/models/keyword/terms_for_sorting.rb'))
 
 describe 'generated runs' do
   (1..ROUNDS).each do |round|
@@ -64,6 +65,27 @@ describe 'generated runs' do
                       .to be == 200
                     expect(resource.relation('media-entry').get.response.status)
                       .to be == 200
+                  end
+                end
+
+                context 'sorting of keywords' do
+                  include_context :datalayer_terms_for_sorting
+
+                  let(:meta_datum_keywords) do
+                    meta_key = FactoryGirl.create(:meta_key_keywords,
+                                                  keywords_alphabetical_order: true)
+                    keywords = terms.reverse.map do |term|
+                      FactoryGirl.create(:keyword, term: term, meta_key: meta_key)
+                    end
+                    FactoryGirl.create(:meta_datum_keywords,
+                                       Hash[:keywords, keywords,
+                                            media_resource.model_name.singular, media_resource])
+                  end
+
+                  it 'the collection is sorted if meta_key.keywords_alphabetical_order true' do
+                    if response.status == 200 and value
+                      expect(value.map { |v| Keyword.find(v['id']).term }).to be == terms
+                    end
                   end
                 end
               end
