@@ -2,6 +2,7 @@
   (:require
     [madek.api.json-roa.auth-info :as auth-info]
     [madek.api.json-roa.collections :as collections]
+    [madek.api.json-roa.collection-media-entry-arcs.core :as collection-media-entry-arcs]
     [madek.api.json-roa.filter-sets :as filter-sets]
     [madek.api.json-roa.keywords :as keywords]
     [madek.api.json-roa.licenses :as licenses]
@@ -30,7 +31,6 @@
               {:ref "http://json-roa.github.io/"
                :name "JSON-ROA Homepage"}}})
 
-
 (defn amend-json-roa [request json-roa-data]
   (-> {}
       (assoc-in [:_json-roa] json-roa-data)
@@ -42,6 +42,10 @@
   (cpj/routes
     (cpj/GET "/" _ root/build)
     (cpj/GET "/auth-info" request (auth-info/auth-info request))
+    (cpj/GET "/collection-media-entry-arcs/" request
+             (collection-media-entry-arcs/index request json-response))
+    (cpj/GET "/collection-media-entry-arcs/:id" request
+             (collection-media-entry-arcs/item request json-response))
     (cpj/GET "/collections/" request (collections/index request json-response))
     (cpj/GET "/collections/:id" request (collections/collection request json-response))
     (cpj/GET "/filter-sets/" request (filter-sets/index request json-response))
@@ -58,7 +62,6 @@
     (cpj/GET "/previews/:id" request (previews/preview request json-response))
     (cpj/GET "/vocabularies/" request (vocabularies/index request json-response))
     (cpj/GET "/vocabularies/:id" request (vocabularies/vocabulary request json-response))))
-    
 
 (defn handler [request response]
   (let [body (:body response)]

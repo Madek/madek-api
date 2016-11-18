@@ -39,6 +39,8 @@
      {:root (links/root context)
       :meta-data (links/collection-meta-data context (:id params))
       :media-entries (links/media-entries context {:collection_id id})
+      :collection-media-entry-arcs (links/collection-media-entry-arcs
+                                     context {:collection_id id})
       :collections (links/collections context {:collection_id id})
       :filter-sets (links/filter-sets context {:collection_id id})}}))
 

@@ -5,7 +5,7 @@ describe 'Getting the children of a collection' do
     let :collection_with_children do
       collection = FactoryGirl.create(:collection,
                                       get_metadata_and_previews: true)
-      collection.media_entries << FactoryGirl.create(:media_entry)
+      collection.media_entries << (@me = FactoryGirl.create(:media_entry, get_metadata_and_previews: true))
       collection.collections << FactoryGirl.create(:collection)
       collection.filter_sets << FactoryGirl.create(:filter_set)
       collection
@@ -33,6 +33,27 @@ describe 'Getting the children of a collection' do
       expect(relation.response.status).to be == 200
       expect(relation.data['filter-sets'].length).to be == 1
     end
+
+    context 'collection-media-entry-arcs' do
+
+      it 'is accessible' do
+        relation = json_roa_keyword_resource.get.relation('collection-media-entry-arcs').get
+        expect(relation.response.status).to be == 200
+        expect(relation.data['collection-media-entry-arcs'].length).to be == 1
+      end
+
+      it 'links for a round trip "collection → arc → entry → arc → collection" ' \
+        ' can be traversed and retrieve the original collection' do
+        media_entry_resource = json_roa_keyword_resource.get.relation('collection-media-entry-arcs') \
+          .get.collection.first.get.relation('media-entry').get
+        collection_resource = media_entry_resource.relation('collection-media-entry-arcs') \
+          .get.collection.first.get.relation('collection').get
+        expect(@me[:id]).to be== media_entry_resource.data[:id]
+        expect(collection_with_children[:id]).to be== collection_resource.data[:id]
+      end
+
+    end
+
   end
 
   context 'no children' do

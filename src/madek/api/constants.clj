@@ -14,9 +14,11 @@
          FILE_STORAGE_DIR
          THUMBNAIL_STORAGE_DIR )
 
-
-(defn- presence [str]
-  (and (not (blank? str)) str))
+(defn presence [v]
+  "Returns nil if v is a blank string. Returns v otherwise."
+  (cond
+    (string? v) (if (clojure.string/blank? v) nil v)
+    :else v))
 
 (defn- madek-env []
   (or (presence (env :madek-env))

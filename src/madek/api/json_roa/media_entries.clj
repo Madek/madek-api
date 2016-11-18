@@ -6,6 +6,7 @@
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
     [madek.api.json-roa.links :as links]
+    [madek.api.json-roa.collection-media-entry-arcs.links :as collection-media-entry-arcs.links]
     [madek.api.pagination :as pagination]
     ))
 
@@ -44,7 +45,10 @@
     {:name "Media-Entry"
      :self-relation (links/media-entry context media-entry-id)
      :relations (merge {:root (links/root context)
-                        :meta-data (links/media-entry-meta-data context media-entry-id)}
+                        :meta-data (links/media-entry-meta-data context media-entry-id)
+                        :collection-media-entry-arcs
+                        (collection-media-entry-arcs.links/collection-media-entry-arcs
+                          context {:media_entry_id media-entry-id})}
                        (if-let [media-file-id (get-first-media-file-id media-entry-id)]
                          {:media-file (links/media-file context media-file-id) } {})
                        )}))

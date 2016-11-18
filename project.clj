@@ -9,7 +9,7 @@
                  [cider-ci/open-session "1.2.0"]
                  [json-roa/clj-utils "1.0.0"]
                  [logbug "4.2.2"]
-                 [nimaai/honeysql "1.3.0-beta.4"]
+                 [drtom/honeysql "2.0.0-ALPHA+1"]
 
                  [camel-snake-kebab "0.3.2"]
                  [cheshire "5.5.0"]

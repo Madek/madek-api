@@ -9,6 +9,7 @@
     [logbug.debug :as debug]
     [madek.api.authorization :refer [authorized?]]
     [madek.api.resources.auth-info :as auth-info]
+    [madek.api.resources.collection-media-entry-arcs :as collection-media-entry-arcs]
     [madek.api.resources.collections :as collections]
     [madek.api.resources.filter-sets :as filter-sets]
     [madek.api.resources.media-files :as media-files]
@@ -161,6 +162,7 @@
   (-> (cpj/routes
         (cpj/GET "/auth-info" _ auth-info/routes)
         (cpj/ANY "/:media_resource_type/:id/meta-data/" _ meta-data/routes)
+        (cpj/ANY "/collection-media-entry-arcs/*" _ collection-media-entry-arcs/routes)
         (cpj/ANY "/collections*" _ collections/routes)
         (cpj/ANY "/filter-sets*" _ filter-sets/routes)
         (cpj/ANY "/licenses/:license_id*" _ licenses/routes)

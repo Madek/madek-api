@@ -6,8 +6,7 @@
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [honeysql.sql :refer :all]
-    [honeysql.helpers :refer [modifiers] :rename {modifiers sql-modifiers}]
+    [honeysql.sql :refer :all :rename {modifiers sql-modifiers}]
     [madek.api.resources.meta-keys.meta-key :as meta-key])
   (:import
     [madek.api WebstackException]))

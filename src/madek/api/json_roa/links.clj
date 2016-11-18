@@ -1,9 +1,12 @@
 (ns madek.api.json-roa.links
   (:require
+    [madek.api.json-roa.collection-media-entry-arcs.links :as collection-media-entry-arcs.links]
+
     [uritemplate-clj.core :refer [uritemplate]]
     [clj-http.client :as http-client]
     [madek.api.pagination :as pagination]
     [ring.util.codec :refer [form-encode]]
+
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
@@ -140,6 +143,11 @@
                            :href "/api/docs/resources/collection.html#collection"
                            }}}))
 
+;### collection-media-entry­arcs ##################################################
+
+(defn collection-media-entry-arcs [& args]
+  (apply collection-media-entry-arcs.links/collection-media-entry-arcs args))
+
 ;### filter-sets ##################################################################
 
 (defn filter-sets-path-base
@@ -179,6 +187,10 @@
     :relations {:api-docs {:name "API-Doc FilterSet"
                            :href "/api/docs/resources/filter-set.html#filter-set"
                            }}}))
+
+
+;### collection-media-entry-arcs ##################################################
+
 
 ;###############################################################################
 

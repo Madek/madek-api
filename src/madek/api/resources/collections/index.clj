@@ -14,8 +14,7 @@
 
   (:import
     [madek.api WebstackException]
-    )
-  )
+    ))
 
 ;### collection_id ############################################################
 
