@@ -16,14 +16,14 @@
         media-entry (-> (jdbc/query (get-ds)
                                     [(str "SELECT * FROM media_entries WHERE id = ?")
                                      media-entry-id]) first)]
-    (if (:get_metadata_and_previews media-entry)
+    (if (get media-entry scope)
       (handler request)
       (if-let [auth-entity (:authenticated-entity request)]
         (if (case scope
-              :get_metadata_and_previews (me-permissions/viewable-by-auth-entity?
-                                           media-entry auth-entity)
               :get_full_size (me-permissions/downloadable-by-auth-entity?
-                               media-entry auth-entity))
+                               media-entry auth-entity)
+              :get_metadata_and_previews (me-permissions/viewable-by-auth-entity?
+                                           media-entry auth-entity))
           (handler request)
           {:status 403})
         {:status 401}))))
