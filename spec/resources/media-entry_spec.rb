@@ -4,8 +4,8 @@ require Pathname(File.expand_path('..', __FILE__)).join('media-entry', 'shared')
 
 shared_examples :check_data_includes_excatly_the_keys do |keys|
   it "the data includes exactly the keys #{keys}" do
-    expect(Set.new(data.keys.map(&:to_sym))).to \
-      be == Set.new(keys.map(&:to_sym))
+    expect(data.keys.map(&:to_sym).sort).to \
+      be == keys.map(&:to_sym).sort
   end
 end
 
@@ -30,7 +30,9 @@ shared_context :check_success_and_data_with_public_permission do
 
       include_examples :check_data_includes_excatly_the_keys,
                        [:created_at, :creator_id, :id,
-                        :is_published, :responsible_user_id].sort
+                        :is_published, :responsible_user_id,
+                        :updated_at, :edit_session_updated_at,
+                        :meta_data_updated_at]
     end
   end
 end
