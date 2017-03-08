@@ -1,6 +1,6 @@
 require 'spec_helper'
 require Pathname(File.expand_path('..', __FILE__)).join('shared')
-require Pathname(File.expand_path('datalayer/spec/models/keyword/terms_for_sorting.rb'))
+require Pathname(File.expand_path('datalayer/spec/models/keyword/terms_for_sorting_shared_context.rb'))
 
 describe 'generated runs' do
   (1..ROUNDS).each do |round|

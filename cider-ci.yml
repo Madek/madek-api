@@ -1,52 +1,81 @@
 jobs:
 
-  all-tests:
-    name: All Tests
-    description: |
-      This job depends on all other tests and checks
-      and it will pass if and only if all dependencies have passed.
-    priority: 999 # "empty" job = high priority
-    depends_on:
-      rspec tests: { type: job, job_key: rspec-tests, states: [passed]}
-      all-tests of the datalayer: {job_key: all-tests, type: job, submodule: [datalayer], states: [passed]}
+  rspec-tests:
+    name: "RSpec Tests"
     run_when: &DEFAULT_TRIGGERS
       any branch matches:
         type: branch
         include_match: ^.+$
     context:
-      task: "echo '✔︎ All dependencies have passed' ; exit 0"
-
-  rspec-tests:
-    name: "RSpec Tests"
-    run_when: *DEFAULT_TRIGGERS
-    context:
       include: cider-ci/rspec-tests.yml
 
-  meta-checks:
-    name: Meta
+  all-tests:
+    name: All Tests
     description: |
-      Tasks that rely on external (out-of-repository) state.
-      Their state is not as fixed as in the other Jobs, so it might change over time.
-    priority: 3 # "I don't always run this, but when I do, it should be fast"
+      This job depends on all unit jobs that need to pass.
+      It is depended upon by the super-project!
+      *Note that there still be more requirements for actually pushing to `origin`,
+      look in job **"Good to Merge"**!*
+    priority: 999 # "empty" job = high priority
+    run_when: *DEFAULT_TRIGGERS
+    depends_on:
+      rspec tests: { type: job, job_key: rspec-tests, states: [passed]}
+      all-tests of the datalayer: {job_key: all-tests, type: job, submodule: [datalayer], states: [passed]}
+    context:
+      task: "echo '✔︎ All dependencies have passed' ; exit 0"
+
+  lint:
+    name: "Linting"
+    description: |
+      Code checks: static checks and metrics: complexity, duplication, and format,
+      also other consistency checks.
+    priority: 3
     run_when: *DEFAULT_TRIGGERS
     context:
-      include:
-        - path: cider-ci/contexts/meta-checks.yml
-          submodule: [datalayer]
       task_defaults:
         environment_variables:
           GIT_LINEAR_HISTORY_CHECK_START_SHA: d9b3e6a1d0397d7294e85a4a189d86aa843f1dfc
+      contexts:
+        include:
+          - path: cider-ci/context-components/lint/git-lint.yml
+            submodule: [datalayer]
+          - path: cider-ci/context-components/lint/rspec-lint.yml
+            submodule: [datalayer]
 
-  good-to-merge:
-    name: "Good To Merge"
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# META JOBS (only depend on other jobs)                                           #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+  all-tests:
+    name: "All tests"
     description: |
-      This job depends on all jobs that need to pass for "Delivery".
-      It is depended upon by GitHub's branch protection (for `master`)!
+      This job depends on all unit jobs that need to pass.
+      It is depended upon by the super-project!
+      *Note that there still be more requirements for actually pushing to `origin`,
+      look in job **"Good to Merge"**!*
     priority: 999 # "empty" job = high priority
     context:
       task: "echo '✔︎ All dependencies have passed' ; exit 0"
     run_when: *DEFAULT_TRIGGERS
     depends_on:
+      lint: {job_key: lint, type: job, states: [passed]}
+      rspec-tests: {job_key: rspec-tests, type: job, states: [passed]}
+      all-tests of the datalayer: {job_key: all-tests, type: job, submodule: [datalayer], states: [passed]}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# GITHUB BRANCH PROTECTION                                                        #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+  good-to-merge:
+    name: "⚑ Good To Merge"
+    description: |
+      This job depends on all jobs that need to pass for "Delivery".
+      It is depended upon by GitHub's branch protection (for `master`)!
+    priority: 999 # "delivery" job = high priority
+    context:
+      include:
+        - path: cider-ci/context-components/merge-checks.yml
+          submodule: [datalayer]
+    depends_on:
       all-tests: {job_key: all-tests, type: job, states: [passed]}
-      meta-checks: {job_key: meta-checks, type: job, states: [passed]}
       good to merge of the datalayer: {job_key: good-to-merge, type: job, submodule: [datalayer], states: [passed]}

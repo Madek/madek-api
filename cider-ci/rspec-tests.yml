@@ -6,8 +6,8 @@ task_defaults:
   max_trials: 1
 
   include:
-    - cider-ci/task_components/database.yml
-    - path: cider-ci/task_components/bundle.yml
+    - cider-ci/task-components/database.yml
+    - path: cider-ci/task-components/bundle.yml
       submodule: [datalayer]
 
 
@@ -124,4 +124,3 @@ task_defaults:
       body: |
         curl -X POST --silent --fail --user x:secret -I  \
           http://localhost:${API_HTTP_PORT}/api/management/shutdown
-
