@@ -4,7 +4,6 @@
     [madek.api.resources.shared :as shared]
     [madek.api.resources.keywords.index :as keywords]
     [madek.api.resources.people.index :as people]
-    [madek.api.resources.licenses.index :as licenses]
 
     [madek.api.authorization :as authorization]
     [cider-ci.utils.rdbms :as rdbms :refer [get-ds]]
@@ -29,8 +28,8 @@
 
 ;### meta-datum ###############################################################
 
-; TODO people/get-index, keywords/get-index, licenses/get-index is very
-; un-intuitive;  it has nothing to do with HTTP get-index which it suggest; =>
+; TODO people/get-index, keywords/get-index is very un-intuitive,
+; it has nothing to do with HTTP get-index which it suggest; =>
 ; delete all those namespaces and move the stuff over here, somthing like (def
 ; people-with-ids [meta-datum] ...  and so on
 
@@ -44,7 +43,6 @@
                           ((case meta-datum-type
                              "MetaDatum::People" people/get-index
                              "MetaDatum::Keywords" keywords/get-index
-                             "MetaDatum::Licenses" licenses/get-index
                              "MetaDatum::Groups" groups-with-ids)
                            meta-datum))))}
          (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])

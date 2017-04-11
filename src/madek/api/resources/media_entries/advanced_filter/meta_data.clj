@@ -16,10 +16,7 @@
                                                   :match_column "searchable"}
                               "meta_data_keywords" {:table "keywords",
                                                     :resource "keyword",
-                                                    :match_column "term"}
-                              "meta_data_licenses" {:table "licenses",
-                                                    :resource "license",
-                                                    :match_column "label"}})
+                                                    :match_column "term"}})
 
 (defn- get-meta-datum-object-type [meta-datum-spec]
   (or (:type meta-datum-spec)
@@ -167,7 +164,6 @@
         related-meta-data-table (case meta-datum-object-type
                                   "MetaDatum::People" "meta_data_people"
                                   "MetaDatum::Keywords" "meta_data_keywords"
-                                  "MetaDatum::Licenses" "meta_data_licenses"
                                   nil)
         sqlmap-with-joined-meta-data (sql-merge-join-meta-data sqlmap
                                                                counter

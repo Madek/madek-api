@@ -5,7 +5,6 @@
     [madek.api.json-roa.collection-media-entry-arcs.core :as collection-media-entry-arcs]
     [madek.api.json-roa.filter-sets :as filter-sets]
     [madek.api.json-roa.keywords :as keywords]
-    [madek.api.json-roa.licenses :as licenses]
     [madek.api.json-roa.media-entries :as media-entries]
     [madek.api.json-roa.media-files :as media-files]
     [madek.api.json-roa.meta-data :as meta-data]
@@ -50,7 +49,6 @@
     (cpj/GET "/collections/:id" request (collections/collection request json-response))
     (cpj/GET "/filter-sets/" request (filter-sets/index request json-response))
     (cpj/GET "/keywords/:id" request (keywords/keyword-term request json-response))
-    (cpj/GET "/licenses/:id" request (licenses/license request json-response))
     (cpj/GET "/media-entries/" request (media-entries/index request json-response))
     (cpj/GET "/media-entries/:id" request (media-entries/media-entry request json-response))
     (cpj/GET "/:media_resource_type/:id/meta-data/" request (meta-data/index request json-response))

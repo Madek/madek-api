@@ -48,8 +48,7 @@
               (into {}
                     (map #(hash-map % ((case meta-datum-type
                                          "MetaDatum::People" links/person
-                                         "MetaDatum::Keywords" links/keyword-term
-                                         "MetaDatum::Licenses" links/license)
+                                         "MetaDatum::Keywords" links/keyword-term)
                                        context %))
                          (map :id (-> response :body :value))))}}))))
 
@@ -57,4 +56,3 @@
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
-

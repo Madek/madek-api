@@ -299,17 +299,6 @@
     :relations {} }))
 
 
-;### license(s) ################################################################
-
-(defn license
-  ([prefix]
-   (license prefix "{id}"))
-  ([prefix id]
-   {:name "License"
-    :href (str prefix "/licenses/" id)
-    :relations {} }))
-
-
 ;### vocabulary(s) ###############################################################
 
 (defn vocabulary
