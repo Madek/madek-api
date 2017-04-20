@@ -9,21 +9,6 @@ jobs:
     context:
       include: cider-ci/rspec-tests.yml
 
-  all-tests:
-    name: All Tests
-    description: |
-      This job depends on all unit jobs that need to pass.
-      It is depended upon by the super-project!
-      *Note that there still be more requirements for actually pushing to `origin`,
-      look in job **"Good to Merge"**!*
-    priority: 999 # "empty" job = high priority
-    run_when: *DEFAULT_TRIGGERS
-    depends_on:
-      rspec tests: { type: job, job_key: rspec-tests, states: [passed]}
-      all-tests of the datalayer: {job_key: all-tests, type: job, submodule: [datalayer], states: [passed]}
-    context:
-      task: "echo '✔︎ All dependencies have passed' ; exit 0"
-
   lint:
     name: "Linting"
     description: |
@@ -47,20 +32,19 @@ jobs:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
   all-tests:
-    name: "All tests"
+    name: All Tests
     description: |
       This job depends on all unit jobs that need to pass.
       It is depended upon by the super-project!
       *Note that there still be more requirements for actually pushing to `origin`,
       look in job **"Good to Merge"**!*
     priority: 999 # "empty" job = high priority
+    depends_on: &ALL_TEST_DEPENDS
+      rspec tests: { type: job, job_key: rspec-tests, states: [passed]}
+      all-tests of the datalayer: {job_key: all-tests, type: job, submodule: [datalayer], states: [passed]}
+    run_when: *ALL_TEST_DEPENDS
     context:
       task: "echo '✔︎ All dependencies have passed' ; exit 0"
-    run_when: *DEFAULT_TRIGGERS
-    depends_on:
-      lint: {job_key: lint, type: job, states: [passed]}
-      rspec-tests: {job_key: rspec-tests, type: job, states: [passed]}
-      all-tests of the datalayer: {job_key: all-tests, type: job, submodule: [datalayer], states: [passed]}
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # GITHUB BRANCH PROTECTION                                                        #
