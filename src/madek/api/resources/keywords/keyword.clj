@@ -19,6 +19,9 @@
                         [:id
                          :meta_key_id
                          :term
+                         :description
+                         :external_uri
+                         :rdf_class
                          :creator_id
                          :created_at])}))
 
