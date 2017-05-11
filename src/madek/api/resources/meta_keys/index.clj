@@ -1,6 +1,6 @@
 (ns madek.api.resources.meta-keys.index
   (:require
-    [cider-ci.utils.rdbms :as rdbms]
+    [madek.api.utils.rdbms :as rdbms]
     [clojure.java.jdbc :as jdbc]
     [honeysql.sql :refer :all]
     [logbug.catcher :as catcher]

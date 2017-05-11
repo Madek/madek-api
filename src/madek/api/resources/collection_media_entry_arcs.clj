@@ -3,7 +3,7 @@
     [madek.api.constants :refer [presence]]
     [madek.api.pagination :as pagination]
 
-    [cider-ci.utils.rdbms :as rdbms]
+    [madek.api.utils.rdbms :as rdbms]
     [clojure.java.jdbc :as jdbc]
     [compojure.core :as cpj]
     [honeysql.core :as sql]

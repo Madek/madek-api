@@ -2,7 +2,7 @@
   (:require
     [camel-snake-kebab.core :refer :all]
     [cider-ci.open-session.bcrypt :refer [checkpw]]
-    [cider-ci.utils.rdbms :as rdbms]
+    [madek.api.utils.rdbms :as rdbms]
     [clj-logging-config.log4j :as logging-config]
     [clojure.data.codec.base64 :as base64]
     [clojure.java.jdbc :as jdbc]

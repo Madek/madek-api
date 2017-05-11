@@ -2,8 +2,8 @@
   (:require
     [cider-ci.open-session.encryptor :refer [decrypt]]
     [cider-ci.open-session.signature :refer [valid?]]
-    [cider-ci.utils.config :refer [get-config parse-config-duration-to-seconds]]
-    [cider-ci.utils.rdbms :as rdbms]
+    [madek.api.utils.config :refer [get-config parse-config-duration-to-seconds]]
+    [madek.api.utils.rdbms :as rdbms]
     [clj-time.core :as time]
     [clj-time.format :as time-format]
     [clojure.java.jdbc :as jdbc]

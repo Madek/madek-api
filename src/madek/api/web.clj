@@ -10,9 +10,9 @@
 
 
     [cider-ci.open-session.cors :as cors]
-    [cider-ci.utils.config :refer [get-config]]
-    [cider-ci.utils.http-server :as http-server]
-    [cider-ci.utils.status :as status]
+    [madek.api.utils.config :refer [get-config]]
+    [madek.api.utils.http-server :as http-server]
+    [madek.api.utils.status :as status]
     [clojure.data.json :as json]
     [clojure.java.io :as io]
     [clojure.walk :refer [keywordize-keys]]

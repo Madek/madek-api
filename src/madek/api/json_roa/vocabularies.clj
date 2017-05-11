@@ -1,6 +1,6 @@
 (ns madek.api.json-roa.vocabularies
   (:require
-    [cider-ci.utils.rdbms :as rdbms]
+    [madek.api.utils.rdbms :as rdbms]
     [clojure.java.jdbc :as jdbc]
     [madek.api.json-roa.links :as links]
     [madek.api.pagination :as pagination]

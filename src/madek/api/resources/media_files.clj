@@ -1,6 +1,6 @@
 (ns madek.api.resources.media-files
   (:require
-    [cider-ci.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [clojure.java.jdbc :as jdbc]
     [compojure.core :as cpj]
     [madek.api.resources.media-files.authorization :as media-files.authorization]

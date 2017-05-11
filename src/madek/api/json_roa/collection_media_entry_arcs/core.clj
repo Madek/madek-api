@@ -1,6 +1,6 @@
 (ns madek.api.json-roa.collection-media-entry-arcs.core
   (:require
-    [cider-ci.utils.rdbms :as rdbms]
+    [madek.api.utils.rdbms :as rdbms]
     [clojure.java.jdbc :as jdbc]
     [madek.api.json-roa.links :as json-roa.links]
     [madek.api.json-roa.collection-media-entry-arcs.links :as links]

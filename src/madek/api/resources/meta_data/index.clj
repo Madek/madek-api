@@ -4,7 +4,7 @@
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
 
-    [cider-ci.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [clojure.java.jdbc :as jdbc]
     [compojure.core :as cpj]
     [honeysql.sql :refer :all]

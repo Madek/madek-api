@@ -1,6 +1,6 @@
 (ns madek.api.resources.vocabularies.index
   (:require
-    [cider-ci.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [clojure.java.jdbc :as jdbc]
     [honeysql.sql :refer :all]
 

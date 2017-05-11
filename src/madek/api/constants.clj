@@ -1,6 +1,6 @@
 (ns madek.api.constants
   (:require
-    [cider-ci.utils.config :as config :refer [get-config]]
+    [madek.api.utils.config :as config :refer [get-config]]
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [environ.core :refer [env]]

@@ -4,9 +4,9 @@
     [madek.api.constants]
     [madek.api.web]
 
-    [cider-ci.utils.config :as config :refer [get-config]]
-    [cider-ci.utils.rdbms :as rdbms]
-    [cider-ci.utils.nrepl :as nrepl]
+    [madek.api.utils.config :as config :refer [get-config]]
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.nrepl :as nrepl]
 
     [clojure.java.jdbc :as jdbc]
     [pg-types.all]
@@ -26,7 +26,7 @@
      :throwable Throwable
      :return-fn (fn [e] (System/exit -1))}
     (logging/info 'madek.api.main "initializing ...")
-    (cider-ci.utils.config/initialize
+    (madek.api.utils.config/initialize
       {:filenames ["./config/settings.yml"
                    "../config/settings.yml"
                    "./config/settings.local.yml"
@@ -45,4 +45,4 @@
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
-;(debug/debug-ns 'cider-ci.utils.rdbms)
+;(debug/debug-ns 'madek.api.utils.rdbms)

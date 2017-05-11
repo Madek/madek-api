@@ -1,7 +1,7 @@
 (ns madek.api.management
   (:require
-    [cider-ci.utils.config :as config :refer [get-config]]
-    [cider-ci.utils.rdbms :as rdbms]
+    [madek.api.utils.config :as config :refer [get-config]]
+    [madek.api.utils.rdbms :as rdbms]
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]

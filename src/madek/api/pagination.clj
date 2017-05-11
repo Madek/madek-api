@@ -1,6 +1,6 @@
 (ns madek.api.pagination
   (:require
-    [cider-ci.utils.rdbms :as rdbms]
+    [madek.api.utils.rdbms :as rdbms]
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [clojure.walk :refer [keywordize-keys]]
