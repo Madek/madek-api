@@ -1,1 +1,0 @@
-test: <%= Settings.database.to_h.to_json %>

@@ -11,3 +11,4 @@
 /tmp
 pom.xml
 pom.xml.asc
+spec/config/database.yml
