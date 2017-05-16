@@ -29,11 +29,12 @@
                        [:revoked :token_revoked]
                        [:description :token_description])
            (sql/from :api_tokens)
-           (sql/merge-where [:in :api_tokens.id
+           (sql/merge-where [:in :api_tokens.token_hash
                              (->> secrets
                                   (filter identity)
                                   (map hash-string))])
-           ;(sql/merge-where [:<> :api_tokens.revoked true])
+           (sql/merge-where [:<> :api_tokens.revoked true])
+           (sql/merge-where (sql/raw "now() < api_tokens.expires_at"))
            (sql/merge-join :users [:= :users.id :api_tokens.user_id])
            (sql/format))
        (jdbc/query (rdbms/get-ds))

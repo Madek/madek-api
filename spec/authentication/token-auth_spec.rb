@@ -28,22 +28,81 @@ describe 'API-Token Authentication' do
     resource.response
   end
 
-  context 'revoked token ' do
+  context 'revoking the token ' do
+
+    context 'initially unrevoked token ' do
+      let :token do
+        ApiToken.create user: user, scope_read: true,
+          scope_write: true
+      end
+
+      context 'used in basic auth' do
+        let :client do
+          json_roa_client do |conn|
+            conn.basic_auth(token.token, nil)
+          end
+        end
+        it 'accessing auth-info results in 200' do
+          expect(auth_info.response.status).to be == 200
+        end
+      end
+
+      context 'after revoking token ' do
+
+        before :each do
+          token.update_attributes! revoked: true
+        end
+
+        context 'used in basic auth' do
+          let :client do
+            json_roa_client do |conn|
+              conn.basic_auth(token.token, nil)
+            end
+          end
+          it 'accessing auth-info results in 401' do
+            expect(auth_info.response.status).to be == 401
+          end
+        end
+
+      end
+
+    end
+
+  end
+
+  context 'prolonging an expired token ' do
     let :token do
       ApiToken.create user: user, scope_read: true,
-                      scope_write: true, revoked: true
+        scope_write: true, expires_at: (Time.zone.now - 1.day)
     end
 
     context 'used in basic auth' do
       let :client do
         json_roa_client do |conn|
-          conn.basic_auth(token.secret, nil)
+          conn.basic_auth(token.token, nil)
         end
       end
-      it 'accessin auth-info results in 401' do
+      it 'accessing auth-info results in 401' do
         expect(auth_info.response.status).to be == 401
       end
     end
+
+    context 'after prolonging the token' do
+      before :each do
+        token.update_attributes! expires_at: (Time.zone.now + 1.day)
+      end
+      context 'used in basic auth' do
+        let :client do
+          json_roa_client do |conn|
+            conn.basic_auth(token.token, nil)
+          end
+        end
+        it 'accessing auth-info results in 401' do
+          expect(auth_info.response.status).to be == 200
+        end
+      end
+    end
+
   end
 
   context 'read only token connection' do
@@ -54,7 +113,7 @@ describe 'API-Token Authentication' do
     context 'connection via token as basic auth user' do
       let :client do
         json_roa_client do |conn|
-          conn.basic_auth(token.secret, nil)
+          conn.basic_auth(token.token, nil)
         end
       end
       it 'enables to read the auth-info' do
@@ -65,7 +124,7 @@ describe 'API-Token Authentication' do
     context 'connection via token as password and some "nonsense" as username' do
       let :client do
         json_roa_client do |conn|
-          conn.basic_auth("nonsense", token.secret)
+          conn.basic_auth("nonsense", token.token)
         end
       end
       it 'enables to read the auth-info' do
@@ -76,8 +135,8 @@ describe 'API-Token Authentication' do
     context 'connection via token "Authorization: token TOKEN" header' do
       let :client do
         json_roa_client do |conn|
-          conn.basic_auth(token.secret, nil)
-          conn.headers['Authorization'] = "token #{token.secret}"
+          conn.basic_auth(token.token, nil)
+          conn.headers['Authorization'] = "token #{token.token}"
         end
       end
 
@@ -99,7 +158,7 @@ describe 'API-Token Authentication' do
     end
     let :client do
       json_roa_client do |conn|
-        conn.basic_auth(token.secret, nil)
+        conn.basic_auth(token.token, nil)
       end
     end
     it 'reading auth_info results in forbidden ' do
