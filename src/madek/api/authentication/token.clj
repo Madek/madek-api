@@ -38,6 +38,7 @@
            (sql/merge-join :users [:= :users.id :api_tokens.user_id])
            (sql/format))
        (jdbc/query (rdbms/get-ds))
+       (map #(clojure.set/rename-keys % {:email :email_address}))
        first))
 
 

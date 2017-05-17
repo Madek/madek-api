@@ -19,6 +19,7 @@
   (->> (jdbc/query (rdbms/get-ds)
                    [(str "SELECT * FROM " table-name " WHERE login = ?") login])
        (map #(assoc % :type (-> table-name ->PascalCase singular)))
+       (map #(clojure.set/rename-keys % {:email :email_address}))
        first))
 
 (defn get-entity-by-login [login]

@@ -10,7 +10,7 @@
 (defn- auth-info [request]
   (if-let [auth-entity (:authenticated-entity request)]
     {:body (merge {}
-                  (select-keys auth-entity [:type :id :login :created_at])
+                  (select-keys auth-entity [:type :id :login :created_at :email_address])
                   (select-keys request [:authentication-method :session-expiration-seconds]))}
     {:status 401}))
 
