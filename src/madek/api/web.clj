@@ -8,8 +8,6 @@
     [madek.api.semver :as semver]
     [madek.api.web.browser :as web.browser]
 
-
-    [cider-ci.open-session.cors :as cors]
     [madek.api.utils.config :refer [get-config]]
     [madek.api.utils.http-server :as http-server]
     [madek.api.utils.status :as status]
@@ -24,6 +22,7 @@
     [json-roa.ring-middleware.response :as json-roa_response]
     [ring.adapter.jetty :as jetty]
     [ring.middleware.json]
+    [ring.middleware.cors :as cors-middleware]
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
@@ -98,7 +97,7 @@
     ))
 
 
-;### warp json encoded query params ###########################################
+;### wrap json encoded query params ###########################################
 
 (defn try-as-json [value]
   (try (cheshire.core/parse-string value)
@@ -115,8 +114,17 @@
   (fn [request]
     (*wrap-parse-json-query-parameters request handler)))
 
-;##############################################################################
+;### wrap CORS ###############################################################
 
+(defn wrap-cors-if-configured [handler doit]
+  (if doit
+    (cors-middleware/wrap-cors handler
+      :access-control-allow-origin [#".*"]
+      :access-control-allow-methods [:get :put :post :delete]
+      :access-control-allow-headers ["Origin" "X-Requested-With" "Content-Type" "Accept" "Authorization"])
+    handler))
+
+;##############################################################################
 
 (defn build-site [context]
   (I> wrap-handler-with-logging
@@ -130,7 +138,7 @@
       (json-roa_request/wrap madek.api.json-roa/handler)
       ring.middleware.json/wrap-json-params
       wrap-parse-json-query-parameters
-      (cors/wrap :enable (-> (get-config) :services :api :cors_enabled))
+      (wrap-cors-if-configured (-> (get-config) :services :api :cors_enabled))
       status/wrap
       site
       (wrap-context context)

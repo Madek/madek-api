@@ -35,6 +35,7 @@
                  [org.yaml/snakeyaml "1.18"]
                  [pg-types "2.3.0"]
                  [ring-basic-authentication "1.0.5"]
+                 [ring-cors "0.1.10"]
                  ;[ring/ring-jetty-adapter "1.6.0"]
                  [ring/ring-json "0.4.0"]
                  [uritemplate-clj "1.1.1"]
