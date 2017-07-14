@@ -22,9 +22,23 @@
        (map #(clojure.set/rename-keys % {:email :email_address}))
        first))
 
-(defn get-entity-by-login [login]
-  (or (get-by-login "api_clients" login)
-      (get-by-login "users" login)))
+(defn- get-api-client-by-login [login]
+  (->> (jdbc/query (rdbms/get-ds)
+                   [(str "SELECT * FROM api_clients WHERE login = ?") login])
+       (map #(assoc % :type "ApiClient"))
+       first))
+
+(defn- get-user-by-login-or-email-address [login-or-email]
+  (->> (jdbc/query (rdbms/get-ds)
+                   [(str "SELECT * FROM users WHERE login = ? OR email = ?")
+                    login-or-email login-or-email])
+       (map #(assoc % :type "User"))
+       (map #(clojure.set/rename-keys % {:email :email_address}))
+       first))
+
+(defn get-entity-by-login-or-email [login-or-email]
+  (or (get-api-client-by-login login-or-email)
+      (get-user-by-login-or-email-address login-or-email)))
 
 (defn- decode-base64
   [^String string]
@@ -40,15 +54,16 @@
        (catch Exception _
          (logging/warn "failed to extract basic-auth properties because" _ ))))
 
-(defn user-password-authentication [login password handler request]
-  (if-let [authenticated-entity (get-entity-by-login login)]
-    (if-not (checkpw password (:password_digest authenticated-entity)); if there is an entity the password must match
-      {:status 401 :body (str "Password mismatch for " {:login login})}
+(defn user-password-authentication [login-or-email password handler request]
+  (if-let [entity (get-entity-by-login-or-email login-or-email)]
+    (if-not (checkpw password (:password_digest entity)); if there is an entity the password must match
+      {:status 401 :body (str "Password mismatch for "
+                              {:login-or-email-address login-or-email})}
       (handler (assoc request
-                      :authenticated-entity authenticated-entity
-                      :authentication-method "Basic Authentication"
-                      )))
-    {:status 401 :body (str "Neither User nor ApiClient exists for " {:login login})}))
+                      :authenticated-entity entity
+                      :authentication-method "Basic Authentication")))
+    {:status 401 :body (str "Neither User nor ApiClient exists for "
+                            {:login-or-email-address login-or-email})}))
 
 (defn authenticate [request handler]
   "Authenticate with the following rules:
