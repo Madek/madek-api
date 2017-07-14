@@ -21,10 +21,7 @@
     (if (re-find #"^[a-z0-9\-\_\:]+:[a-z0-9\-\_\:]+$" id)
       (if-let [meta-key (first
                           (jdbc/query (rdbms/get-ds) query))]
-        {:body (select-keys meta-key [:id
-                                      :description
-                                      :label
-                                      :vocabulary_id])}
+        {:body meta-key}
         {:status 404 :body {:message "Meta-Key could not be found!"}})
       {:status 422
        :body {:message "Wrong meta_key_id format! See documentation."}})))
