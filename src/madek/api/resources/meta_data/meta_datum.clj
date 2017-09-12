@@ -9,7 +9,6 @@
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [clojure.java.jdbc :as jdbc]
     [compojure.core :as cpj]
-    [honeysql.sql :refer :all]
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]

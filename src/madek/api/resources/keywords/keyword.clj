@@ -4,17 +4,17 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
-    [honeysql.sql :refer :all]
+    [madek.api.utils.sql :as sql]
     [logbug.debug :as debug]
     ))
 
 (defn get-keyword [request]
   (let [id (-> request :params :id)
-        query (-> (sql-select :*)
-                  (sql-from :keywords)
-                  (sql-merge-where
+        query (-> (sql/select :*)
+                  (sql/from :keywords)
+                  (sql/merge-where
                     [:= :keywords.id id])
-                  (sql-format))]
+                  (sql/format))]
     {:body (select-keys (first (jdbc/query (rdbms/get-ds) query))
                         [:id
                          :meta_key_id

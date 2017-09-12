@@ -4,43 +4,43 @@
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [honeysql.sql :refer :all])
+    [madek.api.utils.sql :as sql])
   (:import
     [madek.api WebstackException]))
 
 (defn- api-client-authorized-condition [perm id]
   [:or
    [:= (keyword (str "filter_sets." perm)) true]
-   [:exists (-> (sql-select 1)
-                (sql-from [:filter_set_api_client_permissions :fsacp])
-                (sql-merge-where [:= :fsacp.filter_set_id :filter_sets.id])
-                (sql-merge-where [:= (keyword (str "fsacp." perm)) true])
-                (sql-merge-where [:= :fsacp.api_client_id id]))]])
+   [:exists (-> (sql/select true)
+                (sql/from [:filter_set_api_client_permissions :fsacp])
+                (sql/merge-where [:= :fsacp.filter_set_id :filter_sets.id])
+                (sql/merge-where [:= (keyword (str "fsacp." perm)) true])
+                (sql/merge-where [:= :fsacp.api_client_id id]))]])
 
 (defn- group-permission-exists-condition [perm id]
-  [:exists (-> (sql-select 1)
-               (sql-from [:filter_set_group_permissions :fsgp])
-               (sql-merge-where [:= :fsgp.filter_set_id :filter_sets.id])
-               (sql-merge-where [:= (keyword (str "fsgp." perm)) true])
-               (sql-merge-where [:= :fsgp.group_id id]))])
+  [:exists (-> (sql/select true)
+               (sql/from [:filter_set_group_permissions :fsgp])
+               (sql/merge-where [:= :fsgp.filter_set_id :filter_sets.id])
+               (sql/merge-where [:= (keyword (str "fsgp." perm)) true])
+               (sql/merge-where [:= :fsgp.group_id id]))])
 
 (defn- user-permission-exists-condition [perm id]
-  [:exists (-> (sql-select 1)
-               (sql-from [:filter_set_user_permissions :fsup])
-               (sql-merge-where [:= :fsup.filter_set_id :filter_sets.id])
-               (sql-merge-where [:= (keyword (str "fsup." perm)) true])
-               (sql-merge-where [:= :fsup.user_id id]))])
+  [:exists (-> (sql/select true)
+               (sql/from [:filter_set_user_permissions :fsup])
+               (sql/merge-where [:= :fsup.filter_set_id :filter_sets.id])
+               (sql/merge-where [:= (keyword (str "fsup." perm)) true])
+               (sql/merge-where [:= :fsup.user_id id]))])
 
 (defn- group-permission-for-user-exists-condition [perm id]
-  [:exists (-> (sql-select 1)
-               (sql-from [:filter_set_group_permissions :fsgp])
-               (sql-merge-where [:= :fsgp.filter_set_id :filter_sets.id])
-               (sql-merge-where [:= (keyword (str "fsgp." perm)) true])
-               (sql-merge-join :groups
+  [:exists (-> (sql/select true)
+               (sql/from [:filter_set_group_permissions :fsgp])
+               (sql/merge-where [:= :fsgp.filter_set_id :filter_sets.id])
+               (sql/merge-where [:= (keyword (str "fsgp." perm)) true])
+               (sql/merge-join :groups
                                [:= :groups.id :fsgp.group_id])
-               (sql-merge-join [:groups_users :gu]
+               (sql/merge-join [:groups_users :gu]
                                [:= :gu.group_id :groups.id])
-               (sql-merge-where [:= :gu.user_id id]))])
+               (sql/merge-where [:= :gu.user_id id]))])
 
 (defn- user-authorized-condition [perm id]
   [:or
@@ -51,9 +51,9 @@
 
 (defn- filter-by-permission-for-auth-entity [sqlmap permission authenticated-entity]
   (case (:type authenticated-entity)
-    "User" (sql-merge-where sqlmap (user-authorized-condition
+    "User" (sql/merge-where sqlmap (user-authorized-condition
                                      permission (:id authenticated-entity)))
-    "ApiClient" (sql-merge-where sqlmap (api-client-authorized-condition
+    "ApiClient" (sql/merge-where sqlmap (api-client-authorized-condition
                                           permission (:id authenticated-entity)))
     (throw (WebstackException. (str "Filtering for " permission " requires a signed-in entity." )
                                {:status 422}))))
@@ -69,7 +69,7 @@
   (cond-> sqlmap
 
     (:public_get_metadata_and_previews query-params)
-      (sql-merge-where [:= :filter_sets.get_metadata_and_previews true])
+      (sql/merge-where [:= :filter_sets.get_metadata_and_previews true])
 
     (= (:me_get_metadata_and_previews query-params) true)
       (filter-by-permission-for-auth-entity "get_metadata_and_previews" authenticated-entity)))

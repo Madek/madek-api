@@ -1,12 +1,13 @@
 (ns madek.api.resources.media-entries.advanced-filter.meta-data
   (:require
     [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.sql :as sql]
+
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [honeysql.sql :refer :all :rename {modifiers sql-modifiers}]
     [madek.api.resources.meta-keys.meta-key :as meta-key])
   (:import
     [madek.api WebstackException]))
@@ -37,7 +38,7 @@
          related-meta-data-alias (str "rmd" counter)]
      (cond-> initial-sqlmap
        related-meta-data-table
-       (sql-merge-join [(keyword related-meta-data-table)
+       (sql/merge-join [(keyword related-meta-data-table)
                         (keyword related-meta-data-alias)]
                        [:=
                         (keyword (str related-meta-data-alias ".meta_datum_id"))
@@ -45,7 +46,7 @@
 
        (and related-meta-data-table match-value)
        (->
-         (sql-merge-join
+         (sql/merge-join
            (keyword (get-in match-columns [related-meta-data-table :table]))
            [:=
             (keyword
@@ -58,7 +59,7 @@
   [sqlmap counter related-meta-data-table value]
   (let [related-meta-data-alias (str "rmd" counter)]
     (-> sqlmap
-        (sql-merge-where
+        (sql/merge-where
           [:=
            (keyword (str related-meta-data-alias
                          "."
@@ -68,7 +69,7 @@
            value]))))
 
 (defn- sql-raw-text-search [column search-string]
-  (sql-raw
+  (sql/raw
     ; we need to pass 'english' because it was also used
     ; when creating indexes
     (str "to_tsvector('english', " column ")"
@@ -78,7 +79,7 @@
   [sqlmap related-meta-data-table match]
   (cond-> sqlmap
     related-meta-data-table
-    (sql-merge-where
+    (sql/merge-where
       (sql-raw-text-search
         (str (get-in match-columns
                      [related-meta-data-table :table])
@@ -95,10 +96,10 @@
   (let [meta-keys-alias (str "mk" counter)
         vocabularies-alias (str "v" counter)]
     (-> sqlmap
-        (sql-merge-join [:meta_keys (keyword meta-keys-alias)]
+        (sql/merge-join [:meta_keys (keyword meta-keys-alias)]
                         [:= (keyword (str meta-data-alias ".meta_key_id"))
                             (keyword (str meta-keys-alias ".id"))])
-        (sql-merge-join [:vocabularies (keyword vocabularies-alias)]
+        (sql/merge-join [:vocabularies (keyword vocabularies-alias)]
                         [:and
                          [:= (keyword (str meta-keys-alias ".vocabulary_id"))
                              (keyword (str vocabularies-alias ".id"))]
@@ -123,7 +124,7 @@
                                  (keyword (str meta-data-alias ".meta_key_id"))
                                  (or meta-key not-meta-key)]))]
 
-    (-> (sql-merge-join sqlmap
+    (-> (sql/merge-join sqlmap
                         [:meta_data (keyword meta-data-alias)]
                         join-conditions)
         (sql-meta-data-from-public-vocabularies meta-data-alias counter))))
@@ -131,32 +132,32 @@
 (defn sql-search-through-all [sqlmap search-string]
   (cond-> sqlmap
     search-string
-    (sql-merge-where
+    (sql/merge-where
       (cons :or
             (into [[:exists
-                    (-> (sql-select 1)
-                        (sql-from :meta_data)
-                        (sql-merge-where [:= :meta_data.media_entry_id :mes.id]
+                    (-> (sql/select true)
+                        (sql/from :meta_data)
+                        (sql/merge-where [:= :meta_data.media_entry_id :mes.id]
                                          (sql-raw-text-search "meta_data.string"
                                                               search-string)))]]
                   (map #(let [resource_table (get-in match-columns [% :table])]
                           [:exists
-                           (-> (sql-select 1)
-                               (sql-from (keyword resource_table))
-                               (sql-merge-join (keyword %)
+                           (-> (sql/select true)
+                               (sql/from (keyword resource_table))
+                               (sql/merge-join (keyword %)
                                                [:=
                                                 (keyword (str % "." (get-in match-columns [% :resource]) "_id"))
                                                 (keyword (str resource_table ".id"))])
-                               (sql-merge-join :meta_data
+                               (sql/merge-join :meta_data
                                                [:=
                                                 (keyword (str % ".meta_datum_id"))
                                                 :meta_data.id])
-                               (sql-merge-where
+                               (sql/merge-where
                                  (sql-raw-text-search
                                    (str resource_table "."
                                         (get-in match-columns [% :match_column]))
                                    search-string))
-                               (sql-merge-where [:= :meta_data.media_entry_id :mes.id]))])
+                               (sql/merge-where [:= :meta_data.media_entry_id :mes.id]))])
                        (keys match-columns)))))))
 
 (defn- extend-sqlmap-according-to-meta-datum-spec [sqlmap [meta-datum-spec counter]]
@@ -259,11 +260,9 @@
                 (partition 2
                            (interleave meta-data-specs
                                        (iterate inc 1))))
-        (sql-modifiers :distinct))
+        (sql/modifiers :distinct))
     sqlmap))
 
-;(def sqlmap (-> (sql-select :mes.*) (sql-from [:media_entries :mes])))
-;(sql-format (sql-filter-by sqlmap [{:key "any" :match "still"}]))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

@@ -1,12 +1,13 @@
 (ns madek.api.pagination
   (:require
     [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.sql :as sql]
+
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [clojure.walk :refer [keywordize-keys]]
     [compojure.core :as cpj]
     [logbug.debug :as debug]
-    [honeysql.sql :refer :all]
     ))
 
 (def LIMIT 100)
@@ -22,8 +23,8 @@
 (defn add-offset-for-honeysql [query params]
   (let [off (compute-offset params)]
     (-> query
-        (sql-offset off)
-        (sql-limit LIMIT))))
+        (sql/offset off)
+        (sql/limit LIMIT))))
 
 (defn next-page-query-query-params [query-params]
   (let [query-params (keywordize-keys query-params)

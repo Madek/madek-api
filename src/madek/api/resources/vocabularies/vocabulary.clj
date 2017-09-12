@@ -1,20 +1,21 @@
 (ns madek.api.resources.vocabularies.vocabulary
   (:require
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.sql :as sql]
+
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
-    [honeysql.sql :refer :all]
     [logbug.debug :as debug]
     ))
 
 (defn build-vocabulary-query [id]
-  (-> (sql-select :*)
-      (sql-from :vocabularies)
-      (sql-merge-where
+  (-> (sql/select :*)
+      (sql/from :vocabularies)
+      (sql/merge-where
         [:= :vocabularies.id id]
         [:= :vocabularies.enabled_for_public_view true])
-      (sql-format)))
+      (sql/format)))
 
 (defn get-vocabulary [request]
   (let [id (-> request :params :id)

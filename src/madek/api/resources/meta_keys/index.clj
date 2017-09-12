@@ -1,12 +1,12 @@
 (ns madek.api.resources.meta-keys.index
   (:require
     [madek.api.utils.rdbms :as rdbms]
-    [clojure.java.jdbc :as jdbc]
-    [honeysql.sql :refer :all]
-    [logbug.catcher :as catcher]
+    [madek.api.utils.sql :as sql]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
 
+    [clojure.java.jdbc :as jdbc]
+    [logbug.catcher :as catcher]
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
@@ -14,22 +14,22 @@
 
 
 (def base-query
-  (-> (sql-select :meta-keys.id)
-      (sql-from :meta_keys)
-      (sql-merge-join :vocabularies
+  (-> (sql/select :meta-keys.id)
+      (sql/from :meta_keys)
+      (sql/merge-join :vocabularies
                       [:= :meta_keys.vocabulary_id :vocabularies.id])
-      (sql-merge-where [:= :vocabularies.enabled_for_public_view true])))
+      (sql/merge-where [:= :vocabularies.enabled_for_public_view true])))
 
 (defn filter-by-vocabulary [query request]
   (if-let [vocabulary (-> request :query-params :vocabulary)]
     (-> query
-        (sql-merge-where [:= :vocabulary_id vocabulary]))
+        (sql/merge-where [:= :vocabulary_id vocabulary]))
     query))
 
   (defn build-query [request]
     (-> base-query
         (filter-by-vocabulary request)
-        sql-format))
+        sql/format))
 
 (defn- query-index-resources [request]
   (jdbc/query (rdbms/get-ds)

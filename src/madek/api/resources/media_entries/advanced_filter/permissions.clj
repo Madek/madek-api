@@ -4,43 +4,43 @@
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [honeysql.sql :refer :all])
+    [madek.api.utils.sql :as sql])
   (:import
     [madek.api WebstackException]))
 
 (defn- api-client-authorized-condition [perm id]
   [:or
    [:= (keyword (str "mes." perm)) true]
-   [:exists (-> (sql-select 1)
-                (sql-from [:media_entry_api_client_permissions :meacp])
-                (sql-merge-where [:= :meacp.media_entry_id :mes.id])
-                (sql-merge-where [:= (keyword (str "meacp." perm)) true])
-                (sql-merge-where [:= :meacp.api_client_id id]))]])
+   [:exists (-> (sql/select true)
+                (sql/from [:media_entry_api_client_permissions :meacp])
+                (sql/merge-where [:= :meacp.media_entry_id :mes.id])
+                (sql/merge-where [:= (keyword (str "meacp." perm)) true])
+                (sql/merge-where [:= :meacp.api_client_id id]))]])
 
 (defn- group-permission-exists-condition [perm id]
-  [:exists (-> (sql-select 1)
-               (sql-from [:media_entry_group_permissions :megp])
-               (sql-merge-where [:= :megp.media_entry_id :mes.id])
-               (sql-merge-where [:= (keyword (str "megp." perm)) true])
-               (sql-merge-where [:= :megp.group_id id]))])
+  [:exists (-> (sql/select true)
+               (sql/from [:media_entry_group_permissions :megp])
+               (sql/merge-where [:= :megp.media_entry_id :mes.id])
+               (sql/merge-where [:= (keyword (str "megp." perm)) true])
+               (sql/merge-where [:= :megp.group_id id]))])
 
 (defn- user-permission-exists-condition [perm id]
-  [:exists (-> (sql-select 1)
-               (sql-from [:media_entry_user_permissions :meup])
-               (sql-merge-where [:= :meup.media_entry_id :mes.id])
-               (sql-merge-where [:= (keyword (str "meup." perm)) true])
-               (sql-merge-where [:= :meup.user_id id]))])
+  [:exists (-> (sql/select true)
+               (sql/from [:media_entry_user_permissions :meup])
+               (sql/merge-where [:= :meup.media_entry_id :mes.id])
+               (sql/merge-where [:= (keyword (str "meup." perm)) true])
+               (sql/merge-where [:= :meup.user_id id]))])
 
 (defn- group-permission-for-user-exists-condition [perm id]
-  [:exists (-> (sql-select 1)
-               (sql-from [:media_entry_group_permissions :megp])
-               (sql-merge-where [:= :megp.media_entry_id :mes.id])
-               (sql-merge-where [:= (keyword (str "megp." perm)) true])
-               (sql-merge-join :groups
+  [:exists (-> (sql/select true)
+               (sql/from [:media_entry_group_permissions :megp])
+               (sql/merge-where [:= :megp.media_entry_id :mes.id])
+               (sql/merge-where [:= (keyword (str "megp." perm)) true])
+               (sql/merge-join :groups
                                [:= :groups.id :megp.group_id])
-               (sql-merge-join [:groups_users :gu]
+               (sql/merge-join [:groups_users :gu]
                                [:= :gu.group_id :groups.id])
-               (sql-merge-where [:= :gu.user_id id]))])
+               (sql/merge-where [:= :gu.user_id id]))])
 
 (defn- user-authorized-condition [perm id]
   [:or
@@ -51,9 +51,9 @@
 
 (defn- filter-by-permission-for-auth-entity [sqlmap permission authenticated-entity]
   (case (:type authenticated-entity)
-    "User" (sql-merge-where sqlmap (user-authorized-condition
+    "User" (sql/merge-where sqlmap (user-authorized-condition
                                      permission (:id authenticated-entity)))
-    "ApiClient" (sql-merge-where sqlmap (api-client-authorized-condition
+    "ApiClient" (sql/merge-where sqlmap (api-client-authorized-condition
                                           permission (:id authenticated-entity)))
     (throw (WebstackException. (str "Filtering for " permission " requires a signed-in entity." )
                                {:status 422}))))
@@ -69,10 +69,10 @@
   (cond-> sqlmap
 
     (:public_get_metadata_and_previews query-params)
-      (sql-merge-where [:= :mes.get_metadata_and_previews true])
+      (sql/merge-where [:= :mes.get_metadata_and_previews true])
 
     (:public_get_full_size query-params)
-      (sql-merge-where [:= :mes.get_full_size true])
+      (sql/merge-where [:= :mes.get_full_size true])
 
     (= (:me_get_full_size query-params) true)
       (filter-by-permission-for-auth-entity "get_full_size" authenticated-entity)
@@ -84,7 +84,7 @@
   (case (:key permission-spec)
     "public"
     (-> sqlmap
-        (sql-merge-where
+        (sql/merge-where
           [:=
            :mes.get_metadata_and_previews
            (case (:value permission-spec)
@@ -97,13 +97,13 @@
 
     "responsible_user"
     (-> sqlmap
-        (sql-merge-where [:=
+        (sql/merge-where [:=
                           :mes.responsible_user_id
                           (:value permission-spec)]))
 
     "entrusted_to_user"
     (-> sqlmap
-        (sql-merge-where
+        (sql/merge-where
           [:or
            (user-permission-exists-condition "get_metadata_and_previews"
                                              (:value permission-spec))
@@ -112,7 +112,7 @@
 
     "entrusted_to_group"
     (-> sqlmap
-        (sql-merge-where
+        (sql/merge-where
           (group-permission-exists-condition "get_metadata_and_previews"
                                              (:value permission-spec))))))
 

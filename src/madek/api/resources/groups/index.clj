@@ -9,24 +9,24 @@
     [logbug.debug :as debug]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
-    [honeysql.sql :refer :all]
+    [madek.api.utils.sql :as sql]
     ))
 
 (defn- build-index-base-query []
-  (-> (sql-select :groups.id)
-      (sql-from :groups)))
+  (-> (sql/select :groups.id)
+      (sql/from :groups)))
 
 (defn- build-index-query [{:keys [user-id]}]
   (cond-> (build-index-base-query)
     user-id
-    (-> (sql-merge-join :groups_users
+    (-> (sql/merge-join :groups_users
                         [:= :groups.id :groups_users.group_id])
-        (sql-merge-where [:= :groups_users.user_id user-id]))))
+        (sql/merge-where [:= :groups_users.user_id user-id]))))
 
 (defn get-index [query-params]
   (let [query (-> (build-index-query query-params)
                   (pagination/add-offset-for-honeysql query-params)
-                  sql-format)]
+                  sql/format)]
     (jdbc/query (rdbms/get-ds) query)))
 
 ;### Debug ####################################################################

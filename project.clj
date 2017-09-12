@@ -8,7 +8,7 @@
                  [cider-ci/open-session "1.3.0"]
                  [json-roa/clj-utils "1.0.0"]
                  [logbug "4.2.2"]
-                 [drtom/honeysql "2.0.0-ALPHA+1"]
+                 [honeysql "0.9.1"]
 
                  [aleph "0.4.3"]
                  [camel-snake-kebab "0.4.0"]

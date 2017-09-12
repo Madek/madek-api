@@ -1,19 +1,20 @@
 (ns madek.api.resources.meta-keys.meta-key
   (:require
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.sql :as sql]
+
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
-    [honeysql.sql :refer :all]
     [logbug.debug :as debug]
     ))
 
 (defn build-meta-key-query [id]
-  (-> (sql-select :*)
-      (sql-from :meta-keys)
-      (sql-merge-where
+  (-> (sql/select :*)
+      (sql/from :meta-keys)
+      (sql/merge-where
         [:= :meta-keys.id id])
-      (sql-format)))
+      (sql/format)))
 
 (defn get-meta-key [request]
   (let [id (-> request :params :id)

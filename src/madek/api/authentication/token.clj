@@ -2,7 +2,7 @@
   (:require
     [madek.api.utils.rdbms :as rdbms]
 
-    [honeysql.core :as sql]
+    [madek.api.utils.sql :as sql]
     [pandect.algo.sha256 :as algo.sha256]
     [clojure.data.codec.base64 :as codec.base64]
     [clojure.java.jdbc :as jdbc]

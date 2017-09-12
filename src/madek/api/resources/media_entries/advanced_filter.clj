@@ -4,7 +4,7 @@
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [honeysql.sql :refer :all]
+    [madek.api.utils.sql :as sql]
     [madek.api.resources.media-entries.advanced-filter.media-files :as media-files]
     [madek.api.resources.media-entries.advanced-filter.meta-data :as meta-data]
     [madek.api.resources.media-entries.advanced-filter.permissions :as permissions]))

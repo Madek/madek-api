@@ -7,7 +7,7 @@
     [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [honeysql.sql :refer :all]
+    [madek.api.utils.sql :as sql]
     [madek.api.pagination :as pagination]
     [madek.api.resources.filter-sets.advanced-filter.permissions
      :as permissions :refer [filter-by-query-params]])
@@ -22,20 +22,20 @@
 (defn- filter-by-collection-id [sqlmap {:keys [collection_id] :as query-params}]
   (cond-> sqlmap
     (seq collection_id)
-    (-> (sql-merge-join [:collection_filter_set_arcs :cfsa]
+    (-> (sql/merge-join [:collection_filter_set_arcs :cfsa]
                         [:= :cfsa.filter_set_id :filter_sets.id])
-        (sql-merge-where [:= :cfsa.collection_id collection_id]))))
+        (sql/merge-where [:= :cfsa.collection_id collection_id]))))
 
 ;### query ####################################################################
 
 (def ^:private base-query
-  (-> (sql-select :filter_sets.id, :filter_sets.created_at)
-      (sql-from :filter_sets)))
+  (-> (sql/select :filter_sets.id, :filter_sets.created_at)
+      (sql/from :filter_sets)))
 
 (defn- set-order [query query-params]
   (if (some #{"desc"} [(-> query-params :order)])
-    (-> query (sql-order-by [:filter_sets.created-at :desc]))
-    (-> query (sql-order-by [:filter_sets.created-at :asc]))))
+    (-> query (sql/order-by [:filter_sets.created-at :desc]))
+    (-> query (sql/order-by [:filter_sets.created-at :asc]))))
 
 (defn- build-query [request]
   (let [query-params (:query-params request)
@@ -46,7 +46,7 @@
         (permissions/filter-by-query-params query-params
                                             authenticated-entity)
         (pagination/add-offset-for-honeysql query-params)
-        sql-format)))
+        sql/format)))
 
 (defn- query-index-resources [request]
   (jdbc/query (rdbms/get-ds) (build-query request)))

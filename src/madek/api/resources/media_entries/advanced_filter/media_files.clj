@@ -4,11 +4,11 @@
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [honeysql.sql :refer :all]))
+    [madek.api.utils.sql :as sql]))
 
 (defn- sql-merge-where-media-file-spec [sqlmap media-file-spec]
   (-> sqlmap
-      (sql-merge-where
+      (sql/merge-where
         [:=
          (keyword (str "media_files." (:key media-file-spec)))
          (:value media-file-spec)])))
@@ -17,7 +17,7 @@
   (if-not (empty? media-file-specs)
     (reduce sql-merge-where-media-file-spec
             (-> sqlmap
-                (sql-merge-join
+                (sql/merge-join
                   :media_files
                   [:= :media_files.media_entry_id :mes.id]))
             media-file-specs)

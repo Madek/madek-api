@@ -2,11 +2,11 @@
   (:require
     [madek.api.constants :refer [presence]]
     [madek.api.pagination :as pagination]
-
+    [madek.api.utils.sql :as sql]
     [madek.api.utils.rdbms :as rdbms]
+
     [clojure.java.jdbc :as jdbc]
     [compojure.core :as cpj]
-    [honeysql.core :as sql]
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]

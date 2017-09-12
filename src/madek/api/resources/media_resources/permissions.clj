@@ -7,33 +7,33 @@
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
-    [honeysql.sql :refer :all]
+    [madek.api.utils.sql :as sql]
     ))
 
 (defn- build-api-client-permissions-query
   [media-resource-id api-client-id perm-name & {:keys [mr-type]}]
-  (-> (sql-select :*)
-      (sql-from (keyword (str mr-type "_api_client_permissions")))
-      (sql-where [:= (keyword (str mr-type "_id")) media-resource-id]
+  (-> (sql/select :*)
+      (sql/from (keyword (str mr-type "_api_client_permissions")))
+      (sql/where [:= (keyword (str mr-type "_id")) media-resource-id]
                  [:= :api_client_id api-client-id]
                  [:= perm-name true])
-      (sql-format)))
+      (sql/format)))
 
 (defn- build-user-permissions-query
   [media-resource-id user-id perm-name & {:keys [mr-type]}]
-  (-> (sql-select :*)
-      (sql-from (keyword (str mr-type "_user_permissions")))
-      (sql-where [:= (keyword (str mr-type "_id")) media-resource-id]
+  (-> (sql/select :*)
+      (sql/from (keyword (str mr-type "_user_permissions")))
+      (sql/where [:= (keyword (str mr-type "_id")) media-resource-id]
                  [:= :user_id user-id]
                  [:= perm-name true])
-      (sql-format)))
+      (sql/format)))
 
 (defn- build-user-groups-query [user-id]
-  (-> (sql-select :groups.*)
-      (sql-from :groups)
-      (sql-merge-join :groups_users [:= :groups.id :groups_users.group_id])
-      (sql-where [:= :groups_users.user_id user-id])
-      (sql-format)))
+  (-> (sql/select :groups.*)
+      (sql/from :groups)
+      (sql/merge-join :groups_users [:= :groups.id :groups_users.group_id])
+      (sql/where [:= :groups_users.user_id user-id])
+      (sql/format)))
 
 (defn- query-user-groups [user-id]
   (->> (build-user-groups-query user-id)
@@ -41,12 +41,12 @@
 
 (defn- build-group-permissions-query
   [media-resource-id group-ids perm-name & {:keys [mr-type]}]
-  (-> (sql-select :*)
-      (sql-from (keyword (str mr-type "_group_permissions")))
-      (sql-where [:= (keyword (str mr-type "_id")) media-resource-id]
+  (-> (sql/select :*)
+      (sql/from (keyword (str mr-type "_group_permissions")))
+      (sql/where [:= (keyword (str mr-type "_id")) media-resource-id]
                  [:in :group_id group-ids]
                  [:= perm-name true])
-      (sql-format)))
+      (sql/format)))
 
 ; ============================================================
 

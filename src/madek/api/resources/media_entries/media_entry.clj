@@ -4,7 +4,7 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
-    [honeysql.sql :refer :all]
+    [madek.api.utils.sql :as sql]
     [logbug.debug :as debug]
     ))
 
@@ -14,12 +14,12 @@
 
 (defn get-media-entry-for-preview [request]
   (let [preview-id (-> request :params :preview_id)
-        query (-> (sql-select :*)
-                  (sql-from :media_entries)
-                  (sql-merge-join :media_files [:= :media_entries.id :media_files.media_entry_id])
-                  (sql-merge-join :previews [:= :media_files.id :previews.media_file_id])
-                  (sql-merge-where [:= :previews.id preview-id])
-                  (sql-format))]
+        query (-> (sql/select :*)
+                  (sql/from :media_entries)
+                  (sql/merge-join :media_files [:= :media_entries.id :media_files.media_entry_id])
+                  (sql/merge-join :previews [:= :media_files.id :previews.media_file_id])
+                  (sql/merge-where [:= :previews.id preview-id])
+                  (sql/format))]
     (first (jdbc/query (rdbms/get-ds) query))))
 
 (defn get-media-entry [request]

@@ -7,7 +7,6 @@
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
     [logbug.catcher :as catcher]
-    [honeysql.sql :refer :all]
     [madek.api.resources.media-entries.permissions
      :as media-entry-perms :only [viewable-by-auth-entity?]]
     [madek.api.resources.collections.permissions
