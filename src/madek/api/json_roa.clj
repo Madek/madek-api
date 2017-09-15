@@ -4,6 +4,7 @@
     [madek.api.json-roa.collections :as collections]
     [madek.api.json-roa.collection-media-entry-arcs.core :as collection-media-entry-arcs]
     [madek.api.json-roa.filter-sets :as filter-sets]
+    [madek.api.json-roa.groups :as groups]
     [madek.api.json-roa.keywords :as keywords]
     [madek.api.json-roa.media-entries :as media-entries]
     [madek.api.json-roa.media-files :as media-files]
@@ -48,6 +49,10 @@
     (cpj/GET "/collections/" request (collections/index request json-response))
     (cpj/GET "/collections/:id" request (collections/collection request json-response))
     (cpj/GET "/filter-sets/" request (filter-sets/index request json-response))
+    (cpj/GET "/groups/" request (groups/groups request json-response))
+    (cpj/POST "/groups/" request (groups/group request json-response))
+    (cpj/GET "/groups/:id" request (groups/group request json-response))
+    (cpj/PATCH "/groups/:id" request (groups/group request json-response))
     (cpj/GET "/keywords/:id" request (keywords/keyword-term request json-response))
     (cpj/GET "/media-entries/" request (media-entries/index request json-response))
     (cpj/GET "/media-entries/:id" request (media-entries/media-entry request json-response))

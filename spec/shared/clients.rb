@@ -22,6 +22,26 @@ shared_context :json_roa_client_for_authenticated_user do |ctx|
   end
 end
 
+shared_context :json_roa_client_for_authenticated_admin_user  do |ctx|
+  let :user do
+    user = FactoryGirl.create :user, password: 'TOPSECRET'
+    FactoryGirl.create :admin, user: user
+    user
+  end
+
+  let :entity do
+    user
+  end
+
+  include_context :json_roa_client_for_authenticated_entity
+
+  describe 'JSON-ROA `client` for authenticated `user`' do
+    include_context ctx if ctx
+  end
+end
+
+
+
 shared_context :json_roa_client_for_authenticated_api_client do |ctx|
   let :api_client do
     FactoryGirl.create :api_client, password: 'TOPSECRET'

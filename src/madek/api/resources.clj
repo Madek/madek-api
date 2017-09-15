@@ -1,27 +1,30 @@
 (ns madek.api.resources
   (:require
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [compojure.core :as cpj]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
     [madek.api.authorization :refer [authorized?]]
     [madek.api.resources.auth-info :as auth-info]
     [madek.api.resources.collection-media-entry-arcs :as collection-media-entry-arcs]
     [madek.api.resources.collections :as collections]
     [madek.api.resources.filter-sets :as filter-sets]
-    [madek.api.resources.media-files :as media-files]
+    [madek.api.resources.groups :as groups]
+    [madek.api.resources.keywords :as keywords]
     [madek.api.resources.media-entries :as media-entries]
     [madek.api.resources.media-entries.media-entry :refer [get-media-entry-for-preview]]
+    [madek.api.resources.media-files :as media-files]
     [madek.api.resources.meta-data :as meta-data]
     [madek.api.resources.meta-keys :as meta-keys]
-    [madek.api.resources.keywords :as keywords]
     [madek.api.resources.people :as people]
     [madek.api.resources.previews :as previews]
     [madek.api.resources.shared :as shared]
     [madek.api.resources.vocabularies :as vocabularies]
+    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+
+    [compojure.core :as cpj]
+    [clojure.java.jdbc :as jdbc]
+
+    [clj-logging-config.log4j :as logging-config]
+    [clojure.tools.logging :as logging]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
     ))
 
 
@@ -164,6 +167,7 @@
         (cpj/ANY "/collection-media-entry-arcs/*" _ collection-media-entry-arcs/routes)
         (cpj/ANY "/collections*" _ collections/routes)
         (cpj/ANY "/filter-sets*" _ filter-sets/routes)
+        (cpj/ANY "/groups/*" _ groups/routes)
         (cpj/ANY "/keywords/:keyword_id*" _ keywords/routes)
         (cpj/ANY "/media-entries*" _ media-entries/routes)
         (cpj/ANY "/media-files/:media_file_id*" _ media-files/routes)

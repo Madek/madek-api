@@ -81,7 +81,7 @@ GEM
       i18n (~> 0.5)
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
-    faraday_middleware (0.11.0.1)
+    faraday_middleware (0.12.2)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.9.17)
     ffi (1.9.17-java)
@@ -99,7 +99,7 @@ GEM
       domain_name (~> 0.5)
     i18n (0.8.1)
     jdbc-postgres (9.4.1206)
-    json_roa-client (2.0.0.pre.beta.6)
+    json_roa-client (2.0.0)
       addressable (~> 2)
       faraday (~> 0.9)
       faraday_middleware (~> 0.9)
@@ -262,7 +262,7 @@ DEPENDENCIES
   faraday
   git
   jdbc-postgres
-  json_roa-client (= 2.0.0.pre.beta.6)
+  json_roa-client (= 2.0.0)
   pg
   pg_tasks (= 2.2.0.pre.0)
   pry
@@ -281,4 +281,4 @@ DEPENDENCIES
   zencoder (~> 2.4)
 
 BUNDLED WITH
-   1.14.5
+   1.15.4

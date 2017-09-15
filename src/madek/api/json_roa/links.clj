@@ -29,6 +29,34 @@
    :href (str prefix "/auth-info")
    })
 
+;### groups #######################################################################
+
+(defn groups-path [prefix query-params]
+  (str prefix "/groups/?" (http-client/generate-query-string query-params)))
+
+(defn group
+  ([prefix]
+   (group prefix "{id}"))
+  ([prefix id]
+   {:href (str prefix "/groups/" id)
+    :name "Group"
+    :methods {:delete {}
+              :get {}
+              :patch {}}
+    :relations {:api-docs {:name "API-Doc Group"
+                           :href "/api/docs/resources/group.html#group"}}}))
+
+(defn groups
+  ([prefix]
+   (groups prefix {}))
+  ([prefix query-params]
+   {:href (groups-path prefix query-params)
+    :name "Groups"
+    :methods {:get {}
+              :post {}}
+    :relations {:api-docs {:name "API-Doc Group"
+                           :href "/api/docs/resources/group.html#group"
+                           }}}))
 
 ;### meta data ####################################################################
 

@@ -1,12 +1,11 @@
 (ns madek.api.authentication.token
   (:require
     [madek.api.utils.rdbms :as rdbms]
-
     [madek.api.utils.sql :as sql]
+
     [pandect.algo.sha256 :as algo.sha256]
     [clojure.data.codec.base64 :as codec.base64]
     [clojure.java.jdbc :as jdbc]
-
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]

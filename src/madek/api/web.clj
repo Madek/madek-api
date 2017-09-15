@@ -136,7 +136,6 @@
       wrap-public-routes
       wrap-keywordize-request
       (json-roa_request/wrap madek.api.json-roa/handler)
-      ring.middleware.json/wrap-json-params
       wrap-parse-json-query-parameters
       (wrap-cors-if-configured (-> (get-config) :services :api :cors_enabled))
       status/wrap
@@ -144,6 +143,7 @@
       (wrap-context context)
       wrap-exception
       json-roa_response/wrap
+      (ring.middleware.json/wrap-json-body {:keywords? true})
       ring.middleware.json/wrap-json-response))
 
 
