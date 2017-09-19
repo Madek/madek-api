@@ -22,7 +22,10 @@
       (sql/from :meta_data)
       (sql/merge-join :meta_keys [:= :meta_data.meta_key_id :meta_keys.id])
       (sql/merge-join :vocabularies [:= :meta_keys.vocabulary_id :vocabularies.id])
-      (sql/merge-where [:= :vocabularies.enabled_for_public_view true])))
+      (sql/merge-where [:= :vocabularies.enabled_for_public_view true])
+      (sql/order-by [:vocabularies.position :asc]
+                    [:meta_keys.position :asc]
+                    [:meta_data.id :asc])))
 
 (defn- meta-data-query-for-media-entry [media-entry-id]
   (-> base-query
