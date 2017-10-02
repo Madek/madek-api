@@ -26,8 +26,8 @@
         id)
     (sql/where [:or
                 [:= :id id]
-                [:= :institutional-group-id id]])
-    (sql/where [:= :institutional-group-id id])))
+                [:= :institutional_id id]])
+    (sql/where [:= :institutional_id id])))
 
 (defn jdbc-id-where-clause [id]
   (-> id id-where-clause sql/format

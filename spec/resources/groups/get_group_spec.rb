@@ -38,17 +38,17 @@ context 'groups' do
         end
       end
 
-      context 'a institunal group (with naughty institutional_group_id)' do
+      context 'a institunal group (with naughty institutional_id)' do
         before :each do
           @inst_group = FactoryGirl.create :institutional_group,
-            institutional_group_id: '?this#id/needs/to/be/url&encoded'
+            institutional_id: '?this#id/needs/to/be/url&encoded'
         end
-        it 'can be retrieved by the institutional_group_id' do
+        it 'can be retrieved by the institutional_id' do
           expect(
-            client.get.relation('group').get(id: @inst_group.institutional_group_id).response.status
+            client.get.relation('group').get(id: @inst_group.institutional_id).response.status
           ).to be== 200
           expect(
-            client.get.relation('group').get(id: @inst_group.institutional_group_id).data["id"]
+            client.get.relation('group').get(id: @inst_group.institutional_id).data["id"]
           ).to be== @inst_group["id"]
         end
       end
