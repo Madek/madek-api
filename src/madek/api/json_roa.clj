@@ -42,27 +42,39 @@
   (cpj/routes
     (cpj/GET "/" _ root/build)
     (cpj/GET "/auth-info" request (auth-info/auth-info request))
+
     (cpj/GET "/collection-media-entry-arcs/" request
              (collection-media-entry-arcs/index request json-response))
     (cpj/GET "/collection-media-entry-arcs/:id" request
              (collection-media-entry-arcs/item request json-response))
     (cpj/GET "/collections/" request (collections/index request json-response))
     (cpj/GET "/collections/:id" request (collections/collection request json-response))
+
     (cpj/GET "/filter-sets/" request (filter-sets/index request json-response))
+
     (cpj/GET "/groups/" request (groups/groups request json-response))
-    (cpj/POST "/groups/" request (groups/group request json-response))
     (cpj/GET "/groups/:id" request (groups/group request json-response))
     (cpj/PATCH "/groups/:id" request (groups/group request json-response))
+    (cpj/POST "/groups/" request (groups/group request json-response))
+
     (cpj/GET "/keywords/:id" request (keywords/keyword-term request json-response))
+
     (cpj/GET "/media-entries/" request (media-entries/index request json-response))
     (cpj/GET "/media-entries/:id" request (media-entries/media-entry request json-response))
     (cpj/GET "/:media_resource_type/:id/meta-data/" request (meta-data/index request json-response))
+
     (cpj/GET "/media-files/:id" request (media-files/media-file request json-response))
     (cpj/GET "/meta-data/:id" request (meta-data/meta-datum request json-response))
     (cpj/GET "/meta-keys/:id" request (meta-keys/meta-key request json-response))
     (cpj/GET "/meta-keys/" request (meta-keys/index request json-response))
+
+    (cpj/GET "/people/" request (people/people request json-response))
     (cpj/GET "/people/:id" request (people/person request json-response))
+    (cpj/PATCH "/people/:id" request (people/person request json-response))
+    (cpj/POST "/people/" request (people/person request json-response))
+
     (cpj/GET "/previews/:id" request (previews/preview request json-response))
+
     (cpj/GET "/vocabularies/" request (vocabularies/index request json-response))
     (cpj/GET "/vocabularies/:id" request (vocabularies/vocabulary request json-response))))
 

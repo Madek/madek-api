@@ -21,5 +21,7 @@
                  :meta-datum (links/meta-datum context)
                  :meta-key (links/meta-key context)
                  :meta-keys (links/meta-keys context)
+                 :person (links/person context)
+                 :people (links/people context)
                  :vocabularies (links/vocabularies context)
                  }}))

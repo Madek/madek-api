@@ -1,12 +1,12 @@
 (ns madek.api.resources.meta-data.meta-datum
   (:require
-    [madek.api.pagination :as pagination]
-    [madek.api.resources.shared :as shared]
-    [madek.api.resources.keywords.index :as keywords]
-    [madek.api.resources.people.index :as people]
-
     [madek.api.authorization :as authorization]
+    [madek.api.pagination :as pagination]
+    [madek.api.resources.keywords.index :as keywords]
+    [madek.api.resources.shared :as shared]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.sql :as sql]
+
     [clojure.java.jdbc :as jdbc]
     [compojure.core :as cpj]
 
@@ -16,7 +16,7 @@
     [logbug.catcher :as catcher]
     ))
 
-;### meta-datum ###############################################################
+;### people ###################################################################
 
 ; TODO meta-datum groups will be moved to people, no point in implementing this
 ; here and now, the following is a Hack so the server so it won't fail when
@@ -24,6 +24,19 @@
 (defn groups-with-ids [meta-datum]
   []
   )
+
+(defn get-people-index [meta-datum]
+  (let [query (-> (sql/select :people.*)
+                  (sql/from :people)
+                  (sql/merge-join
+                    :meta_data_people
+                    [:= :meta_data_people.person_id :people.id])
+                  (sql/merge-where
+                    [:= :meta_data_people.meta_datum_id (:id meta-datum)])
+                  (sql/format))]
+    (jdbc/query (rdbms/get-ds) query)))
+
+
 
 ;### meta-datum ###############################################################
 
@@ -40,7 +53,7 @@
                      (:string meta-datum)
                      (map #(select-keys % [:id])
                           ((case meta-datum-type
-                             "MetaDatum::People" people/get-index
+                             "MetaDatum::People" get-people-index
                              "MetaDatum::Keywords" keywords/get-index
                              "MetaDatum::Groups" groups-with-ids)
                            meta-datum))))}

@@ -261,6 +261,7 @@ DEPENDENCIES
   faker
   faraday
   git
+  hashdiff
   jdbc-postgres
   json_roa-client (= 2.0.0)
   pg

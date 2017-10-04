@@ -80,7 +80,6 @@
       (cpj/ANY "/previews/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/media-files/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/meta-data/:resource_id*" _ return-422-if-not-uuid-conform)
-      (cpj/ANY "/people/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/keywords/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "*" _ handler))))
 
@@ -173,7 +172,7 @@
         (cpj/ANY "/media-files/:media_file_id*" _ media-files/routes)
         (cpj/ANY "/meta-data/:meta_datum_id" _ meta-data/routes)
         (cpj/ANY "/meta-keys/*" _ meta-keys/routes)
-        (cpj/ANY "/people/:person_id*" _ people/routes)
+        (cpj/ANY "/people/*" _ people/routes)
         (cpj/ANY "/previews/:preview_id*" _ previews/routes)
         (cpj/ANY "/vocabularies/*" _ vocabularies/routes)
         (cpj/ANY "*" _ default-handler)

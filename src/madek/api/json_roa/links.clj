@@ -305,15 +305,34 @@
                            }}}))
 
 
-;### person(s) #################################################################
+;### people and person #########################################################
+
+(defn people-path [prefix query-params]
+  (str prefix "/people/?" (http-client/generate-query-string query-params)))
 
 (defn person
   ([prefix]
    (person prefix "{id}"))
   ([prefix id]
-   {:name "Person"
-    :href (str prefix "/people/" id)
-    :relations {} }))
+   {:href (str prefix "/people/" id)
+    :name "Group"
+    :methods {:delete {}
+              :get {}
+              :patch {}}
+    :relations {:api-docs {:name "API-Doc Group"
+                           :href "/api/docs/resources/person.html#person"}}}))
+
+(defn people
+  ([prefix]
+   (people prefix {}))
+  ([prefix query-params]
+   {:href (people-path prefix query-params)
+    :name "Groups"
+    :methods {:get {}
+              :post {}}
+    :relations {:api-docs {:name "API-Doc Group"
+                           :href "/api/docs/resources/person.html#person"
+                           }}}))
 
 
 ;### keyword(s) ################################################################
