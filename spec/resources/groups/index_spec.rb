@@ -29,7 +29,7 @@ context 'groups' do
           expect(groups_result.response.status).to be== 200
         end
 
-        it 'returns some data but less than greated because we paginate' do
+        it 'returns some data but less than created because we paginate' do
           expect(
             groups_result.data()['groups'].count
           ).to be< @groups.count

@@ -1,4 +1,4 @@
-(ns madek.api.json-roa.groups
+(ns madek.api.json-roa.users
   (:require
     [madek.api.json-roa.links :as links]
     [madek.api.pagination :as pagination]
@@ -8,23 +8,22 @@
     [logbug.debug :as debug]
     ))
 
-(defn group [request response]
+(defn user [request response]
   (let [context (:context request)
-        group (-> response :body)]
-    {:name "Group"
-     :self-relation (links/group context (:id group))
+        user (-> response :body)]
+    {:name "User"
+     :self-relation (links/user context (:id user))
      :relations
      {:root (links/root context)
-      :users (links/group-users context :group-id (:id group))
-      :user (links/group-user context :group-id (:id group))
+      :person (links/person context (:person_id  user))
       }}))
 
-(defn groups [request response]
+(defn users [request response]
   (let [context (:context request)
         query-params (:query-params request)]
-    (let [ids (->> response :body :groups (map :id))]
-      {:name "Groups"
-       :self-relation (links/groups context query-params)
+    (let [ids (->> response :body :users (map :id))]
+      {:name "Users"
+       :self-relation (links/users context query-params)
        :relations
        {:root (links/root context)}
        :collection
@@ -33,10 +32,10 @@
           (into {} (map-indexed
                      (fn [i id]
                        [(+ 1 i (pagination/compute-offset query-params))
-                        (links/group context id)])
+                        (links/user context id)])
                      ids))}
          (when (seq ids)
-           (links/next-link links/groups-path context query-params)
+           (links/next-link links/users-path context query-params)
            ))})))
 
 ;### Debug ####################################################################

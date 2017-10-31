@@ -19,7 +19,7 @@ context 'people' do
           expect(people_result.response.status).to be== 200
         end
 
-        it 'returns some data but less than greated because we paginate' do
+        it 'returns some data but less than created because we paginate' do
           expect(
             people_result.data()['people'].count
           ).to be< @people.count

@@ -58,6 +58,36 @@
                            :href "/api/docs/resources/group.html#group"
                            }}}))
 
+
+;### groups-users #################################################################
+
+(defn group-user
+  ([prefix & {:keys [group-id user-id]
+              :or {group-id "{group_id}"
+                   user-id "{user_id}"}}]
+   {:href (str prefix "/groups/" group-id "/users/" user-id)
+    :name "Group-User"
+    :methods {:delete {}
+              :get {}
+              :put {}}
+    :relations {:api-docs {:name "API-Doc Group"
+                           :href "/api/docs/resources/group-users.html"}}}))
+
+(defn group-users-path [prefix query-params]
+  (str prefix "/groups/{group_id}/users/?"
+       (http-client/generate-query-string query-params)))
+
+(defn group-users
+  ([prefix & {:keys [group-id]
+              :or {group-id "{group_id}"}}]
+   {:href (str prefix "/groups/" group-id "/users/")
+    :name "Group-Users"
+    :methods {:get {}
+              :put {}}
+    :relations {:api-docs {:name "API-Doc Group-Users"
+                           :href "/api/docs/resources/group-users.html"}}}))
+
+
 ;### meta data ####################################################################
 
 (defn collection-meta-data
@@ -333,6 +363,37 @@
     :relations {:api-docs {:name "API-Doc Group"
                            :href "/api/docs/resources/person.html#person"
                            }}}))
+
+
+;### users #######################################################################
+
+(defn users-path [prefix query-params]
+  (str prefix "/users/?" (http-client/generate-query-string query-params)))
+
+(defn user
+  ([prefix]
+   (user prefix "{id}"))
+  ([prefix id]
+   {:href (str prefix "/users/" id)
+    :name "User"
+    :methods {:delete {}
+              :get {}
+              :patch {}}
+    :relations {:api-docs {:name "API-Doc User"
+                           :href "/api/docs/resources/user.html#user"}}}))
+
+(defn users
+  ([prefix]
+   (users prefix {}))
+  ([prefix query-params]
+   {:href (users-path prefix query-params)
+    :name "Users"
+    :methods {:get {}
+              :post {}}
+    :relations {:api-docs {:name "API-Doc Users"
+                           :href "/api/docs/resources/users.html#users"
+                           }}}))
+
 
 
 ;### keyword(s) ################################################################

@@ -4,6 +4,8 @@ context 'groups' do
 
   before :each do
     @group = FactoryGirl.create :group
+    @user = FactoryGirl.create :user
+    @group.users << @user
   end
 
   context 'non admin user' do

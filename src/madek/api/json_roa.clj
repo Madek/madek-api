@@ -5,12 +5,14 @@
     [madek.api.json-roa.collection-media-entry-arcs.core :as collection-media-entry-arcs]
     [madek.api.json-roa.filter-sets :as filter-sets]
     [madek.api.json-roa.groups :as groups]
+    [madek.api.json-roa.group-users :as group-users]
     [madek.api.json-roa.keywords :as keywords]
     [madek.api.json-roa.media-entries :as media-entries]
     [madek.api.json-roa.media-files :as media-files]
     [madek.api.json-roa.meta-data :as meta-data]
     [madek.api.json-roa.meta-keys :as meta-keys]
     [madek.api.json-roa.people :as people]
+    [madek.api.json-roa.users :as users]
     [madek.api.json-roa.previews :as previews]
     [madek.api.json-roa.root :as root]
     [madek.api.json-roa.vocabularies :as vocabularies]
@@ -72,6 +74,14 @@
     (cpj/GET "/people/:id" request (people/person request json-response))
     (cpj/PATCH "/people/:id" request (people/person request json-response))
     (cpj/POST "/people/" request (people/person request json-response))
+
+    (cpj/GET "/users/" request (users/users request json-response))
+    (cpj/GET "/groups/:group-id/users/" request (group-users/users request json-response))
+    (cpj/GET "/users/:id" request (users/user request json-response))
+    (cpj/GET "/groups/:group-id/users/:user-id" request (users/user request json-response))
+    (cpj/PUT "/groups/:group-id/users/:user-id" request (users/user request json-response))
+    (cpj/PATCH "/users/:id" request (users/user request json-response))
+    (cpj/POST "/users/" request (users/user request json-response))
 
     (cpj/GET "/previews/:id" request (previews/preview request json-response))
 

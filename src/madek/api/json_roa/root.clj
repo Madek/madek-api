@@ -23,5 +23,7 @@
                  :meta-keys (links/meta-keys context)
                  :person (links/person context)
                  :people (links/people context)
+                 :users (links/users context)
+                 :user (links/user context)
                  :vocabularies (links/vocabularies context)
                  }}))

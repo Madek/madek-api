@@ -15,6 +15,7 @@
     [madek.api.resources.people :as people]
     [madek.api.resources.previews :as previews]
     [madek.api.resources.shared :as shared]
+    [madek.api.resources.users :as users]
     [madek.api.resources.vocabularies :as vocabularies]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
 
@@ -174,6 +175,7 @@
         (cpj/ANY "/meta-keys/*" _ meta-keys/routes)
         (cpj/ANY "/people/*" _ people/routes)
         (cpj/ANY "/previews/:preview_id*" _ previews/routes)
+        (cpj/ANY "/users/*" _ users/routes)
         (cpj/ANY "/vocabularies/*" _ vocabularies/routes)
         (cpj/ANY "*" _ default-handler)
         )

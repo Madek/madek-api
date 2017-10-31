@@ -33,9 +33,11 @@
 (defalias format-predicate format/format-predicate)
 (defalias quote-identifier format/quote-identifier)
 
+(defalias columns helpers/columns)
 (defalias delete-from helpers/delete-from)
 (defalias from helpers/from)
 (defalias group helpers/group)
+(defalias insert-into helpers/insert-into)
 (defalias join helpers/join)
 (defalias limit helpers/limit)
 (defalias merge-join helpers/merge-join)
@@ -48,6 +50,7 @@
 (defalias select helpers/select)
 (defhelper using [m tables]
   (assoc m :using (helpers/collify tables)))
+(defalias values helpers/values)
 (defalias where helpers/where)
 
 
