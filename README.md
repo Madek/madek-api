@@ -3,6 +3,17 @@
 The madek-api is a JSON / JSON-ROA API for Madek.
 
 
+### TODOs Users and Groups
+
+* DB schema refactoring users: zhdkid -> institutional_id
+
+* resource `/users/`, `/users/:id` GET, POST, PATCH
+
+* resource `/groups/:group_id/users/`  `/groups/:id/users/:user_id` GET, PUT, DELETE
+* (???) resource `/users/:user_id/groups/`  `/groups/:id/users/:user_id` GET, PUT, DELETE
+
+
+
 ## Development
 
 ### Configuration
