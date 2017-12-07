@@ -40,6 +40,20 @@ context 'users' do
         end
       end
 
+      context 'a deactivated user can\'t be retrieved' do
+        let :deactivated_user do
+          FactoryGirl.create :user, is_deactivated: true
+        end
+        let :get_user_result do
+          client.get.relation('user').get(id: deactivated_user.id)
+        end
+
+        it 'is not found' do
+          expect(get_user_result.response.status).to be == 404
+        end
+
+      end
+
       context 'a user (with a naughty institutional_id)' do
         before :each do
           @inst_user = FactoryGirl.create :user,
@@ -87,5 +101,3 @@ context 'users' do
     end
   end
 end
-
-

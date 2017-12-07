@@ -41,9 +41,15 @@ context 'users' do
           expect(set_of_created_ids - set_of_retrieved_ids).to be_empty
         end
 
+        it 'omits deactivated users' do
+          deactivated_user = @users.sample
+          deactivated_user.update_attributes!(is_deactivated: true)
+
+          all_indexed_user_ids = Set.new(users_result.collection().map(&:get).map{|x| x.data['id'].to_s})
+          expect(all_indexed_user_ids).not_to include(deactivated_user.id.to_s)
+        end
+
       end
     end
   end
 end
-
-
