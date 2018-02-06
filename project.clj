@@ -21,7 +21,6 @@
                  [com.mchange/c3p0 "0.9.5.2"]
                  [compojure "1.6.0"]
                  [environ "1.1.0"]
-                 [environ "1.1.0"]
                  [inflections "0.13.0"]
                  [log4j/log4j "1.2.17" :exclusions [javax.mail/mail javax.jms/jms com.sun.jdmk/jmxtools com.sun.jmx/jmxri]]
                  [me.raynes/fs "1.4.6"]
@@ -50,4 +49,12 @@
   :main madek.api.main
   :java-source-paths ["java"]
   ;:source-paths ["src" "tmp/logbug/src"]
+
+  ; jdk 9 needs ["--add-modules" "java.xml.bind"]
+  :jvm-opts #=(eval (if (re-matches #"^9\..*" (System/getProperty "java.version"))
+                      ["--add-modules" "java.xml.bind"]
+                      []))
+
+  :javac-options ["-target" "1.8" "-source" "1.8" "-Xlint:-options"]
+
   )
