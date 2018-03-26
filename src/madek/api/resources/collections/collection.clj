@@ -6,7 +6,7 @@
     ))
 
 (def ^:private collection-keys
-  [:id :created_at :responsible_user_id :creator_id :updated_at
+  [:id :created_at :responsible_user_id :updated_at
    :edit_session_updated_at :meta_data_updated_at])
 
 (defn get-collection [request]
