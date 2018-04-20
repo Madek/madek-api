@@ -28,7 +28,9 @@
     (logging/info 'madek.api.main "initializing ...")
     (madek.api.utils.config/initialize
       {:filenames ["./config/settings.yml"
-                   "../config/settings.yml"
+                   "../config/settings.yml",
+                   "./datalayer/config/settings.yml",
+                   "../webapp/datalayer/config/settings.yml",
                    "./config/settings.local.yml"
                    "../config/settings.local.yml"]})
     (rdbms/initialize (config/get-db-spec :api))

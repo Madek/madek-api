@@ -1,5 +1,6 @@
 (ns madek.api.resources.meta-keys.meta-key
   (:require
+    [madek.api.utils.config :as config :refer [get-config]]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [madek.api.utils.sql :as sql]
 
@@ -8,6 +9,26 @@
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
     ))
+
+(defn- available-locales []
+  (into #{}
+    (for [locale (set (:madek_available_locales (get-config)))]
+      locale)))
+
+(defn- default-locale []
+  (let [config (get-config)]
+    (:madek_default_locale config)))
+
+(defn- determine-locale [request]
+  (let [locale (get-in request [:query-params :lang] (default-locale))]
+    (if (and (some? locale) (contains? (available-locales) locale))
+      locale
+      (default-locale))))
+
+(defn- localize-result [result locale]
+  (if-let [label (get-in result [:labels locale])]
+    (assoc result :label label)
+    (assoc result :label (get-in result [:labels (default-locale)]))))
 
 (defn build-meta-key-query [id]
   (-> (sql/select :*)
@@ -22,7 +43,7 @@
     (if (re-find #"^[a-z0-9\-\_\:]+:[a-z0-9\-\_\:]+$" id)
       (if-let [meta-key (first
                           (jdbc/query (rdbms/get-ds) query))]
-        {:body meta-key}
+        {:body (localize-result meta-key (determine-locale request))}
         {:status 404 :body {:message "Meta-Key could not be found!"}})
       {:status 422
        :body {:message "Wrong meta_key_id format! See documentation."}})))
@@ -31,5 +52,3 @@
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
-
-
