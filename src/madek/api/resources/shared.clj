@@ -14,4 +14,8 @@
     (cpj/ANY "*" _ {:status 501 :body {:message "501 NOT IMPLEMENTED"}})
     ))
 
+(def internal-keys [:admin_comment])
 
+(defn remove-internal-keys
+  [resource]
+  (apply dissoc resource internal-keys))

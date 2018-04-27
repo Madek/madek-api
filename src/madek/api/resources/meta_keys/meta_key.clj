@@ -3,6 +3,7 @@
     [madek.api.utils.config :as config :refer [get-config]]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [madek.api.utils.sql :as sql]
+    [madek.api.resources.shared :refer [remove-internal-keys]]
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
@@ -43,7 +44,7 @@
     (if (re-find #"^[a-z0-9\-\_\:]+:[a-z0-9\-\_\:]+$" id)
       (if-let [meta-key (first
                           (jdbc/query (rdbms/get-ds) query))]
-        {:body (localize-result meta-key (determine-locale request))}
+        {:body (remove-internal-keys (localize-result meta-key (determine-locale request)))}
         {:status 404 :body {:message "Meta-Key could not be found!"}})
       {:status 422
        :body {:message "Wrong meta_key_id format! See documentation."}})))

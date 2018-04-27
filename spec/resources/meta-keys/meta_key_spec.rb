@@ -79,5 +79,16 @@ describe 'meta-key' do
         end
       end
     end
+
+    it 'does not return admin_comment property' do
+      vocabulary = FactoryGirl.create(:vocabulary,
+                                      enabled_for_public_view: true)
+      meta_key = FactoryGirl.create(:meta_key,
+                                    id: "#{vocabulary.id}:#{Faker::Lorem.word}",
+                                    vocabulary: vocabulary)
+
+      expect(json_roa_meta_key_resource(meta_key.id).get.response.body)
+        .not_to have_key 'admin_comment'
+    end
   end
 end

@@ -2,6 +2,7 @@
   (:require
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [madek.api.utils.sql :as sql]
+    [madek.api.resources.shared :refer [remove-internal-keys]]
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
@@ -21,7 +22,7 @@
   (let [id (-> request :params :id)
         query (build-vocabulary-query id)]
     (if-let [vocabulary (first (jdbc/query (rdbms/get-ds) query))]
-      {:body vocabulary}
+      {:body (remove-internal-keys vocabulary)}
       {:status 404 :body {:message "Vocabulary could not be found!"}})))
 
 ;### Debug ####################################################################
