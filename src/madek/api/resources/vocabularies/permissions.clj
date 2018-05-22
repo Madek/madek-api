@@ -14,14 +14,11 @@
 
 (defn- execute-query
   [query]
-  (println "execute-query:" query)
-  (println "=>" (jdbc/query (rdbms/get-ds) query))
   (jdbc/query (rdbms/get-ds) query))
 
 (defn extract-current-user
   [request]
   (def current-user (:authenticated-entity request))
-  (println "CURRENT USER" current-user))
 
 (defn- current-user-id
   []
