@@ -18,7 +18,7 @@
 
 (defn extract-current-user
   [request]
-  (def current-user (:authenticated-entity request))
+  (def current-user (:authenticated-entity request)))
 
 (defn- current-user-id
   []
