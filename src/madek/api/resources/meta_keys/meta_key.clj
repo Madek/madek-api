@@ -11,14 +11,28 @@
     [logbug.debug :as debug]
     ))
 
+(defn- find-app-setting
+  []
+  (let [query (-> (sql/select :*)
+                  (sql/from :app_settings)
+                  (sql/format))]
+    (first (jdbc/query (rdbms/get-ds) query))))
+
 (defn- available-locales []
-  (into #{}
-    (for [locale (set (:madek_available_locales (get-config)))]
-      locale)))
+  (let [settings (find-app-setting)]
+    (if-not (nil? settings)
+      (set (:available_locales settings))
+      (let [settings (set (:madek_available_locales (get-config)))]
+        (into #{}
+          (for [locale settings]
+            locale))))))
 
 (defn- default-locale []
-  (let [config (get-config)]
-    (:madek_default_locale config)))
+  (let [app-setting (find-app-setting)]
+    (if-not (nil? app-setting)
+      (:default_locale app-setting)
+      (let [config (get-config)]
+        (:madek_default_locale config)))))
 
 (defn- determine-locale [request]
   (let [locale (get-in request [:query-params :lang] (default-locale))]
