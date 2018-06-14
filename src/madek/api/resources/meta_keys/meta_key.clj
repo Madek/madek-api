@@ -45,6 +45,33 @@
     (assoc result :label label)
     (assoc result :label (get-in result [:labels (default-locale)]))))
 
+(defn- get-io-mappings
+  [id]
+  (let [query (-> (sql/select :key_map, :io_interface_id)
+                  (sql/from :io_mappings)
+                  (sql/where
+                    [:= :io_mappings.meta_key_id id])
+                  (sql/format))]
+    (jdbc/query (rdbms/get-ds) query)))
+
+(defn- prepare-io-mappings-from
+  [io-mappings]
+  (let [groupped (group-by :io_interface_id io-mappings)]
+    (let [io-interfaces (keys groupped)]
+      (map (fn [io-interface-id] {
+        :id io-interface-id
+        :keys (reduce (fn [m key-map]
+                        (conj m {:key (:key_map key-map)}))
+                      []
+                      (get groupped io-interface-id))
+      }) io-interfaces))))
+  
+
+(defn- include-io-mappings
+  [result id]
+  (let [io-mappings (prepare-io-mappings-from(get-io-mappings id))]
+    (assoc result :io_mappings io-mappings)))
+
 (defn build-meta-key-query [id]
   (-> (sql/select :*)
       (sql/from :meta-keys)
@@ -58,7 +85,10 @@
     (if (re-find #"^[a-z0-9\-\_\:]+:[a-z0-9\-\_\:]+$" id)
       (if-let [meta-key (first
                           (jdbc/query (rdbms/get-ds) query))]
-        {:body (remove-internal-keys (localize-result meta-key (determine-locale request)))}
+        {:body (include-io-mappings
+          (remove-internal-keys
+            (localize-result meta-key
+              (determine-locale request))) id)}
         {:status 404 :body {:message "Meta-Key could not be found!"}})
       {:status 422
        :body {:message "Wrong meta_key_id format! See documentation."}})))

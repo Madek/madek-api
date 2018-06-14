@@ -90,5 +90,54 @@ describe 'meta-key' do
       expect(json_roa_meta_key_resource(meta_key.id).get.response.body)
         .not_to have_key 'admin_comment'
     end
+
+    context 'when meta key has some mappings' do
+      it 'returns io-mappings structure' do
+        vocabulary = FactoryGirl.create(:vocabulary,
+                                        enabled_for_public_view: true)
+        meta_key = FactoryGirl.create(:meta_key,
+                                      id: "#{vocabulary.id}:#{Faker::Lorem.word}",
+                                      vocabulary: vocabulary)
+        io_interface_1 = FactoryGirl.create(:io_interface)
+        io_interface_2 = FactoryGirl.create(:io_interface)
+        io_mapping_1 = FactoryGirl.create(:io_mapping, io_interface: io_interface_1, meta_key: meta_key)
+        io_mapping_2 = FactoryGirl.create(:io_mapping, io_interface: io_interface_1, meta_key: meta_key)
+        io_mapping_3 = FactoryGirl.create(:io_mapping, io_interface: io_interface_2, meta_key: meta_key)
+        io_mapping_4 = FactoryGirl.create(:io_mapping, io_interface: io_interface_2, meta_key: meta_key)
+
+        response_body = json_roa_meta_key_resource(meta_key.id).get.response.body
+
+        expect(response_body['io_mappings']).to eq [
+          {
+            'id' => io_interface_1.id,
+            'keys' => [
+              { 'key' => io_mapping_1.key_map },
+              { 'key' => io_mapping_2.key_map }
+            ]
+          },
+          {
+            'id' => io_interface_2.id,
+            'keys' => [
+              { 'key' => io_mapping_3.key_map },
+              { 'key' => io_mapping_4.key_map }
+            ]
+          },
+        ]
+      end
+    end
+
+    context 'when meta key has no mappings' do
+      it 'returns an empty io-mappings structure' do
+        vocabulary = FactoryGirl.create(:vocabulary,
+                                        enabled_for_public_view: true)
+        meta_key = FactoryGirl.create(:meta_key,
+                                      id: "#{vocabulary.id}:#{Faker::Lorem.word}",
+                                      vocabulary: vocabulary)
+
+        response_body = json_roa_meta_key_resource(meta_key.id).get.response.body
+
+        expect(response_body['io_mappings']).to eq []
+      end
+    end
   end
 end
