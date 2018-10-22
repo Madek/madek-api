@@ -12,6 +12,7 @@
     [madek.api.json-roa.meta-data :as meta-data]
     [madek.api.json-roa.meta-keys :as meta-keys]
     [madek.api.json-roa.people :as people]
+    [madek.api.json-roa.roles :as roles]
     [madek.api.json-roa.users :as users]
     [madek.api.json-roa.previews :as previews]
     [madek.api.json-roa.root :as root]
@@ -67,6 +68,7 @@
 
     (cpj/GET "/media-files/:id" request (media-files/media-file request json-response))
     (cpj/GET "/meta-data/:id" request (meta-data/meta-datum request json-response))
+    (cpj/GET "/meta-data-roles/:id" request (meta-data/meta-datum request json-response))
     (cpj/GET "/meta-keys/:id" request (meta-keys/meta-key request json-response))
     (cpj/GET "/meta-keys/" request (meta-keys/index request json-response))
 
@@ -74,6 +76,9 @@
     (cpj/GET "/people/:id" request (people/person request json-response))
     (cpj/PATCH "/people/:id" request (people/person request json-response))
     (cpj/POST "/people/" request (people/person request json-response))
+
+    (cpj/GET "/roles/" request (roles/roles request json-response))
+    (cpj/GET "/roles/:id" request (roles/role request json-response))
 
     (cpj/GET "/users/" request (users/users request json-response))
     (cpj/GET "/groups/:group-id/users/" request (group-users/users request json-response))

@@ -6,6 +6,13 @@ ROUNDS = begin
            25
          end
 
+shared_context :meta_datum_for_media_entry do |_ctx|
+  let :media_resource do
+    user = FactoryGirl.create(:user)
+    FactoryGirl.create :media_entry, creator: user, responsible_user: user
+  end
+end
+
 shared_context :meta_datum_for_random_resource_type do |_ctx|
   let :media_resource do
     user = FactoryGirl.create(:user)

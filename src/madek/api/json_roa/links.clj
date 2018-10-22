@@ -116,6 +116,16 @@
                            :href "/api/docs/resources/meta-datum.html#meta-datum"
                            }}}))
 
+(defn meta-datum-role
+  ([prefix]
+   (meta-datum-role prefix "{id}"))
+  ([prefix id]
+   {:name "MetaDatum::Role"
+    :href (str prefix "/meta-data-roles/" id)
+    :relations {:api-docs {:name "API-Doc MetaDatum::Role"
+                           :href "/api/docs/resources/meta-datum.html#meta-datum"
+                           }}}))
+
 
 ;### media-entries ################################################################
 
@@ -345,11 +355,11 @@
    (person prefix "{id}"))
   ([prefix id]
    {:href (str prefix "/people/" id)
-    :name "Group"
+    :name "Person"
     :methods {:delete {}
               :get {}
               :patch {}}
-    :relations {:api-docs {:name "API-Doc Group"
+    :relations {:api-docs {:name "API-Doc Person"
                            :href "/api/docs/resources/person.html#person"}}}))
 
 (defn people
@@ -438,6 +448,31 @@
                            :href "/api/docs/resources/vocabularies.html#vocabularies"
                            }}}))
 
+
+;### role(s) ################################################################
+
+(defn roles-path [prefix query-params]
+  (str prefix "/roles/?" (http-client/generate-query-string query-params)))
+
+(defn role
+  ([prefix]
+   (role prefix "{id}"))
+  ([prefix id]
+   {:name "Role"
+    :href (str prefix "/roles/" id)
+    :relations {:api-docs {:name "API-Doc Role"
+                           :href "/api/docs/resources/role.html#role"
+                           }}}))
+
+(defn roles
+  ([prefix]
+    (roles prefix {}))
+  ([prefix query-params]
+   {:name "Roles"
+    :href (roles-path prefix query-params)
+    :relations {:api-docs {:name "API-Doc Roles"
+                           :href "/api/docs/resources/roles.html#roles"
+                           }}}))
 
 
 ;### next link #################################################################

@@ -11,6 +11,41 @@
   [(format "%07d" idx)
    (links/meta-datum context meta-datum)])
 
+(defn- meta-datum-role?
+  [response]
+  (let [params (-> response :body)]
+    (and (contains? params :meta_datum_id)
+         (contains? params :person_id)
+         (contains? params :role_id))))
+
+(defn- meta-datum-relations
+  [response context]
+  {:meta-key (links/meta-key
+             context (-> response :body :meta_key_id))
+   :media-entry (links/media-entry
+                context (-> response :body :media_entry_id))}
+  )
+
+(defn- meta-datum-role-relations
+  [response context]
+  (conj {}
+    {:meta-datum (links/meta-datum
+                 context {:id (-> response :body :meta_datum_id)})
+     :person (links/person
+             context (-> response :body :person_id))}
+    (if (some? (-> response :body :role_id))
+      {:role (links/role
+             context (-> response :body :role_id))}
+      {})
+  )
+)
+
+(defn- relations
+  [response context]
+  (if (meta-datum-role? response)
+    (meta-datum-role-relations response context)
+    (meta-datum-relations response context)))
+
 (defn index [request response]
   (let [context (:context request)
         query-params (:query-params request)]
@@ -34,11 +69,8 @@
   (let [context (:context request)
         meta-datum-type (-> response :body :type)]
     (conj {:name "Meta-Datum"
-           :relations {:root (links/root context)
-                       :meta-key (links/meta-key
-                                   context (-> response :body :meta_key_id))
-                       :media-entry (links/media-entry
-                                      context (-> response :body :media_entry_id))}}
+           :relations (conj {:root (links/root context)}
+                            (relations response context))}
           (when-not (or (= meta-datum-type "MetaDatum::Text")
                         (= meta-datum-type "MetaDatum::TextDate"))
             {:collection
@@ -46,7 +78,8 @@
               (into {}
                     (map #(hash-map % ((case meta-datum-type
                                          "MetaDatum::People" links/person
-                                         "MetaDatum::Keywords" links/keyword-term)
+                                         "MetaDatum::Keywords" links/keyword-term
+                                         "MetaDatum::Roles" links/meta-datum-role)
                                        context %))
                          (map :id (-> response :body :value))))}}))))
 

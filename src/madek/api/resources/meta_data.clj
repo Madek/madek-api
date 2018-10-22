@@ -17,6 +17,7 @@
     (cpj/GET "/media-entries/:media_entry_id/meta-data/" _ meta-data.index/get-index)
     (cpj/GET "/collections/:collection_id/meta-data/" _ meta-data.index/get-index)
     (cpj/GET "/meta-data/:meta_datum_id" _ meta-datum/get-meta-datum)
+    (cpj/GET "/meta-data-roles/:meta_datum_id" _ meta-datum/get-meta-datum-role)
     (cpj/ANY "*" _ shared/dead-end-handler)
     ))
 
