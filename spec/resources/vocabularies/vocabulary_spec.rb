@@ -25,9 +25,11 @@ describe 'vocabulary' do
     end
     ###############################################################################
 
-    def json_roa_vocabulary_resource(vocabulary_id, is_authenticated_user = false)
+    def json_roa_vocabulary_resource(vocabulary_id, is_authenticated_user = false, params = {})
+      query_params = URI.encode_www_form(params)
+      query_params = '?' + query_params unless query_params.empty?
       JSON_ROA::Client.connect(
-        "#{api_base_url}/vocabularies/#{vocabulary_id}",
+        "#{api_base_url}/vocabularies/#{vocabulary_id}#{query_params}",
         raise_error: false) do |conn|
           if is_authenticated_user
             conn.basic_auth(entity.login, entity.password)
@@ -137,6 +139,118 @@ describe 'vocabulary' do
             expect(data).not_to have_key 'id'
             expect(data['message']).to eq 'Vocabulary could not be found!'
           end
+        end
+      end
+    end
+
+    describe 'multilingual labels' do
+      let(:vocabulary) do
+        FactoryGirl.create(
+          :vocabulary,
+          labels: {
+            de: 'label de',
+            en: 'label en'
+          })
+      end
+
+      specify 'result contains correct labels' do
+        expect(json_roa_vocabulary_resource(vocabulary.id).get.data['labels'])
+          .to eq({ 'de' => 'label de', 'en' => 'label en'})
+      end
+
+      context 'when locale param is not present' do
+        it 'returns a label for a default locale' do
+          expect(
+            json_roa_vocabulary_resource(vocabulary.id).get.data['label']
+          ).to eq 'label de'
+        end
+      end
+
+      context 'when locale param is present' do
+        it 'returns a correct label for "en" locale' do
+          expect(
+            json_roa_vocabulary_resource(
+              vocabulary.id,
+              false,
+              { lang: :en }).get.data['label']
+          ).to eq 'label en'
+        end
+
+        it 'returns a correct label for "de" locale' do
+          expect(
+            json_roa_vocabulary_resource(
+              vocabulary.id,
+              false,
+              { lang: :de }).get.data['label']
+          ).to eq 'label de'
+        end
+      end
+
+      context 'when locale param is not available' do
+        it 'returns a label for a default locale' do
+          expect(
+            json_roa_vocabulary_resource(
+              vocabulary.id,
+              false,
+              { lang: :pl }).get.data['label']
+          ).to eq 'label de'
+        end
+      end
+    end
+
+    describe 'multilingual descriptions' do
+      let(:vocabulary) do
+        FactoryGirl.create(
+          :vocabulary,
+          descriptions: {
+            de: 'description de',
+            en: 'description en'
+          })
+      end
+
+      specify 'result contains correct descriptions' do
+        expect(
+          json_roa_vocabulary_resource(vocabulary.id).get.data['descriptions']
+        )
+          .to eq({ 'de' => 'description de', 'en' => 'description en' })
+      end
+
+      context 'when locale param is not present' do
+        it 'returns a description for a default locale' do
+          expect(
+            json_roa_vocabulary_resource(vocabulary.id).get.data['description']
+          ).to eq 'description de'
+        end
+      end
+
+      context 'when locale param is present' do
+        it 'returns a correct description for "en" locale' do
+          expect(
+            json_roa_vocabulary_resource(
+              vocabulary.id,
+              false,
+              { lang: :en }).get.data['description']
+          ).to eq 'description en'
+        end
+
+        it 'returns a correct description for "de" locale' do
+          expect(
+            json_roa_vocabulary_resource(
+              vocabulary.id,
+              false,
+              { lang: :de }).get.data['description']
+          ).to eq 'description de'
+        end
+      end
+
+      context 'when locale param is not available' do
+        it 'returns a description for a default locale' do
+          expect(
+            json_roa_vocabulary_resource(
+              vocabulary.id,
+              false,
+              { lang: :pl }).get.data['description']
+          ).to eq 'description de'
         end
       end
     end
