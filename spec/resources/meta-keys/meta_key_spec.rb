@@ -35,7 +35,7 @@ describe 'meta-key' do
       ).to be == 404
     end
 
-    describe 'multilanguage labels' do
+    describe 'multilingual labels' do
       let(:vocabulary) { FactoryGirl.create :vocabulary }
       let(:meta_key) do
         FactoryGirl.create :meta_key,
