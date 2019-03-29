@@ -1,6 +1,7 @@
 (ns madek.api.web
   (:require
     [madek.api.authentication :as authentication]
+    [madek.api.authorization :as authorization]
     [madek.api.json-protocol]
     [madek.api.json-roa]
     [madek.api.management :as management]
@@ -130,6 +131,7 @@
   (I> wrap-handler-with-logging
       dead-end-handler
       madek.api.resources/wrap-api-routes
+      authorization/wrap-authorize-http-method
       authentication/wrap
       management/wrap
       web.browser/wrap

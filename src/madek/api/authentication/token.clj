@@ -44,7 +44,7 @@
 (defn violates-not-read? [user-token request]
   (and (not (:token_scope_read user-token))
        (#{:get :head :options}
-               (:request-method request))))
+         (:request-method request))))
 
 (defn violates-not-write? [user-token request]
   (and (not (:token_scope_write user-token))
