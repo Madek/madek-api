@@ -16,14 +16,6 @@
   [query]
   (jdbc/query (rdbms/get-ds) query))
 
-(defn extract-current-user
-  [request]
-  (def current-user (:authenticated-entity request)))
-
-(defn- current-user-id
-  []
-  (:id current-user))
-
 (defn- group-ids
   [user-id]
   (if (nil? user-id)
@@ -36,13 +28,12 @@
       (map :group_id (execute-query query)))))
 
 (defn- user-permissions-query
-  []
-  (if (nil? (current-user-id))
-    nil
+  [user-id]
+  (if user-id
     (-> (sql/select :vocabulary_id)
         (sql/from :vocabulary_user_permissions)
         (sql/merge-where
-          [:= :vocabulary_user_permissions.user_id (current-user-id)]
+          [:= :vocabulary_user_permissions.user_id user-id]
           [:= :vocabulary_user_permissions.view true])
         (sql/format))))
 
@@ -53,22 +44,22 @@
     (map :vocabulary_id (execute-query query))))
 
 (defn- group-permissions-query
-  []
-  (let [groups-ids-result (group-ids (current-user-id))]
+  [user-id]
+  (let [groups-ids-result (group-ids user-id)]
     (if (empty? groups-ids-result)
       nil
       (-> (sql/select :vocabulary_id)
           (sql/from :vocabulary_group_permissions)
           (sql/where
-            [:in :vocabulary_group_permissions.group_id (group-ids (current-user-id))]
+            [:in :vocabulary_group_permissions.group_id (group-ids user-id)]
             [:= :vocabulary_group_permissions.view true])
           (sql/format)))))
 
 (defn accessible-vocabulary-ids
-  []
+  [user-id]
   (concat
-    (pluck-vocabulary-ids (user-permissions-query))
-    (pluck-vocabulary-ids (group-permissions-query))))
+    (pluck-vocabulary-ids (user-permissions-query user-id))
+    (pluck-vocabulary-ids (group-permissions-query user-id))))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

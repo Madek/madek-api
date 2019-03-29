@@ -12,28 +12,26 @@
     ))
 
 (defn- where-clause
-  [id]
-  (let [vocabuary-ids (permissions/accessible-vocabulary-ids)]
-    (if (empty? vocabuary-ids)
-      [:and
-        [:= :vocabularies.id id]
-        [:= :vocabularies.enabled_for_public_view true]]
-      [:or
+  [id user-id]
+  (let [public [:= :vocabularies.enabled_for_public_view true]
+        id-match [:= :vocabularies.id id]]
+    (if user-id
+      (let [vocabulary-ids (permissions/accessible-vocabulary-ids user-id)]
         [:and
-          [:= :vocabularies.id id]
-          [:= :vocabularies.enabled_for_public_view true]]
-        [:in :vocabularies.id vocabuary-ids]])))
+         [:or public [:in :vocabularies.id vocabulary-ids]]
+         id-match])
+      [:and public id-match])))
 
-(defn build-vocabulary-query [id]
+(defn build-vocabulary-query [id user-id]
   (-> (sql/select :*)
       (sql/from :vocabularies)
-      (sql/where (where-clause id))
+      (sql/where (where-clause id user-id))
       (sql/format)))
 
 (defn get-vocabulary [request]
-  (permissions/extract-current-user request)
   (let [id (-> request :params :id)
-        query (build-vocabulary-query id)]
+        user-id (-> request :authenticated-entity :id)
+        query (build-vocabulary-query id user-id)]
     (if-let [vocabulary (first (jdbc/query (rdbms/get-ds) query))]
       {:body (remove-internal-keys vocabulary)}
       {:status 404 :body {:message "Vocabulary could not be found!"}})))

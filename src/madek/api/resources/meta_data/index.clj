@@ -19,8 +19,8 @@
     [madek.api WebstackException]))
 
 (defn- where-clause
-  []
-  (let [vocabulary-ids (permissions/accessible-vocabulary-ids)]
+  [user-id]
+  (let [vocabulary-ids (permissions/accessible-vocabulary-ids user-id)]
     (if (empty? vocabulary-ids)
       [:= :vocabularies.enabled_for_public_view true]
       [:or
@@ -28,22 +28,22 @@
         [:in :vocabularies.id vocabulary-ids]])))
 
 (defn- base-query
-  []
+  [user-id]
   (-> (sql/select :meta_data.id :meta_data.type :meta_data.meta_key_id)
       (sql/from :meta_data)
       (sql/merge-join :meta_keys [:= :meta_data.meta_key_id :meta_keys.id])
       (sql/merge-join :vocabularies [:= :meta_keys.vocabulary_id :vocabularies.id])
-      (sql/merge-where (where-clause))
+      (sql/merge-where (where-clause user-id))
       (sql/order-by [:vocabularies.position :asc]
                     [:meta_keys.position :asc]
                     [:meta_data.id :asc])))
 
-(defn- meta-data-query-for-media-entry [media-entry-id]
-  (-> (base-query)
+(defn- meta-data-query-for-media-entry [media-entry-id user-id]
+  (-> (base-query user-id)
       (sql/merge-where [:= :meta_data.media_entry_id media-entry-id])))
 
-(defn- meta-data-query-for-collection [collection-id]
-  (-> (base-query)
+(defn- meta-data-query-for-collection [collection-id user-id]
+  (-> (base-query user-id)
       (sql/merge-where [:= :meta_data.collection_id  collection-id])))
 
 (defn filter-meta-data-by-meta-key-ids [query request]
@@ -62,15 +62,15 @@
       sql/format))
 
 (defn get-meta-data [request media-resource]
-  (when-let [id (:id media-resource)]
-    (->> (case (:type media-resource)
-           "MediaEntry" (meta-data-query-for-media-entry id)
-           "Collection" (meta-data-query-for-collection id))
-         (build-query request)
-         (jdbc/query (get-ds)))))
+  (let [user-id (-> request :authenticated-entity :id)]
+    (when-let [id (:id media-resource)]
+      (->> (case (:type media-resource)
+             "MediaEntry" (meta-data-query-for-media-entry id user-id)
+             "Collection" (meta-data-query-for-collection id user-id))
+           (build-query request)
+           (jdbc/query (get-ds))))))
 
 (defn get-index [request]
-  (permissions/extract-current-user request)
   (if-let [media-resource (:media-resource request)]
     (when-let [meta-data (get-meta-data request media-resource)]
       {:body

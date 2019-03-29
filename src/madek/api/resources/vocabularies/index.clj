@@ -11,26 +11,26 @@
     [logbug.debug :as debug]))
 
 (defn- where-clause
-  []
-  (let [vocabuary-ids (permissions/accessible-vocabulary-ids)]
-    (if (empty? vocabuary-ids)
+  [user-id]
+  (let [vocabulary-ids (permissions/accessible-vocabulary-ids user-id)]
+    (if (empty? vocabulary-ids)
       [:= :vocabularies.enabled_for_public_view true]
       [:or
         [:= :vocabularies.enabled_for_public_view true]
-        [:in :vocabularies.id vocabuary-ids]])))
+        [:in :vocabularies.id vocabulary-ids]])))
 
 (defn- base-query
-  []
+  [user-id]
   (-> (sql/select :id)
       (sql/from :vocabularies)
-      (sql/merge-where (where-clause))
+      (sql/merge-where (where-clause user-id))
       sql/format))
 
 (defn- query-index-resources [request]
-  (jdbc/query (rdbms/get-ds) (base-query)))
+  (let [user-id (-> request :authenticated-entity :id)]
+    (jdbc/query (rdbms/get-ds) (base-query user-id))))
 
 (defn get-index [request]
-  (permissions/extract-current-user request)
   (catcher/with-logging {}
     {:body
      {:vocabularies

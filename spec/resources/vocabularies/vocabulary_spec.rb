@@ -2,14 +2,37 @@ require 'spec_helper'
 
 describe 'vocabulary' do
   include_context :json_roa_client_for_authenticated_user do
+    ###############################################################################
+    # Just so that there is some other arbitrary data besides the actual test data.
+    # No exlicit expectations are done with them.
+    before :example do
+      10.times do
+        FactoryGirl.create(:vocabulary,
+                           enabled_for_public_view: [true, false].sample)
+      end
+
+      Vocabulary.take(5).shuffle.each do |vocabulary|
+        Permissions::VocabularyUserPermission.create!(user_id: user.id,
+                                                      view: [true, false].sample,
+                                                      vocabulary: vocabulary)
+
+        group = FactoryGirl.create :group
+        group.users << user
+        Permissions::VocabularyGroupPermission.create!(group_id: group.id,
+                                                       view: [true, false].sample,
+                                                       vocabulary: vocabulary)
+      end
+    end
+    ###############################################################################
+
     def json_roa_vocabulary_resource(vocabulary_id, is_authenticated_user = false)
       JSON_ROA::Client.connect(
         "#{api_base_url}/vocabularies/#{vocabulary_id}",
         raise_error: false) do |conn|
-        if is_authenticated_user
-          conn.basic_auth(entity.login, entity.password)
+          if is_authenticated_user
+            conn.basic_auth(entity.login, entity.password)
+          end
         end
-      end
     end
 
     it 'should return 200 for an existing vocabulary' do
@@ -61,8 +84,8 @@ describe 'vocabulary' do
             vocabulary = FactoryGirl.create(:vocabulary,
                                             enabled_for_public_view: false)
             Permissions::VocabularyUserPermission.create!(user_id: user.id,
-                                                                       view: true,
-                                                                       vocabulary: vocabulary)
+                                                          view: true,
+                                                          vocabulary: vocabulary)
 
             data = json_roa_vocabulary_resource(vocabulary.id, true).get.response.body
 
@@ -76,8 +99,8 @@ describe 'vocabulary' do
             group = FactoryGirl.create :group
             group.users << user
             Permissions::VocabularyGroupPermission.create!(group_id: group.id,
-                                                                        view: true,
-                                                                        vocabulary: vocabulary)
+                                                           view: true,
+                                                           vocabulary: vocabulary)
 
             data = json_roa_vocabulary_resource(vocabulary.id, true).get.response.body
 
@@ -91,8 +114,8 @@ describe 'vocabulary' do
             vocabulary = FactoryGirl.create(:vocabulary,
                                             enabled_for_public_view: false)
             Permissions::VocabularyUserPermission.create!(user_id: user.id,
-                                                                       view: false,
-                                                                       vocabulary: vocabulary)
+                                                          view: false,
+                                                          vocabulary: vocabulary)
 
             data = json_roa_vocabulary_resource(vocabulary.id, true).get.response.body
 
@@ -106,8 +129,8 @@ describe 'vocabulary' do
             group = FactoryGirl.create :group
             group.users << user
             Permissions::VocabularyGroupPermission.create!(group_id: group.id,
-                                                                        view: false,
-                                                                        vocabulary: vocabulary)
+                                                           view: false,
+                                                           vocabulary: vocabulary)
 
             data = json_roa_vocabulary_resource(vocabulary.id, true).get.response.body
 
