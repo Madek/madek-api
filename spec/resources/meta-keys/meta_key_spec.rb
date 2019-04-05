@@ -38,45 +38,75 @@ describe 'meta-key' do
     describe 'multilingual labels' do
       let(:vocabulary) { FactoryGirl.create :vocabulary }
       let(:meta_key) do
-        FactoryGirl.create :meta_key,
-                           id: "#{vocabulary.id}:#{Faker::Lorem.word}",
-                           vocabulary: vocabulary
-      end
-      before do
-        Settings.madek_available_locales.each do |locale|
-          meta_key.labels[locale] = "label #{locale}"
-        end
-        meta_key.save!
-      end
-
-      context 'when locale param is not present' do
-        it 'returns a label for a default locale' do
-          expect(
-            json_roa_meta_key_resource(meta_key.id).get.data['label']
-          ).to eq 'label de'
-        end
+        FactoryGirl.create(
+          :meta_key,
+          id: "#{vocabulary.id}:#{Faker::Lorem.word}",
+          vocabulary: vocabulary,
+          labels: {
+            de: 'label de',
+            en: 'label en'
+          })
       end
 
-      context 'when locale param is present' do
-        it 'returns a correct label for "en" locale' do
-          expect(
-            json_roa_meta_key_resource(meta_key.id, { lang: :en }).get.data['label']
-          ).to eq 'label en'
-        end
-
-        it 'returns a correct label for "de" locale' do
-          expect(
-            json_roa_meta_key_resource(meta_key.id, { lang: :de }).get.data['label']
-          ).to eq 'label de'
-        end
+      specify 'result contains correct labels' do
+        expect(json_roa_meta_key_resource(meta_key.id).get.data['labels'])
+          .to eq({ 'de' => 'label de', 'en' => 'label en'})
       end
 
-      context 'when locale param is not available' do
-        it 'returns a label for a default locale' do
-          expect(
-            json_roa_meta_key_resource(meta_key.id, { lang: :pl }).get.data['label']
-          ).to eq 'label de'
-        end
+      specify 'result contains a label from default locale' do
+        expect(
+          json_roa_meta_key_resource(meta_key.id).get.data['label']
+        ).to eq 'label de'
+      end
+    end
+
+    describe 'multilingual descriptions' do
+      let(:vocabulary) { FactoryGirl.create :vocabulary }
+      let(:meta_key) do
+        FactoryGirl.create(
+          :meta_key,
+          id: "#{vocabulary.id}:#{Faker::Lorem.word}",
+          vocabulary: vocabulary,
+          descriptions: {
+            de: 'description de',
+            en: 'description en'
+          })
+      end
+
+      specify 'result contains correct descriptions' do
+        expect(json_roa_meta_key_resource(meta_key.id).get.data['descriptions'])
+          .to eq({ 'de' => 'description de', 'en' => 'description en'})
+      end
+
+      specify 'result contains a description from default locale' do
+        expect(
+          json_roa_meta_key_resource(meta_key.id).get.data['description']
+        ).to eq 'description de'
+      end
+    end
+
+    describe 'multilingual hints' do
+      let(:vocabulary) { FactoryGirl.create :vocabulary }
+      let(:meta_key) do
+        FactoryGirl.create(
+          :meta_key,
+          id: "#{vocabulary.id}:#{Faker::Lorem.word}",
+          vocabulary: vocabulary,
+          hints: {
+            de: 'hint de',
+            en: 'hint en'
+          })
+      end
+
+      specify 'result contains correct hints' do
+        expect(json_roa_meta_key_resource(meta_key.id).get.data['hints'])
+          .to eq({ 'de' => 'hint de', 'en' => 'hint en'})
+      end
+
+      specify 'result contains a hint from default locale' do
+        expect(
+          json_roa_meta_key_resource(meta_key.id).get.data['hint']
+        ).to eq 'hint de'
       end
     end
 
