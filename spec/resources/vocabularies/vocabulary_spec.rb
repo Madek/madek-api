@@ -25,11 +25,9 @@ describe 'vocabulary' do
     end
     ###############################################################################
 
-    def json_roa_vocabulary_resource(vocabulary_id, is_authenticated_user = false, params = {})
-      query_params = URI.encode_www_form(params)
-      query_params = '?' + query_params unless query_params.empty?
+    def json_roa_vocabulary_resource(vocabulary_id, is_authenticated_user = false)
       JSON_ROA::Client.connect(
-        "#{api_base_url}/vocabularies/#{vocabulary_id}#{query_params}",
+        "#{api_base_url}/vocabularies/#{vocabulary_id}",
         raise_error: false) do |conn|
           if is_authenticated_user
             conn.basic_auth(entity.login, entity.password)
@@ -158,43 +156,10 @@ describe 'vocabulary' do
           .to eq({ 'de' => 'label de', 'en' => 'label en'})
       end
 
-      context 'when locale param is not present' do
-        it 'returns a label for a default locale' do
-          expect(
-            json_roa_vocabulary_resource(vocabulary.id).get.data['label']
-          ).to eq 'label de'
-        end
-      end
-
-      context 'when locale param is present' do
-        it 'returns a correct label for "en" locale' do
-          expect(
-            json_roa_vocabulary_resource(
-              vocabulary.id,
-              false,
-              { lang: :en }).get.data['label']
-          ).to eq 'label en'
-        end
-
-        it 'returns a correct label for "de" locale' do
-          expect(
-            json_roa_vocabulary_resource(
-              vocabulary.id,
-              false,
-              { lang: :de }).get.data['label']
-          ).to eq 'label de'
-        end
-      end
-
-      context 'when locale param is not available' do
-        it 'returns a label for a default locale' do
-          expect(
-            json_roa_vocabulary_resource(
-              vocabulary.id,
-              false,
-              { lang: :pl }).get.data['label']
-          ).to eq 'label de'
-        end
+      specify 'result contains a label for default locale' do
+        expect(
+          json_roa_vocabulary_resource(vocabulary.id).get.data['label']
+        ).to eq 'label de'
       end
     end
 
@@ -215,43 +180,10 @@ describe 'vocabulary' do
           .to eq({ 'de' => 'description de', 'en' => 'description en' })
       end
 
-      context 'when locale param is not present' do
-        it 'returns a description for a default locale' do
-          expect(
-            json_roa_vocabulary_resource(vocabulary.id).get.data['description']
-          ).to eq 'description de'
-        end
-      end
-
-      context 'when locale param is present' do
-        it 'returns a correct description for "en" locale' do
-          expect(
-            json_roa_vocabulary_resource(
-              vocabulary.id,
-              false,
-              { lang: :en }).get.data['description']
-          ).to eq 'description en'
-        end
-
-        it 'returns a correct description for "de" locale' do
-          expect(
-            json_roa_vocabulary_resource(
-              vocabulary.id,
-              false,
-              { lang: :de }).get.data['description']
-          ).to eq 'description de'
-        end
-      end
-
-      context 'when locale param is not available' do
-        it 'returns a description for a default locale' do
-          expect(
-            json_roa_vocabulary_resource(
-              vocabulary.id,
-              false,
-              { lang: :pl }).get.data['description']
-          ).to eq 'description de'
-        end
+      specify 'result contains a description for default locale' do
+        expect(
+          json_roa_vocabulary_resource(vocabulary.id).get.data['description']
+        ).to eq 'description de'
       end
     end
   end

@@ -3,7 +3,9 @@ require 'spec_helper'
 describe 'roles' do
 
   before :each do
-    @roles = 201.times.map { |i| FactoryGirl.create :role, label: "Role #{i}" }
+    @roles = 201.times.map do |i|
+      FactoryGirl.create :role, labels: { de: "Role #{i}" }
+    end
   end
 
   include_context :authenticated_json_roa_client do
