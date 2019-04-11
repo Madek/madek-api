@@ -5,24 +5,26 @@
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [madek.api.utils.sql :as sql]
-    [logbug.debug :as debug]
-    ))
+    [logbug.debug :as debug]))
 
-(defn get-keyword [request]
-  (let [id (-> request :params :id)
-        query (-> (sql/select :*)
-                  (sql/from :keywords)
-                  (sql/merge-where
-                    [:= :keywords.id id])
-                  (sql/format))]
-    {:body (select-keys (first (jdbc/query (rdbms/get-ds) query))
-                        [:id
-                         :meta_key_id
-                         :term
-                         :description
-                         :external_uri
-                         :rdf_class
-                         :created_at])}))
+(defn get-keyword
+  [request]
+  (let [id
+          (->
+            request
+            :params
+            :id)
+        query
+          (->
+            (sql/select :*)
+            (sql/from :keywords)
+            (sql/merge-where [:= :keywords.id id])
+            (sql/format))]
+    {:body
+       (select-keys
+         (first (jdbc/query (rdbms/get-ds) query))
+         [:id :meta_key_id :term :description :external_uri :rdf_class
+          :created_at])}))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
