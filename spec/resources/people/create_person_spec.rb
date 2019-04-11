@@ -52,7 +52,6 @@ context 'people' do
         end
         describe 'the json-roa-data' do
           it 'lets us navigate to the person via the self-relation' do
-            binding.pry
             expect(created_person.json_roa_data['self-relation']['href']).to \
               match /#{created_person.data['id']}/
           end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 context 'Getting a keyword resource without authentication' do
   before :each do
-    @keyword = FactoryGirl.create :keyword
+    @keyword = FactoryGirl.create(:keyword, external_uris: ['http://example.com'])
   end
 
   let :plain_json_response do
@@ -25,5 +25,16 @@ context 'Getting a keyword resource without authentication' do
         .get.relation('root').get.response.status
     ).to be == 200
     expect(plain_json_response.status).to be == 200
+  end
+
+  it 'has the proper data' do
+    keyword = json_roa_keyword_resource.get.data
+    expect(
+      keyword.except(:created_at, :updated_at)
+    ).to eq(
+      @keyword.attributes.with_indifferent_access
+        .except(:searchable, :position, :creator_id, :created_at, :updated_at)
+        .merge(external_uri: keyword[:external_uris].first)
+    )
   end
 end

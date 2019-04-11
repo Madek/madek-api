@@ -28,6 +28,4 @@ end
 #  Rails.root.join('datalayer', 'app', 'lib'),
 # ]
 
-# binding.pry
-
 Rails.application.initialize!

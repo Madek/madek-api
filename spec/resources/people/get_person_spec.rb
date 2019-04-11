@@ -4,7 +4,7 @@ require 'hashdiff'
 context 'people' do
 
   before :each do
-    @person = FactoryGirl.create :person
+    @person = FactoryGirl.create(:person, external_uris: ['http://example.com'])
     @person = @person.reload
   end
 
@@ -25,11 +25,14 @@ context 'people' do
         end
 
         it 'has the proper data' do
+          person = get_person_result.data
           expect(
-            HashDiff.diff(
-              get_person_result.data.except(:searchable,:created_at,:updated_at),
-              @person.attributes.with_indifferent_access.except(:searchable,:created_at,:updated_at))
-          ).to be_empty
+            person.except(:searchable, :created_at, :updated_at)
+          ).to eq(
+            @person.attributes.with_indifferent_access
+              .except(:searchable, :created_at, :updated_at)
+              .merge(external_uri: person[:external_uris].first)
+          )
         end
       end
 
@@ -51,5 +54,3 @@ context 'people' do
     end
   end
 end
-
-

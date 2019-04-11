@@ -7,6 +7,14 @@
     [madek.api.utils.sql :as sql]
     [logbug.debug :as debug]))
 
+(defn find-keyword-sql
+  [id]
+  (->
+    (sql/select :*)
+    (sql/from :keywords)
+    (sql/merge-where [:= :keywords.id id])
+    sql/format))
+
 (defn get-keyword
   [request]
   (let [id
@@ -14,17 +22,15 @@
             request
             :params
             :id)
-        query
-          (->
-            (sql/select :*)
-            (sql/from :keywords)
-            (sql/merge-where [:= :keywords.id id])
-            (sql/format))]
+        keyword (first (jdbc/query (rdbms/get-ds) (find-keyword-sql id)))]
     {:body
-       (select-keys
-         (first (jdbc/query (rdbms/get-ds) query))
-         [:id :meta_key_id :term :description :external_uri :rdf_class
-          :created_at])}))
+       (->
+         keyword
+         (select-keys
+           [:id :meta_key_id :term :description :external_uris :rdf_class
+            :created_at])
+         (assoc ; support old (singular) version of field
+           :external_uri (first (keyword :external_uris))))}))
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
