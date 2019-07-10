@@ -5,8 +5,6 @@ module Madek
   class Application < Rails::Application
     config.eager_load = false
 
-    config.active_record.raise_in_transactional_callbacks = true
-
     config.paths['config/initializers'] << \
       Rails.root.join('datalayer', 'initializers')
 
