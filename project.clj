@@ -50,10 +50,11 @@
   :java-source-paths ["java"]
   ;:source-paths ["src" "tmp/logbug/src"]
 
-  ; jdk 9 needs ["--add-modules" "java.xml.bind"]
-  :jvm-opts #=(eval (if (re-matches #"^9\..*" (System/getProperty "java.version"))
+  ; jdk 9|10 needs ["--add-modules" "java.xml.bind"]
+  :jvm-opts #=(eval (if (re-matches #"^(9|10)\..*" (System/getProperty "java.version"))
                       ["--add-modules" "java.xml.bind"]
                       []))
+
 
   :javac-options ["-target" "1.8" "-source" "1.8" "-Xlint:-options"]
 
