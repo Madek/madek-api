@@ -9,6 +9,7 @@
                  [json-roa/clj-utils "1.0.0"]
                  [logbug "4.2.2"]
                  [honeysql "0.9.6"]
+                 [org.clojure/core.match "0.3.0"]
 
                  ;[ring/ring-jetty-adapter "1.6.0"]
                  [aleph "0.4.6"]

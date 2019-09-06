@@ -113,7 +113,7 @@
         join-conditions (cond-> [:and [:=
                                        (keyword (str meta-data-alias
                                                      ".media_entry_id"))
-                                       :mes.id]]
+                                       :media_entries.id]]
 
                           (and (primitive-type? md-object-type) match)
                           (conj (sql-raw-text-search (str meta-data-alias ".string")
@@ -137,7 +137,7 @@
             (into [[:exists
                     (-> (sql/select true)
                         (sql/from :meta_data)
-                        (sql/merge-where [:= :meta_data.media_entry_id :mes.id]
+                        (sql/merge-where [:= :meta_data.media_entry_id :media_entries.id]
                                          (sql-raw-text-search "meta_data.string"
                                                               search-string)))]]
                   (map #(let [resource_table (get-in match-columns [% :table])]
@@ -157,7 +157,7 @@
                                    (str resource_table "."
                                         (get-in match-columns [% :match_column]))
                                    search-string))
-                               (sql/merge-where [:= :meta_data.media_entry_id :mes.id]))])
+                               (sql/merge-where [:= :meta_data.media_entry_id :media_entries.id]))])
                        (keys match-columns)))))))
 
 (defn- extend-sqlmap-according-to-meta-datum-spec [sqlmap [meta-datum-spec counter]]

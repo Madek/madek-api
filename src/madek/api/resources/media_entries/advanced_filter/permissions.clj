@@ -10,31 +10,31 @@
 
 (defn- api-client-authorized-condition [perm id]
   [:or
-   [:= (keyword (str "mes." perm)) true]
+   [:= (keyword (str "media_entries." perm)) true]
    [:exists (-> (sql/select true)
                 (sql/from [:media_entry_api_client_permissions :meacp])
-                (sql/merge-where [:= :meacp.media_entry_id :mes.id])
+                (sql/merge-where [:= :meacp.media_entry_id :media_entries.id])
                 (sql/merge-where [:= (keyword (str "meacp." perm)) true])
                 (sql/merge-where [:= :meacp.api_client_id id]))]])
 
 (defn- group-permission-exists-condition [perm id]
   [:exists (-> (sql/select true)
                (sql/from [:media_entry_group_permissions :megp])
-               (sql/merge-where [:= :megp.media_entry_id :mes.id])
+               (sql/merge-where [:= :megp.media_entry_id :media_entries.id])
                (sql/merge-where [:= (keyword (str "megp." perm)) true])
                (sql/merge-where [:= :megp.group_id id]))])
 
 (defn- user-permission-exists-condition [perm id]
   [:exists (-> (sql/select true)
                (sql/from [:media_entry_user_permissions :meup])
-               (sql/merge-where [:= :meup.media_entry_id :mes.id])
+               (sql/merge-where [:= :meup.media_entry_id :media_entries.id])
                (sql/merge-where [:= (keyword (str "meup." perm)) true])
                (sql/merge-where [:= :meup.user_id id]))])
 
 (defn- group-permission-for-user-exists-condition [perm id]
   [:exists (-> (sql/select true)
                (sql/from [:media_entry_group_permissions :megp])
-               (sql/merge-where [:= :megp.media_entry_id :mes.id])
+               (sql/merge-where [:= :megp.media_entry_id :media_entries.id])
                (sql/merge-where [:= (keyword (str "megp." perm)) true])
                (sql/merge-join :groups
                                [:= :groups.id :megp.group_id])
@@ -44,8 +44,8 @@
 
 (defn- user-authorized-condition [perm id]
   [:or
-   [:= (keyword (str "mes." perm)) true]
-   [:= :mes.responsible_user_id id]
+   [:= (keyword (str "media_entries." perm)) true]
+   [:= :media_entries.responsible_user_id id]
    (user-permission-exists-condition perm id)
    (group-permission-for-user-exists-condition perm id)])
 
@@ -69,10 +69,10 @@
   (cond-> sqlmap
 
     (:public_get_metadata_and_previews query-params)
-      (sql/merge-where [:= :mes.get_metadata_and_previews true])
+      (sql/merge-where [:= :media_entries.get_metadata_and_previews true])
 
     (:public_get_full_size query-params)
-      (sql/merge-where [:= :mes.get_full_size true])
+      (sql/merge-where [:= :media_entries.get_full_size true])
 
     (= (:me_get_full_size query-params) true)
       (filter-by-permission-for-auth-entity "get_full_size" authenticated-entity)
@@ -86,7 +86,7 @@
     (-> sqlmap
         (sql/merge-where
           [:=
-           :mes.get_metadata_and_previews
+           :media_entries.get_metadata_and_previews
            (case (:value permission-spec)
              "true" true
              "false" false
@@ -98,7 +98,7 @@
     "responsible_user"
     (-> sqlmap
         (sql/merge-where [:=
-                          :mes.responsible_user_id
+                          :media_entries.responsible_user_id
                           (:value permission-spec)]))
 
     "entrusted_to_user"

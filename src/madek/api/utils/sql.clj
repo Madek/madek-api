@@ -41,10 +41,13 @@
 (defalias join helpers/join)
 (defalias limit helpers/limit)
 (defalias merge-join helpers/merge-join)
+(defalias merge-left-join helpers/merge-left-join)
+(defalias merge-select helpers/merge-select)
 (defalias merge-where helpers/merge-where)
 (defalias modifiers helpers/modifiers)
 (defalias offset helpers/offset)
 (defalias order-by helpers/order-by)
+(defalias merge-order-by helpers/merge-order-by)
 (defhelper returning [m fields]
   (assoc m :returning (helpers/collify fields)))
 (defalias select helpers/select)

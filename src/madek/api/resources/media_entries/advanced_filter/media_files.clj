@@ -19,7 +19,7 @@
             (-> sqlmap
                 (sql/merge-join
                   :media_files
-                  [:= :media_files.media_entry_id :mes.id]))
+                  [:= :media_files.media_entry_id :media_entries.id]))
             media-file-specs)
     sqlmap))
 

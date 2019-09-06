@@ -28,7 +28,7 @@ shared_context :bunch_of_media_entries do
   let :collection do
     coll = FactoryGirl.create :collection
     media_entries.each do |me|
-      if (rand <= 0.75)
+      if me.is_published && (rand <= 0.75)
         FactoryGirl.create :collection_media_entry_arc,
           collection: coll, media_entry: me
       end
