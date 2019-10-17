@@ -10,6 +10,8 @@
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
+    [clojure.string :as string]
+    [clojure.set :as set]
     [logbug.debug :as debug]
     ))
 
@@ -137,19 +139,19 @@
    (media-entries-path prefix {}))
   ([prefix query-params]
    (str (media-entries-path-base prefix)
-        (let [template-params (str "order,"
-                                   "public_get_metadata_and_previews,"
-                                   "public_get_full_size,"
-                                   "me_get_metadata_and_previews,"
-                                   "me_get_full_size,"
-                                   "filter_by,"
-                                   "collection_id}")]
+        (let [template-param-keys
+              #{:order :public_get_metadata_and_previews :public_get_full_size
+               :me_get_metadata_and_previews :me_get_full_size :filter_by :collection_id}
+              template-params
+              ; dont add template params that are already present in query params
+              (set/difference template-param-keys (set (keys query-params)))]
           (if (empty? query-params)
             (str "{?" template-params)
             (str "?"
                  (http-client/generate-query-string query-params)
                  "{&"
-                 template-params))))))
+                 (string/join "," template-params)
+                 "}"))))))
 
 (defn media-entries
   ([prefix ]
@@ -181,17 +183,21 @@
    (collections-path prefix {}))
   ([prefix query-params]
    (str (collections-path-base prefix)
-        (let [template-params (str "order,"
-                                   "public_get_metadata_and_previews,"
-                                   "me_get_metadata_and_previews"
-                                   ; brain-dead hotfix for bug #217
-                                   (if (:collection_id query-params) "}" ",collection_id}"))]
+        (let [template-param-keys
+              #{:order :public_get_metadata_and_previews
+               :me_get_metadata_and_previews :collection_id}
+              template-params
+              ; dont add template params that are already present in query params
+              (set/difference template-param-keys (set (keys query-params)))]
+          (logging/info "DEBUG: template-params" template-params)
+          (logging/info "DEBUG: query-params" query-params)
           (if (empty? query-params)
             (str "{?" template-params)
             (str "?"
                  (http-client/generate-query-string query-params)
                  "{&"
-                 template-params))))))
+                 (string/join "," template-params)
+                 "}"))))))
 
 (defn collections
   ([prefix]
@@ -227,16 +233,19 @@
    (filter-sets-path prefix {}))
   ([prefix query-params]
    (str (filter-sets-path-base prefix)
-        (let [template-params (str "order,"
-                                   "public_get_metadata_and_previews,"
-                                   "me_get_metadata_and_previews,"
-                                   "collection_id}")]
+        (let [template-param-keys
+              #{:order :public_get_metadata_and_previews
+               :me_get_metadata_and_previews :collection_id}
+              template-params
+              ; dont add template params that are already present in query params
+              (set/difference template-param-keys (set (keys query-params)))]
           (if (empty? query-params)
             (str "{?" template-params)
             (str "?"
                  (http-client/generate-query-string query-params)
                  "{&"
-                 template-params))))))
+                 (string/join "," template-params)
+                 "}"))))))
 
 (defn filter-sets
   ([prefix]
