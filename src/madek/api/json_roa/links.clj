@@ -183,8 +183,9 @@
    (str (collections-path-base prefix)
         (let [template-params (str "order,"
                                    "public_get_metadata_and_previews,"
-                                   "me_get_metadata_and_previews,"
-                                   "collection_id}")]
+                                   "me_get_metadata_and_previews"
+                                   ; brain-dead hotfix for bug #217
+                                   (if (:collection_id query-params) "}" ",collection_id}"))]
           (if (empty? query-params)
             (str "{?" template-params)
             (str "?"
