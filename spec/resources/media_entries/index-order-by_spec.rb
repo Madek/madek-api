@@ -51,9 +51,9 @@ describe 'ordering media entries by created_at' do
 
     context "response of ordering by the order attribute of the arc descending" do
 
-      let :response do 
+      let :response do
         media_entries_relation.get(
-          collection_id: collection.id, 
+          collection_id: collection.id,
           order: [ [:arc, :order, :desc],
                    [:arc, :created_at, :desc],
                    [:media_entry, :created_at, :desc]].to_json).response
@@ -83,7 +83,7 @@ describe 'ordering media entries by created_at' do
         end
 
         it "non order nil arcs are ordered descending" do
-          expect(arcs_before_first_order_nil).to be==  
+          expect(arcs_before_first_order_nil).to be==
             arcs_before_first_order_nil.sort_by{|arc| arc[:order] ? arc[:order] : -1 }.reverse
         end
 
@@ -104,9 +104,9 @@ describe 'ordering media entries by created_at' do
 
     context "response of ordering by the time media entries are added to the set" do
 
-      let :response do 
+      let :response do
         media_entries_relation.get(
-          collection_id: collection.id, 
+          collection_id: collection.id,
           order: [ [:arc, :created_at, :asc],
                    [:media_entry, :created_at, :desc]].to_json).response
       end
@@ -149,9 +149,9 @@ describe 'ordering media entries by created_at' do
 
       context "response of ordering by metadatum string (title usually)" do
 
-        let :response do 
+        let :response do
           media_entries_relation.get(
-            collection_id: collection.id, 
+            collection_id: collection.id,
             order: [["MetaDatum::Text", meta_key_title.id, :asc]].to_json).response
         end
 
@@ -172,7 +172,12 @@ describe 'ordering media entries by created_at' do
             media_entry_ids_ordered_by_titles = titles \
               .filter{|t| media_entry_ids_from_response.include? t[:media_entry_id] }\
               .sort_by{|t| t[:string]}.map{|t| t[:media_entry_id]}
-            expect(media_entry_ids_ordered_by_titles.to_a).to be== media_entry_ids_from_response.to_a
+
+            expect(media_entry_ids_ordered_by_titles.to_a.length)
+              .to eq media_entry_ids_from_response.to_a.length
+
+            expect(media_entry_ids_ordered_by_titles.to_a.sort)
+              .to be== media_entry_ids_from_response.to_a.sort
           end
         end
       end
