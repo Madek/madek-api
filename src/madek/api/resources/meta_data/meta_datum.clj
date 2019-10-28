@@ -9,6 +9,7 @@
 
     [clojure.java.jdbc :as jdbc]
     [compojure.core :as cpj]
+    [ring.util.response :as ring-response]
 
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
@@ -67,14 +68,15 @@
 (defn- prepare-meta-datum [meta-datum]
   (merge (select-keys meta-datum [:id :meta_key_id :type])
          {:value (let [meta-datum-type (:type meta-datum)]
-                   (if (or (= meta-datum-type "MetaDatum::Text")
-                           (= meta-datum-type "MetaDatum::TextDate"))
-                     (:string meta-datum)
-                     (map #(select-keys % [:id]) ; else
+                   (case meta-datum-type
+                     "MetaDatum::JSON" (:json meta-datum)
+                     "MetaDatum::Text" (:string meta-datum)
+                     "MetaDatum::TextDate" (:string meta-datum)
+                     (map #(select-keys % [:id])
                           ((case meta-datum-type
-                             "MetaDatum::People" get-people-index
-                             "MetaDatum::Keywords" keywords/get-index
                              "MetaDatum::Groups" groups-with-ids
+                             "MetaDatum::Keywords" keywords/get-index
+                             "MetaDatum::People" get-people-index
                              "MetaDatum::Roles" find-meta-data-roles)
                            meta-datum))))}
          (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
@@ -90,6 +92,18 @@
 (defn get-meta-datum [request]
   (let [meta-datum (:meta-datum request)]
     {:body (prepare-meta-datum meta-datum)}))
+
+(defn get-meta-datum-data-stream [request]
+  (let [meta-datum (:meta-datum request)
+        content-type (case (-> request :meta-datum :type)
+                       "MetaDatum::JSON" "application/json; charset=utf-8"
+                       "text/plain; charset=utf-8")
+        value (-> meta-datum prepare-meta-datum :value)]
+    (cond
+      (nil? value)  {:status 422}
+      (str value) (-> {:body value}
+                      (ring-response/header "Content-Type" content-type))
+      :else {:body value})))
 
 (defn get-meta-datum-role
   [request]

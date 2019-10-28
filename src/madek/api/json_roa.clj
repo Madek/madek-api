@@ -97,7 +97,7 @@
   (let [body (:body response)]
     (if-not (and body (map? body))
       response
-      (let [json-roa-handler (if (< (:status response) 400) (build-routes-handler response))
+      (let [json-roa-handler (when (< (:status response) 300) (build-routes-handler response))
             json-roa-data (select-keys (if json-roa-handler
                                          (json-roa-handler request)
                                          {:relations {:root (links/root (:context request))}})

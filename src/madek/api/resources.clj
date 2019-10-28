@@ -160,10 +160,37 @@
   (fn [request]
     (dispatch-authorize request handler)))
 
+;### a few redirects ##########################################################
+
+(defn redirect-to-meta-datum-data-stream
+  [{{media-entry-id :media_entry_id
+     meta-key-id :meta_key_id} :route-params
+    context :context :as request}]
+  (logging/debug request)
+  (if-let [meta-data-id (-> (jdbc/query (get-ds)
+                                        [(str "SELECT id FROM meta_data "
+                                              "WHERE media_entry_id = ? "
+                                              "AND meta_key_id = ?") media-entry-id meta-key-id])
+                            first :id)]
+    (ring.util.response/redirect (str context "/meta-data/" meta-data-id "/data-stream"))))
+
+(defn redirect-to-media-file-data-stream
+  [{{media-entry-id :media_entry_id} :route-params
+    context :context :as request}]
+  (logging/debug request)
+  (if-let [media-file-id (-> (jdbc/query (get-ds)
+                                         [(str "SELECT id FROM media_files "
+                                               "WHERE media_entry_id = ? ") media-entry-id])
+                             first :id)]
+    (ring.util.response/redirect (str context "/media-files/" media-file-id "/data-stream"))))
+
+
 ;### ##### ####################################################################
 
 (defn wrap-api-routes [default-handler]
   (-> (cpj/routes
+        (cpj/GET "/media-entries/:media_entry_id/meta-data/:meta_key_id/data-stream" _ redirect-to-meta-datum-data-stream)
+        (cpj/GET "/media-entries/:media_entry_id/media-file/data-stream" _ redirect-to-media-file-data-stream)
         (cpj/GET "/auth-info" _ auth-info/routes)
         (cpj/ANY "/:media_resource_type/:id/meta-data/" _ meta-data/routes)
         (cpj/ANY "/collection-media-entry-arcs/*" _ collection-media-entry-arcs/routes)
@@ -173,7 +200,7 @@
         (cpj/ANY "/keywords/:keyword_id*" _ keywords/routes)
         (cpj/ANY "/media-entries*" _ media-entries/routes)
         (cpj/ANY "/media-files/:media_file_id*" _ media-files/routes)
-        (cpj/ANY "/meta-data/:meta_datum_id" _ meta-data/routes)
+        (cpj/ANY "/meta-data/:meta_datum_id*" _ meta-data/routes)
         (cpj/ANY "/meta-data-roles/:meta_datum_id" _ meta-data/routes)
         (cpj/ANY "/meta-keys/*" _ meta-keys/routes)
         (cpj/ANY "/people/*" _ people/routes)
@@ -192,4 +219,4 @@
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)
 ;(logging-config/set-logger! :level :info)
-;(debug/debug-ns *ns*)
+(debug/debug-ns *ns*)

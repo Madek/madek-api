@@ -19,6 +19,7 @@
                  :media-entry (links/media-entry context)
                  :media-file (links/media-file context)
                  :meta-datum (links/meta-datum context)
+                 :meta-datum-data-stream (links/meta-datum-data-stream context)
                  :meta-datum-role (links/meta-datum-role context)
                  :meta-key (links/meta-key context)
                  :meta-keys (links/meta-keys context)

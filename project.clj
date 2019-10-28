@@ -5,7 +5,7 @@
             :url "https://gnu.org/licenses/gpl-3.0.txt"}
   :dependencies [
                  [drtom/clj-uuid  "0.1.7"]
-                 [cider-ci/open-session "1.3.0"] ; upgrade will break 
+                 [cider-ci/open-session "1.3.0"] ; upgrade will break
                  [json-roa/clj-utils "1.0.0"]
                  [logbug "4.2.2"]
                  [honeysql "0.9.6"]
@@ -55,6 +55,6 @@
                       []))
 
 
-  :javac-options ["-target" "1.8" "-source" "1.8" "-Xlint:-options"]
+  ; :javac-options ["-target" "1.8" "-source" "1.8" "-Xlint:-options"]
 
   )

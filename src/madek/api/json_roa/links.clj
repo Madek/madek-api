@@ -132,6 +132,18 @@
                            :href "/api/docs/resources/meta-datum.html#meta-datum"
                            }}}))
 
+(defn meta-datum-data-stream
+  ([prefix]
+   (meta-datum-data-stream prefix {:id "{id}"}))
+  ([prefix meta-datum]
+   {:href (str prefix "/meta-data/" (:id meta-datum) "/data-stream")
+    :name (str "Meta-Datum-Data-Stream"
+               (when-let [meta-key-id (:meta_key_id meta-datum)]
+                 (str " of " meta-key-id)))
+    :relations {:api-docs {:name "API-Doc Meta-Datum-Data-Stream"
+                           :href "/api/docs/resources/meta-datum.html#meta-datum-data-stream"
+                           }}}))
+
 (defn meta-datum-role
   ([prefix]
    (meta-datum-role prefix "{id}"))

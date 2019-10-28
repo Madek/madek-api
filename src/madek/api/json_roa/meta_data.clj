@@ -21,10 +21,11 @@
 (defn- meta-datum-relations
   [response context]
   {:meta-key (links/meta-key
-             context (-> response :body :meta_key_id))
+               context (-> response :body :meta_key_id))
    :media-entry (links/media-entry
-                context (-> response :body :media_entry_id))}
-  )
+                  context (-> response :body :media_entry_id))
+   :data-stream (links/meta-datum-data-stream
+                  context (-> response :body))})
 
 (defn- meta-datum-role-relations
   [response context]
@@ -36,9 +37,7 @@
     (if (some? (-> response :body :role_id))
       {:role (links/role
              context (-> response :body :role_id))}
-      {})
-  )
-)
+      {})))
 
 (defn- relations
   [response context]
@@ -71,8 +70,7 @@
     (conj {:name "Meta-Datum"
            :relations (conj {:root (links/root context)}
                             (relations response context))}
-          (when-not (or (= meta-datum-type "MetaDatum::Text")
-                        (= meta-datum-type "MetaDatum::TextDate"))
+          (when-not (#{"MetaDatum::JSON" "MetaDatum::Text" "MetaDatum::TextDate"} meta-datum-type)
             {:collection
              {:relations
               (into {}
