@@ -13,16 +13,32 @@
     [logbug.debug :as debug]
     ))
 
+
+;### helpers ######################################################################
+
+(defn template-params-str [template-keys query-params]
+  "Computes the string of available template-params by removing those
+  already used in the query-params. The Madek-API does not use duplicate
+  keys in the query params. "
+  (->> (clojure.set/difference
+         template-keys
+         (->> query-params
+              keys
+              (map keyword)))
+       (map name)
+       (clojure.string/join ",")))
+
+;### root #########################################################################
+
 (defn root
   ([prefix]
    {:name "Root"
     :href (str prefix "/")
     :relations {:api-docs {:name "API-Doc Root"
-                           :href "/api/docs/resources/root.html#root"
-                           }}}))
-
+                           :href "/api/docs/resources/root.html#root"}}}))
 
 ;### auth-info ####################################################################
+
 
 (defn auth-info [prefix]
   {:name "Authentication-Info"
@@ -129,27 +145,32 @@
 
 ;### media-entries ################################################################
 
+
+
 (defn media-entries-path-base
   ([prefix] (str prefix "/media-entries/")))
+
+(def media-entries-path-query-template-keys
+  #{:collection_id
+    :filter_by
+    :me_get_full_size
+    :me_get_metadata_and_previews
+    :order
+    :public_get_full_size
+    :public_get_metadata_and_previews})
 
 (defn media-entries-path
   ([prefix]
    (media-entries-path prefix {}))
   ([prefix query-params]
-   (str (media-entries-path-base prefix)
-        (let [template-params (str "order,"
-                                   "public_get_metadata_and_previews,"
-                                   "public_get_full_size,"
-                                   "me_get_metadata_and_previews,"
-                                   "me_get_full_size,"
-                                   "filter_by,"
-                                   "collection_id}")]
+   (let [template-params (template-params-str
+                           media-entries-path-query-template-keys
+                           query-params)]
+     (str (media-entries-path-base prefix)
           (if (empty? query-params)
-            (str "{?" template-params)
-            (str "?"
-                 (http-client/generate-query-string query-params)
-                 "{&"
-                 template-params))))))
+            (str "{?" template-params "}")
+            (str "?" (http-client/generate-query-string query-params)
+                 "{&" template-params "}"))))))
 
 (defn media-entries
   ([prefix ]
@@ -158,8 +179,7 @@
    {:name "Media-Entries"
     :href (media-entries-path prefix query-params)
     :relations {:api-docs {:name "API-Doc Media-Entries"
-                           :href "/api/docs/resources/media-entries.html#media-entries"
-                           }}}))
+                           :href "/api/docs/resources/media-entries.html#media-entries"}}}))
 
 (defn media-entry
   ([prefix]
@@ -168,30 +188,31 @@
    {:name "Media-Entry"
     :href (str prefix "/media-entries/" id)
     :relations {:api-docs {:name "API-Doc Media-Entry"
-                           :href "/api/docs/resources/media-entry.html#media-entry"
-                           }}}))
+                           :href "/api/docs/resources/media-entry.html#media-entry"}}}))
 
 ;### collections ##################################################################
 
 (defn collections-path-base
   ([prefix] (str prefix "/collections/")))
 
+(def collections-path-query-template-keys
+  #{:collection_id
+    :me_get_metadata_and_previews
+    :order
+    :public_get_metadata_and_previews})
+
 (defn collections-path
   ([prefix]
    (collections-path prefix {}))
   ([prefix query-params]
-   (str (collections-path-base prefix)
-        (let [template-params (str "order,"
-                                   "public_get_metadata_and_previews,"
-                                   "me_get_metadata_and_previews"
-                                   ; brain-dead hotfix for bug #217
-                                   (if (:collection_id query-params) "}" ",collection_id}"))]
+   (let [template-params (template-params-str
+                           collections-path-query-template-keys
+                           query-params)]
+     (str (collections-path-base prefix)
           (if (empty? query-params)
-            (str "{?" template-params)
-            (str "?"
-                 (http-client/generate-query-string query-params)
-                 "{&"
-                 template-params))))))
+            (str "{?" template-params "}")
+            (str "?" (http-client/generate-query-string query-params)
+                 "{&" template-params "}"))))))
 
 (defn collections
   ([prefix]
@@ -218,6 +239,9 @@
   (apply collection-media-entry-arcs.links/collection-media-entry-arcs args))
 
 ;### filter-sets ##################################################################
+
+; TODO filter-sets are dead in Madek, remove the whole section
+; also we are not going to fix the duplicate query params through templates here
 
 (defn filter-sets-path-base
   ([prefix] (str prefix "/filter-sets/")))
@@ -493,3 +517,4 @@
 ;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
 ;(debug/wrap-with-log-debug #'next-link)
+;(debug/wrap-with-log-debug #'media-entries-path)
