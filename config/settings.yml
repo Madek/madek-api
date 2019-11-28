@@ -11,7 +11,7 @@ services:
 
   api:
 
-    cors_enabled: false
+    cors_enabled: true
 
     http:
 
