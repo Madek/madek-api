@@ -52,13 +52,27 @@ describe 'MediaFile Resource' do
           .get('id' => media_file.id)
       end
 
-      describe 'the response status ' do
+      describe 'the response' do
         let :response do
           resource.response
         end
 
-        it 'is 200 OK' do
-          expect(response.status).to be == 200
+        describe 'the status ' do
+          it 'is 200 OK' do
+            expect(response.status).to be == 200
+          end
+        end
+
+        describe 'the response body ' do
+
+          it 'includes the content_type key' do
+            expect(response.body.keys).to include "content_type"
+          end
+
+          it 'includes the media_type key' do
+            expect(response.body.keys).to include "media_type"
+          end
+
         end
       end
 

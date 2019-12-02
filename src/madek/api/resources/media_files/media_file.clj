@@ -11,12 +11,12 @@
     [madek.api.resources.previews.index :as previews]
     ))
 
-
 (defn- get-media-file [request]
   (when-let [media-file (:media-file request)]
     {:status 200
      :body (conj (select-keys media-file [:id :size :created_at :updated_at
-                                          :media_entry_id :filename])
+                                          :media_type :media_entry_id
+                                          :filename :content_type])
                  {:previews (map #(select-keys % [:id :thumbnail])
                                  (previews/get-index media-file))})}))
 
