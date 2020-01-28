@@ -117,13 +117,23 @@
 
 ;### wrap CORS ###############################################################
 
+(defn add-access-control-allow-credentials [response]
+  (assoc-in response [:headers "Access-Control-Allow-Credentials"] true))
+
+(defn wrap-with-access-control-allow-credentials [handler]
+  (fn [request]
+    (add-access-control-allow-credentials (handler request))))
+
 (defn wrap-cors-if-configured [handler doit]
   (if doit
-    (cors-middleware/wrap-cors handler
-      :access-control-allow-origin [#".*"]
-      :access-control-allow-methods [:get :put :post :delete]
-      :access-control-allow-headers ["Origin" "X-Requested-With" "Content-Type" "Accept" "Authorization"])
+    (-> handler
+        (cors-middleware/wrap-cors
+          :access-control-allow-origin [#".*"]
+          :access-control-allow-methods [:get :put :post :delete]
+          :access-control-allow-headers ["Origin" "X-Requested-With" "Content-Type" "Accept" "Authorization"])
+        wrap-with-access-control-allow-credentials)
     handler))
+
 
 ;##############################################################################
 

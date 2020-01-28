@@ -40,8 +40,6 @@
                  [ring/ring-core "1.7.1"]
                  [ring/ring-json "0.5.0"]
                  [uritemplate-clj "1.2.3"]
-
-
                  ]
   :aot :all
   :uberjar-name "api.jar"
