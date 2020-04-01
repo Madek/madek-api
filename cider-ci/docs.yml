@@ -1,20 +1,17 @@
 task_defaults:
-
   environment_variables:
     RUBY_ENGINE: ruby
-    RUBY_VERSION: 2.6.3
-    RUBY: '{{RUBY_ENGINE}}-{{RUBY_VERSION}}'
-    WORKING_DIR: '{{CIDER_CI_WORKING_DIR}}/docs_source'
+    RUBY_VERSION: 2.6.6
+    RUBY: "{{RUBY_ENGINE}}-{{RUBY_VERSION}}"
+    WORKING_DIR: "{{CIDER_CI_WORKING_DIR}}/docs_source"
 
   git_options:
     submodules:
       include_match: .*docs.*|datalayer
 
   scripts:
-
     env:
       body: env | sort
-
 
     bundle:
       exclusive_executor_resource: ruby-install_{{$RUBY}}
@@ -37,7 +34,6 @@ task_defaults:
         fi
 
         bundle install
-
 
 tasks:
   docs:

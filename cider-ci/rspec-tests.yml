@@ -2,7 +2,6 @@ generate_tasks:
   include_match: spec/.*_spec.rb
 
 task_defaults:
-
   max_trials: 1
 
   include:
@@ -10,14 +9,13 @@ task_defaults:
     - path: cider-ci/task-components/bundle.yml
       submodule: [datalayer]
 
-
   environment_variables:
     DATABASE: madek_api_{{CIDER_CI_TRIAL_ID}}
-    API_DIR: '{{CIDER_CI_WORKING_DIR}}'
+    API_DIR: "{{CIDER_CI_WORKING_DIR}}"
     RAILS_ENV: test
     API_DATABASE_URL: "postgresql://localhost:5432/{{DATABASE}}?pool=3"
     RUBY_ENGINE: ruby
-    RUBY_VERSION: 2.6.3
+    RUBY_VERSION: 2.6.6
 
   ports:
     API_HTTP_PORT:
@@ -56,7 +54,6 @@ task_defaults:
     curl: true
 
   scripts:
-
     configure-database:
       body: |
         #!/usr/bin/env ruby
@@ -75,7 +72,6 @@ task_defaults:
         rails_db_conf[ENV['RAILS_ENV']]['password']= ENV['PGPASSWORD']
         IO.write 'spec/config/database.yml', rails_db_conf.to_yaml
         IO.write 'datalayer/config/database.yml', rails_db_conf.to_yaml
-
 
     precompile-api:
       exclusive_executor_resource: precompile-madek-api
