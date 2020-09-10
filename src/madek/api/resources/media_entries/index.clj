@@ -11,6 +11,7 @@
 
     [clojure.core.match :refer [match]]
     [clojure.set :refer [rename-keys]]
+    [clojure.string :as str]
     [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
@@ -34,7 +35,7 @@
         (sql/merge-join [:collection_media_entry_arcs :arcs]
                         [:= :arcs.media_entry_id :media_entries.id])
         (sql/merge-where [:= :arcs.collection_id collection_id])
-        (sql/merge-select 
+        (sql/merge-select
           [:arcs.created_at :arc_created_at]
           [:arcs.order :arc_order]
           [:arcs.created_at :arc_created_at]
@@ -52,7 +53,8 @@
 (defn- order-by-media-entry-attribute [query [attribute order]]
   (let [order-by-arg (match [(keyword attribute) (keyword order)]
                             [:created_at :desc] [:media-entries.created_at :desc :nulls-last]
-                            [:created_at _] [:media-entries.created_at])]
+                            [:created_at _] [:media-entries.created_at]
+                            [:edit_session_updated_at _] [:media_entries.edit_session_updated_at])]
     (sql/merge-order-by query order-by-arg)))
 
 (defn- order-by-arc-attribute [query [attribute order]]
@@ -86,16 +88,45 @@
     "arc" (order-by-arc-attribute query more)
     "MetaDatum::Text" (order-by-meta-datum-text query more)))
 
+(defn- order-by-title [query order]
+  (let [direction (-> (str/split order #"_") (last))]
+    (reduce order-reducer [query ["MetaDatum::Text" "madek_core:title" direction]])))
+
+(defn- order-by-string [query order]
+  (case order
+    "asc" (sql/order-by query [:media_entries.created-at (keyword order)])
+    "desc" (sql/order-by query [:media_entries.created-at (keyword order)])
+    "title_asc" (order-by-title query order)
+    "title_desc" (order-by-title query order)
+    "last_change" (order-by-media-entry-attribute query [:edit_session_updated_at :asc])))
+
+(def ^:private available-sortings #{"desc" "asc" "title_asc" "title_desc" "last_change"})
+
+(defn- find-collection-default-sorting [collection-id]
+  (let [query {:select [:sorting]
+               :from [:collections]
+               :where [:= :collections.id collection-id]}]
+    (:sorting (first (jdbc/query (rdbms/get-ds) (-> query sql/format))))))
+
+(defn- default-order [query {collection-id :collection_id}]
+  (if collection-id
+    (if-let [sorting (find-collection-default-sorting collection-id)]
+      (let [prepared-sorting (->> (str/split (str/replace sorting "created_at " "") #" ") (str/join "_") str/lower-case)]
+        (order-by-string query prepared-sorting))
+      (sql/order-by query [:media_entries.created-at :asc]))
+    (sql/order-by query [:media_entries.created-at :asc])))
+
 (defn- set-order [query query-params]
   (-> (let [order (-> query-params :order)]
         (cond 
-          (nil? order) (sql/order-by query [:media_entries.created-at :asc])
-          (string? order) (if (#{"desc" "asc"} order)
-                            (sql/order-by query [:media_entries.created-at (keyword order)]) 
-                            (throw (ex-info "only desc or asc is allowed for simple sting values of order" 
+          (nil? order) (default-order query query-params)
+          (string? order) (if (contains? available-sortings order)
+                            (order-by-string query order)
+                            (throw (ex-info "only desc or asc is allowed for simple string values of order" 
                                             {:status 422})))
           (seq? order)(reduce order-reducer query order)
-          :else (sql/order-by query [:media_entries.created-at :asc])))
+          :else (default-order query query-params))
+      )
       (sql/merge-order-by :media_entries.id)))
 
 (defn- build-query [request]
@@ -132,7 +163,10 @@
                        (map #(rename-keys % {:arc_id :id
                                              :arc_order :order 
                                              :arc_created_at :created_at
-                                             :arc_updated_at :updated_at})))}))})))
+                                             :arc_updated_at :updated_at})))}))}
+    )
+  )
+)
 
 ;### Debug ####################################################################
 ;(logging-config/set-logger! :level :debug)

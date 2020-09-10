@@ -1,7 +1,7 @@
 require 'spec_helper'
 require Pathname(File.expand_path('..', __FILE__)).join('shared')
 
-describe 'ordering media entries by created_at' do
+describe 'ordering media entries' do
   include_context :bunch_of_media_entries
 
   include_context :json_roa_client_for_authenticated_user do
@@ -15,32 +15,41 @@ describe 'ordering media entries by created_at' do
       media_entries_relation.get('order' => order)
     end
 
-    context "old style string desc/asc order attribute" do
+    context "old style string 'order' attribute" do
 
+      context 'created_at' do
+        include_examples 'ordering by created_at'
 
-      def media_entries_created_at(order = nil)
-        # to_datetime.strftime('%Q').to_i => int with ms precision
-        resource(order)
-          .data['media-entries']
-          .map { |me| MediaEntry.unscoped.find(me['id']) }
-          .map { |me| me.created_at.to_datetime.strftime('%Q').to_i }
-      end
+        [nil, 'asc', 'desc'].each do |direction|
+          it "returns 30 media entries for #{direction.inspect} order" do
+              expect(media_entries_created_at(direction).size).to eq(30)
+          end
+        end
 
-      it 'defaults to :asc' do
-        media_entries_created_at.each_cons(2) do |ca_pair|
-          expect(ca_pair.first < ca_pair.second).to be true
+        it 'defaults to :asc' do
+          media_entries_created_at.each_cons(2) do |ca_pair|
+            expect(ca_pair.first < ca_pair.second).to be true
+          end
         end
       end
 
-      it 'ascending' do
-        media_entries_created_at('asc').each_cons(2) do |ca_pair|
-          expect(ca_pair.first < ca_pair.second).to be true
+      context 'madek_core:title' do
+        include_examples 'ordering by madek_core:title'
+
+        it 'returns 30 media entries for ascending order' do
+          expect(titles('asc').size).to eq(30)
+        end
+
+        it 'returns 30 media entries for descending order' do
+          expect(titles('desc').size).to eq(30)
         end
       end
 
-      it 'descending' do
-        media_entries_created_at('desc').each_cons(2) do |ca_pair|
-          expect(ca_pair.first > ca_pair.second).to be true
+      context 'last_change' do
+        include_examples 'ordering by last_change'
+
+        it 'returns 30 media entries of ascending order' do
+          expect(edit_session_updated_ats.size).to eq(30)
         end
       end
     end
@@ -132,16 +141,11 @@ describe 'ordering media entries by created_at' do
         FactoryGirl.create :meta_key_title
       end
 
-      let :titles do
+      let! :titles do
         media_entries.map do |me|
           @meta_datum_text = FactoryGirl.create :meta_datum_text,
             media_entry: me, meta_key: meta_key_title
         end
-      end
-
-      before :each do
-        # force initialization
-        titles
       end
 
       # NOTE: meta_data should have ref to media_entry; so maybe we dont need the dance
@@ -159,27 +163,78 @@ describe 'ordering media entries by created_at' do
           expect(response.status).to be== 200
         end
 
-        describe "arcs" do
+        specify "media_entries are ordered by metadatum string" do
+          media_entry_ids_from_response = response
+            .body
+            .with_indifferent_access["media-entries"]
+            .map{|me| me[:id]}
+          media_entry_ids_ordered_by_titles = titles \
+            .filter{|t| media_entry_ids_from_response.include? t[:media_entry_id] }\
+            .sort_by{|t| t[:string]}.map{|t| t[:media_entry_id]}
 
-          let :arcs do
-            response.body.with_indifferent_access[:arcs]
-          end
+          expect(media_entry_ids_ordered_by_titles.to_a.length)
+            .to eq media_entry_ids_from_response.to_a.length
 
-          it "media_entries are ordered by metadatum string" do
-            media_entry_ids_from_response = response.body.with_indifferent_access["media-entries"].map{|me| me[:id]}
-            # titles.filter{|t| media_entry_ids_from_response.include? t[:media_entry_id] }\
-            #   .sort_by{|t| t[:string]}.map{|t| puts t[:string]}
-            media_entry_ids_ordered_by_titles = titles \
-              .filter{|t| media_entry_ids_from_response.include? t[:media_entry_id] }\
-              .sort_by{|t| t[:string]}.map{|t| t[:media_entry_id]}
-
-            expect(media_entry_ids_ordered_by_titles.to_a.length)
-              .to eq media_entry_ids_from_response.to_a.length
-
-            expect(media_entry_ids_ordered_by_titles.to_a.sort)
-              .to be== media_entry_ids_from_response.to_a.sort
-          end
+          expect(media_entry_ids_ordered_by_titles.to_a.sort)
+            .to be== media_entry_ids_from_response.to_a.sort
         end
+      end
+    end
+
+    context 'ordering by order param' do
+      def resource(order)
+        media_entries_relation.get(
+          collection_id: collection.id,
+          order: order
+        )
+      end
+
+      context 'created_at' do
+        include_examples 'ordering by created_at'
+      end
+
+      context 'madek_core:title' do
+        include_examples 'ordering by madek_core:title'
+      end
+
+      context 'last_change' do
+        include_examples 'ordering by last_change'
+      end
+    end
+
+    context "default order from set's attribute" do
+      def resource(*)
+        media_entries_relation.get(collection_id: collection.id)
+      end
+
+      context 'created_at DESC' do
+        before { collection.update!(sorting: 'created_at DESC') }
+
+        include_examples 'ordering by created_at', 'desc'
+      end
+
+      context 'created_at ASC' do
+        before { collection.update!(sorting: 'created_at ASC') }
+
+        include_examples 'ordering by created_at', 'asc'
+      end
+
+      context 'title_asc' do
+        before { collection.update!(sorting: 'title ASC') }
+
+        include_examples 'ordering by madek_core:title', 'asc'
+      end
+
+      context 'title_desc' do
+        before { collection.update!(sorting: 'title DESC') }
+
+        include_examples 'ordering by madek_core:title', 'desc'
+      end
+
+      context 'last_change' do
+        before { collection.update!(sorting: 'last_change') }
+
+        include_examples 'ordering by last_change'
       end
     end
   end
