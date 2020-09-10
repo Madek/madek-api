@@ -9,3 +9,10 @@ RSpec.configure do |config|
     clean_db
   end
 end
+
+def with_disabled_triggers
+  ActiveRecord::Base.connection.execute 'SET session_replication_role = REPLICA;'
+  result = yield
+  ActiveRecord::Base.connection.execute 'SET session_replication_role = DEFAULT;'
+  result
+end
