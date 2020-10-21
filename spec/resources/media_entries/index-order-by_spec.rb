@@ -23,8 +23,8 @@ describe 'ordering media entries' do
           expect(response.status).to eq(422)
           expect(response.body).to eq({ 'message' => 'only the following values are allowed as '\
                                                      'order parameter: desc, asc, title_asc, '\
-                                                     'title_desc, last_change '\
-                                                     'and stored_in_collection' })
+                                                     'title_desc, last_change, manual_asc, '\
+                                                     'manual_desc and stored_in_collection' })
         end
       end
 
@@ -68,6 +68,26 @@ describe 'ordering media entries' do
         context 'when collection_id param is missing' do
           it 'raises an error' do
             response = media_entries_relation.get(order: 'stored_in_collection').response
+            expect(response.status).to eq(422)
+            expect(response.body).to eq({ 'message' => 'collection_id param must be given' })
+          end
+        end
+      end
+
+      context 'manual_asc' do
+        context 'when collection_id param is missing' do
+          it 'raises an error' do
+            response = media_entries_relation.get(order: 'manual_asc').response
+            expect(response.status).to eq(422)
+            expect(response.body).to eq({ 'message' => 'collection_id param must be given' })
+          end
+        end
+      end
+
+      context 'manual_desc' do
+        context 'when collection_id param is missing' do
+          it 'raises an error' do
+            response = media_entries_relation.get(order: 'manual_desc').response
             expect(response.status).to eq(422)
             expect(response.body).to eq({ 'message' => 'collection_id param must be given' })
           end
@@ -220,6 +240,40 @@ describe 'ordering media entries' do
 
       context 'last_change' do
         include_examples 'ordering by last_change'
+      end
+
+      context 'manual' do
+        def update_arcs_with_positions
+          collection
+            .collection_media_entry_arcs
+            .to_a
+            .shuffle
+            .each_with_index
+            .map { |arc, index| arc.update!(position: index); arc }
+        end
+
+        before { @arcs = update_arcs_with_positions }
+
+        it 'returns shuffled entries every time' do
+          expect(update_arcs_with_positions.map(&:media_entry_id))
+            .not_to eq(update_arcs_with_positions.map(&:media_entry_id))
+        end
+
+        context 'ascending order' do
+          it 'returns media entries in the correct order' do
+            media_entry_ids = resource('manual_asc').data['media-entries'].map { |me| me['id'] }
+
+            expect(@arcs.map(&:media_entry_id)).to eq(media_entry_ids)
+          end
+        end
+
+        context 'descending order' do
+          it 'returns media entries in the correct order' do
+            media_entry_ids = resource('manual_desc').data['media-entries'].map { |me| me['id'] }
+
+            expect(@arcs.map(&:media_entry_id)).to eq(media_entry_ids.reverse)
+          end
+        end
       end
 
       context 'stored_in_collection' do

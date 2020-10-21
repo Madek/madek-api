@@ -38,6 +38,7 @@
         (sql/merge-select
           [:arcs.created_at :arc_created_at]
           [:arcs.order :arc_order]
+          [:arcs.position :arc_position]
           [:arcs.created_at :arc_created_at]
           [:arcs.updated_at :arc_updated_at]
           [:arcs.id :arc_id]))))
@@ -61,6 +62,8 @@
   (let [order-by-arg (match [(keyword attribute) (keyword order)]
                             [:order :desc] [:arcs.order :desc :nulls-last]
                             [:order _] [:arcs.order]
+                            [:position :asc] [:arcs.position :asc]
+                            [:position :desc] [:arcs.position :desc :nulls-last]
                             [:created_at :desc] [:arcs.created_at :desc :nulls-last]
                             [:created_at _] [:arcs.created_at])]
     (sql/merge-order-by query order-by-arg)))
@@ -98,39 +101,48 @@
                :where [:= :collections.id collection-id]}]
     (:sorting (first (jdbc/query (rdbms/get-ds) (-> query sql/format))))))
 
-(defn- order-by-string [query order]
+(defn- handle-missing-collection-id [collection-id code-to-run]
+  (if collection-id
+    code-to-run
+    (throw (ex-info "collection_id param must be given" {:status 422}))))
+
+(defn- order-by-string [query order collection-id]
   (case order
     "asc" (sql/order-by query [:media_entries.created-at (keyword order)])
     "desc" (sql/order-by query [:media_entries.created-at (keyword order)])
     "title_asc" (order-by-title query order)
     "title_desc" (order-by-title query order)
-    "last_change" (order-by-media-entry-attribute query [:edit_session_updated_at :asc])))
+    "last_change" (order-by-media-entry-attribute query [:edit_session_updated_at :asc])
+    "manual_asc" (handle-missing-collection-id collection-id (order-by-arc-attribute query [:position :asc]))
+    "manual_desc" (handle-missing-collection-id collection-id (order-by-arc-attribute query [:position :desc]))
+  )
+)
 
-(def ^:private available-sortings '("desc" "asc" "title_asc" "title_desc" "last_change"))
+(def ^:private available-sortings '("desc" "asc" "title_asc" "title_desc"
+                                    "last_change" "manual_asc" "manual_desc"))
 
 (defn- default-order [query]
   (sql/order-by query [:media_entries.created-at :asc]))
 
-(defn- order-by-collection-sorting [query {collection-id :collection_id}]
-  (if collection-id
+(defn- order-by-collection-sorting [query collection-id]
+  (handle-missing-collection-id collection-id
     (if-let [sorting (find-collection-default-sorting collection-id)]
       (let [prepared-sorting (->> (str/split (str/replace sorting "created_at " "") #" ") (str/join "_") str/lower-case)]
-        (order-by-string query prepared-sorting))
-      (sql/order-by query [:media_entries.created-at :asc]))
-    (throw (ex-info "collection_id param must be given" {:status 422}))
-  ))
+        (order-by-string query prepared-sorting collection-id))
+      (sql/order-by query [:media_entries.created-at :asc]))))
 
 (def ^:private not-allowed-order-param-message
   (str "only the following values are allowed as order parameter: "
        (str/join ", " available-sortings) " and stored_in_collection"))
 
 (defn- set-order [query query-params]
-  (-> (let [order (-> query-params :order)]
+  (-> (let [order (-> query-params :order)
+            collection-id (-> query-params :collection_id)]
         (cond 
           (nil? order) (default-order query)
           (string? order) (cond
-                            (some #(= order %) available-sortings) (order-by-string query order)
-                            (= order "stored_in_collection") (order-by-collection-sorting query query-params)
+                            (some #(= order %) available-sortings) (order-by-string query order collection-id)
+                            (= order "stored_in_collection") (order-by-collection-sorting query collection-id)
                             :else (throw (ex-info not-allowed-order-param-message
                                                   {:status 422})))
           (seq? order)(reduce order-reducer query order)
@@ -169,9 +181,10 @@
                                                       :media_entry_created_at :created_at})))}
            (when collection-id
              {:arcs (->> data
-                         (map #(select-keys % [:arc_id :media_entry_id :arc_order :arc_created_at :arc_updated_at]))
+                         (map #(select-keys % [:arc_id :media_entry_id :arc_order :arc_position :arc_created_at :arc_updated_at]))
                          (map #(rename-keys % {:arc_id :id
                                                :arc_order :order
+                                               :arc_position :position
                                                :arc_created_at :created_at
                                                :arc_updated_at :updated_at})))}))})
       (catch Exception e (merge (ex-data e) {:body {:message (.getMessage e)}}))
