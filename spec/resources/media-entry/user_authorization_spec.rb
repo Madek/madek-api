@@ -45,9 +45,41 @@ describe 'Getting a media-entry resource with authentication' do
     end
   end
 
-  context :check_allowed_if_responsible do
+  context :check_allowed_if_responsible_user do
     before :example do
       @media_entry.update_attributes! responsible_user: @entity
+    end
+
+    it 'is allowed 200' do
+      expect(response.status).to be == 200
+    end
+  end
+
+  context :check_allowed_if_user_belongs_to_responsible_delegation do
+    before do
+      delegation = create(:delegation)
+      delegation.users << @entity
+      @media_entry.update_attributes!(
+        responsible_user: nil,
+        responsible_delegation_id: delegation.id
+      )
+    end
+
+    it 'is allowed 200' do
+      expect(response.status).to be == 200
+    end
+  end
+
+  context :check_allowed_if_user_belongs_to_group_belonging_to_responsible_delegation do
+    before do
+      delegation = create(:delegation)
+      group = create(:group)
+      delegation.groups << group
+      group.users << @entity
+      @media_entry.update_attributes!(
+        responsible_user: nil,
+        responsible_delegation_id: delegation.id
+      )
     end
 
     it 'is allowed 200' do

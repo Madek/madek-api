@@ -50,6 +50,21 @@
 
 ; ============================================================
 
+(defn- delegation-ids [user_id]
+  (let [query {:union [
+                (-> (sql/select :delegation_id)
+                    (sql/from :delegations_groups)
+                    (sql/where [:in :delegations_groups.group_id (->
+                      (sql/select :group_id)
+                      (sql/from :groups_users)
+                      (sql/where [:= :groups_users.user_id user_id]))]))
+                (-> (sql/select :delegation_id)
+                    (sql/from :delegations_users)
+                    (sql/where [:= :delegations_users.user_id user_id]))]}]
+    (map #(:delegation_id %) (jdbc/query (rdbms/get-ds) (sql/format query)))
+  )
+)
+
 (defn- query-api-client-permissions
   [resource api-client-id perm-name & {:keys [mr-type]}]
   (->> (build-api-client-permissions-query
@@ -74,6 +89,7 @@
       (let [auth-entity-id (:id auth-entity)]
         (-> (case (:type auth-entity)
               "User" (or (= auth-entity-id (:responsible_user_id resource))
+                         (some #(= (:responsible_delegation_id resource) %) (delegation-ids auth-entity-id))
                          (seq (query-user-permissions resource
                                                       auth-entity-id
                                                       perm-name

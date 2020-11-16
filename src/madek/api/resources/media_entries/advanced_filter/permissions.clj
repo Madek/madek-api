@@ -8,6 +8,25 @@
   (:import
     [madek.api WebstackException]))
 
+; (defn- delegation-ids-subquery [user_id]
+;   {:union
+;     [
+;       (-> (sql/select :delegation_id)
+;           (sql/from :delegations_groups)
+;           (sql/where [:in :delegations_groups.group_id (->
+;             (sql/select :group_id)
+;             (sql/from :groups_users)
+;             (sql/where [:= :groups_users.user_id user_id])
+;           )])
+;       )
+;       (-> (sql/select :delegation_id)
+;           (sql/from :delegations_users)
+;           (sql/where [:= :delegations_users.user_id user_id])
+;       )
+;     ]
+;   }
+; )
+
 (defn- api-client-authorized-condition [perm id]
   [:or
    [:= (keyword (str "media_entries." perm)) true]
@@ -43,9 +62,11 @@
                (sql/merge-where [:= :gu.user_id id]))])
 
 (defn- user-authorized-condition [perm id]
+  ; (println (sql/format (delegation-ids-subquery id)))
   [:or
    [:= (keyword (str "media_entries." perm)) true]
    [:= :media_entries.responsible_user_id id]
+   ; [:in :media_entries.responsible_delegation_id (delegation-ids-subquery id)]
    (user-permission-exists-condition perm id)
    (group-permission-for-user-exists-condition perm id)])
 
