@@ -10,7 +10,7 @@ describe 'redirects for the research video project' do
 
   let :http_client do
     Faraday.new(url: api_base_url) do |conn|
-      yield(conn) if block_given?
+      # yield conn if block_given? # FIXME: this fails with `Invalid yield (SyntaxError)` since ruby 2.7 BUT also seems obsolete???
       conn.adapter Faraday.default_adapter
     end
   end
