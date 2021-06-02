@@ -84,8 +84,8 @@ GEM
     erubi (1.10.0)
     factory_girl (4.8.1)
       activesupport (>= 3.0.0)
-    faker (1.7.3)
-      i18n (~> 0.5)
+    faker (1.8.7)
+      i18n (>= 0.7)
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.12.2)
@@ -269,7 +269,7 @@ DEPENDENCIES
   cider_ci-open_session (>= 1.0.0, < 2.0.0)
   cider_ci-support (= 3.2)
   factory_girl (~> 4.8.1)
-  faker
+  faker (~> 1.8.7)
   faraday
   git
   hashdiff
