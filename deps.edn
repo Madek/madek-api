@@ -6,10 +6,13 @@
         cheshire/cheshire {:mvn/version "5.10.1"}
         cider-ci/open-session {:mvn/version "2.0.0-beta.1"} ; upgrade will break
         clj-http/clj-http {:mvn/version "3.12.3"}
+        clj-pid/clj-pid {:mvn/version "0.1.2"}
         clj-yaml/clj-yaml {:mvn/version "0.4.0"}
         clojure-humanize/clojure-humanize {:mvn/version "0.2.2"}
+        com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
         com.github.mfornos/humanize-slim {:mvn/version "1.2.2"}
         com.mchange/c3p0 {:mvn/version "0.9.5.5"}
+        com.taoensso/timbre {:mvn/version "5.1.2"}
         compojure/compojure {:mvn/version "1.6.2"}
         drtom/clj-uuid  {:mvn/version "0.1.7"}
         environ/environ {:mvn/version "1.2.0"}
@@ -23,17 +26,17 @@
         org.clojure/clojure {:mvn/version "1.10.3"}
         org.clojure/core.match {:mvn/version "1.0.0"}
         org.clojure/java.jdbc {:mvn/version "0.7.12"}
+        org.clojure/tools.cli {:mvn/version "1.0.206"}
         org.clojure/tools.logging {:mvn/version "1.2.1"}
-        org.clojure/tools.nrepl {:mvn/version "0.2.13"}
+        nrepl/nrepl {:mvn/version "0.8.3"}
         org.yaml/snakeyaml {:mvn/version "1.29"}
         pg-types/pg-types {:mvn/version "3.0.0"}
         ring-basic-authentication/ring-basic-authentication {:mvn/version "1.1.1"}
         ring-cors/ring-cors {:mvn/version "0.1.13"}
         ring/ring-core {:mvn/version "1.9.4"}
         ring/ring-json {:mvn/version "0.5.1"}
+        spootnik/signal {:mvn/version "0.2.4"}
         uritemplate-clj/uritemplate-clj {:mvn/version "1.3.0"}
-        com.taoensso/timbre {:mvn/version "5.1.2"}
-        com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
         }
  :aliases
  {;

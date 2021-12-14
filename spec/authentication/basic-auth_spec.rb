@@ -60,6 +60,7 @@ shared_context :test_proper_basic_auth do
     end
 
     it 'responds with success 200' do
+      binding.pry
       expect(response.status).to be == 200
     end
 
