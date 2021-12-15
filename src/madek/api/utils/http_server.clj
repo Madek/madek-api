@@ -1,15 +1,7 @@
-; Copyright © 2013 - 2017 Dr. Thomas Schank <Thomas.Schank@AlgoCon.ch>
-; Licensed under the terms of the GNU Affero General Public License v3.
-; See the "LICENSE.txt" file provided with this software.
-
-
 (ns madek.api.utils.http-server
   (:require
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]
     [aleph.http :as http-server]
-    )
-  (:import
+    [clojure.tools.logging :as logging]
     ))
 
 

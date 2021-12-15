@@ -1,17 +1,14 @@
 (ns madek.api.authentication.basic
   (:require
-    [madek.api.authentication.token :as token-authentication]
-    [madek.api.utils.rdbms :as rdbms]
-
     [camel-snake-kebab.core :refer :all]
     [cider-ci.open-session.bcrypt :refer [checkpw]]
     [clojure.java.jdbc :as jdbc]
-    [inflections.core :refer :all]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
+    [inflections.core :refer :all]
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
+    [madek.api.authentication.token :as token-authentication]
+    [madek.api.utils.rdbms :as rdbms]
     )
   (:import
     [java.util Base64]
@@ -87,6 +84,4 @@
     (authenticate request handler)))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
-;(debug/debug-ns *ns*)
+(debug/debug-ns *ns*)

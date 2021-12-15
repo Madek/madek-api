@@ -1,19 +1,17 @@
 (ns madek.api.resources.meta-data.index
   (:require
+    [clojure.java.jdbc :as jdbc]
+    [clojure.tools.logging :as logging]
+    [compojure.core :as cpj]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
     [madek.api.authorization :as authorization]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
-    [madek.api.utils.sql :as sql]
     [madek.api.resources.vocabularies.permissions :as permissions]
-
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    [clojure.java.jdbc :as jdbc]
-    [compojure.core :as cpj]
-
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]))
+    [madek.api.utils.sql :as sql]
+    ))
 
 (defn- where-clause
   [user-id]
@@ -78,6 +76,4 @@
            "Collection" {:collection_id (:id media-resource)}))})))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

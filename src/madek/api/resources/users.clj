@@ -1,19 +1,16 @@
 (ns madek.api.resources.users
   (:require
+    [clj-uuid]
+    [clojure.java.jdbc :as jdbc]
+    [clojure.tools.logging :as logging]
+    [compojure.core :as cpj]
+    [logbug.debug :as debug]
     [madek.api.constants :refer [presence]]
     [madek.api.pagination :as pagination]
     [madek.api.utils.auth :refer [wrap-authorize-admin!]]
     [madek.api.utils.rdbms :as rdbms]
     [madek.api.utils.sql :as sql]
-
-    [clj-uuid]
-    [clojure.java.jdbc :as jdbc]
-    [compojure.core :as cpj]
     [ring.util.codec :refer [url-decode]]
-
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
     ))
 
 
@@ -123,6 +120,4 @@
       wrap-authorize-admin!))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

@@ -4,14 +4,10 @@
 
 (ns madek.api.utils.nrepl
   (:require
-    [logbug.catcher :as catcher]
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [clojure.tools.nrepl.server :as nrepl-server]
+    [logbug.catcher :as catcher]
     ))
-
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 
 (declare start-server)
 

@@ -1,14 +1,13 @@
 (ns madek.api.management
   (:require
-    [madek.api.utils.config :as config :refer [get-config]]
-    [madek.api.utils.rdbms :as rdbms]
-    [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
     [madek.api.authentication.basic :as basic-auth]
+    [madek.api.utils.config :as config :refer [get-config]]
+    [madek.api.utils.rdbms :as rdbms]
     ))
 
 
@@ -44,7 +43,4 @@
 
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
-

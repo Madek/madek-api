@@ -1,11 +1,8 @@
 (ns madek.api.json-roa.collection-media-entry-arcs.links
   (:require
     [clj-http.client :as http-client]
-    )
-  (:require
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
-    [clj-logging-config.log4j :as logging-config]
     ))
 
 (defn collection-media-entry-arcs-path-base
@@ -50,6 +47,4 @@
                 }}}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

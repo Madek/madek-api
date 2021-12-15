@@ -1,15 +1,12 @@
 (ns madek.api.json-roa.collection-media-entry-arcs.core
   (:require
-    [madek.api.utils.rdbms :as rdbms]
     [clojure.java.jdbc :as jdbc]
-    [madek.api.json-roa.links :as json-roa.links]
-    [madek.api.json-roa.collection-media-entry-arcs.links :as links]
-    [madek.api.pagination :as pagination])
-  (:require
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
-    [clj-logging-config.log4j :as logging-config]
-    ))
+    [madek.api.json-roa.collection-media-entry-arcs.links :as links]
+    [madek.api.json-roa.links :as json-roa.links]
+    [madek.api.pagination :as pagination]
+    [madek.api.utils.rdbms :as rdbms]))
 
 (defn- collection-relations [context query-params ids]
   (->> ids
@@ -47,6 +44,4 @@
                      context (-> response :body :collection_id))}}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

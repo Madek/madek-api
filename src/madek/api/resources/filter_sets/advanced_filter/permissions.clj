@@ -1,10 +1,10 @@
 (ns madek.api.resources.filter-sets.advanced-filter.permissions
   (:require
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [madek.api.utils.sql :as sql]))
+    [madek.api.utils.sql :as sql]
+    ))
 
 (defn- api-client-authorized-condition [perm id]
   [:or
@@ -71,8 +71,6 @@
                "get_metadata_and_previews" authenticated-entity)))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
 ;(debug/wrap-with-log-debug #'filter-by-permissions)
 ;(debug/wrap-with-log-debug #'build-query)

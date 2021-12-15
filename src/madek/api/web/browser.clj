@@ -1,15 +1,12 @@
 (ns madek.api.web.browser
   (:require
-
-    [compojure.core :as cpj :refer [defroutes GET PUT POST DELETE ANY]]
-    [ring.middleware.resource :as resource]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
+    [compojure.core :as cpj :refer [defroutes GET PUT POST DELETE ANY]]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug :refer [I> I>>]]
     [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
     [logbug.thrown :as thrown]
+    [ring.middleware.resource :as resource]
     ))
 
 (defn- remove-context [request]
@@ -37,6 +34,4 @@
 
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

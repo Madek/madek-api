@@ -1,16 +1,15 @@
 (ns madek.api.resources.filter-sets.index
   (:require
-    [madek.api.utils.rdbms :as rdbms]
-    [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [madek.api.utils.sql :as sql]
     [madek.api.pagination :as pagination]
-    [madek.api.resources.filter-sets.advanced-filter.permissions
-     :as permissions :refer [filter-by-query-params]]))
+    [madek.api.resources.filter-sets.advanced-filter.permissions :as permissions :refer [filter-by-query-params]]
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.sql :as sql]
+    ))
 
 ;### collection_id ############################################################
 
@@ -55,8 +54,6 @@
       (query-index-resources request)}}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
 ;(debug/wrap-with-log-debug #'filter-by-permissions)
 ;(debug/wrap-with-log-debug #'build-query)

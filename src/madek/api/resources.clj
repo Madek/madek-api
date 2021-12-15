@@ -1,5 +1,10 @@
 (ns madek.api.resources
   (:require
+    [clojure.java.jdbc :as jdbc]
+    [clojure.tools.logging :as logging]
+    [compojure.core :as cpj]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
     [madek.api.authorization :refer [authorized?]]
     [madek.api.resources.auth-info :as auth-info]
     [madek.api.resources.collection-media-entry-arcs :as collection-media-entry-arcs]
@@ -19,14 +24,6 @@
     [madek.api.resources.users :as users]
     [madek.api.resources.vocabularies :as vocabularies]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-
-    [compojure.core :as cpj]
-    [clojure.java.jdbc :as jdbc]
-
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
     ))
 
 
@@ -217,6 +214,4 @@
       ))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 (debug/debug-ns *ns*)

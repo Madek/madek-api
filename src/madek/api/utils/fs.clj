@@ -4,11 +4,10 @@
 
 (ns madek.api.utils.fs
   (:require
-    [logbug.debug :as debug]
-    [clj-logging-config.log4j :as logging-config]
     [clj-uuid]
     [clojure.string :as string]
     [clojure.tools.logging :as logging]
+    [logbug.debug :as debug]
     )
   (:import
     [java.io File]

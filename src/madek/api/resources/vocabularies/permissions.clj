@@ -1,15 +1,13 @@
 (ns madek.api.resources.vocabularies.permissions
   (:require
+    [clojure.java.jdbc :as jdbc]
+    [clojure.tools.logging :as logging]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
+    [logbug.thrown :as thrown]
     [madek.api.authentication.basic :refer [extract]]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [madek.api.utils.sql :as sql]
-
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [logbug.thrown :as thrown]
-    [logbug.catcher :as catcher]
     ))
 
 (defn- execute-query
@@ -62,6 +60,4 @@
     (pluck-vocabulary-ids (group-permissions-query user-id))))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

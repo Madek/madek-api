@@ -1,16 +1,14 @@
 (ns madek.api.resources.meta-keys.index
   (:require
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
+    [clojure.java.jdbc :as jdbc]
+    [clojure.tools.logging :as logging]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
     [madek.api.resources.vocabularies.permissions :as permissions]
-
-    [clojure.java.jdbc :as jdbc]
-    [logbug.catcher :as catcher]
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.sql :as sql]
     ))
 
 (defn- where-clause
@@ -53,6 +51,4 @@
       (query-index-resources request)}}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

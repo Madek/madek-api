@@ -1,19 +1,8 @@
 (ns madek.api.web
   (:require
-    [madek.api.authentication :as authentication]
-    [madek.api.authorization :as authorization]
-    [madek.api.json-protocol]
-    [madek.api.json-roa]
-    [madek.api.management :as management]
-    [madek.api.resources]
-    [madek.api.semver :as semver]
-    [madek.api.web.browser :as web.browser]
-
-    [madek.api.utils.config :refer [get-config]]
-    [madek.api.utils.http-server :as http-server]
-    [madek.api.utils.status :as status]
     [clojure.data.json :as json]
     [clojure.java.io :as io]
+    [clojure.tools.logging :as logging]
     [clojure.walk :refer [keywordize-keys]]
     [compojure.core :as cpj :refer [defroutes GET PUT POST DELETE ANY]]
     [compojure.handler :refer [site]]
@@ -21,16 +10,24 @@
     [environ.core :refer [env]]
     [json-roa.ring-middleware.request :as json-roa_request]
     [json-roa.ring-middleware.response :as json-roa_response]
-    [ring.adapter.jetty :as jetty]
-    [ring.middleware.json]
-    [ring.middleware.cors :as cors-middleware]
-
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug :refer [I> I>>]]
     [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
     [logbug.thrown :as thrown]
+    [madek.api.authentication :as authentication]
+    [madek.api.authorization :as authorization]
+    [madek.api.json-protocol]
+    [madek.api.json-roa]
+    [madek.api.management :as management]
+    [madek.api.resources]
+    [madek.api.semver :as semver]
+    [madek.api.utils.config :refer [get-config]]
+    [madek.api.utils.http-server :as http-server]
+    [madek.api.utils.status :as status]
+    [madek.api.web.browser :as web.browser]
+    [ring.adapter.jetty :as jetty]
+    [ring.middleware.cors :as cors-middleware]
+    [ring.middleware.json]
     ))
 
 ;### helper ###################################################################
@@ -186,6 +183,4 @@
 
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

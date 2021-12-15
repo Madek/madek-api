@@ -4,21 +4,18 @@
 
 (ns madek.api.utils.config
   (:require
-    [madek.api.utils.daemon :as daemon :refer [defdaemon]]
-    [madek.api.utils.duration :refer [parse-string-to-seconds]]
-    [madek.api.utils.fs :refer :all]
-    [madek.api.utils.core :refer [deep-merge]]
-    [madek.api.utils.rdbms :as rdbms]
-
     [clj-yaml.core :as yaml]
     [clojure.java.io :as io]
     [clojure.set :refer [difference]]
-    [me.raynes.fs :as clj-fs]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
     [logbug.catcher :refer [snatch with-logging]]
+    [logbug.debug :as debug]
+    [madek.api.utils.core :refer [deep-merge]]
+    [madek.api.utils.daemon :as daemon :refer [defdaemon]]
+    [madek.api.utils.duration :refer [parse-string-to-seconds]]
+    [madek.api.utils.fs :refer :all]
+    [madek.api.utils.rdbms :as rdbms]
+    [me.raynes.fs :as clj-fs]
     ))
 
 
@@ -127,5 +124,3 @@
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)
 ;(logbug.thrown/reset-ns-filter-regex #".*cider.ci.*")
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)

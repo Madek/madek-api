@@ -1,11 +1,9 @@
 (ns madek.api.json-roa.groups
   (:require
-    [madek.api.json-roa.links :as links]
-    [madek.api.pagination :as pagination]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
+    [madek.api.json-roa.links :as links]
+    [madek.api.pagination :as pagination]
     ))
 
 (defn group [request response]
@@ -40,6 +38,4 @@
            ))})))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

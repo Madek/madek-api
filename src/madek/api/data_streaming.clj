@@ -1,6 +1,5 @@
 (ns madek.api.data-streaming
   (:require
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [ring.util.response]))
 
@@ -12,6 +11,4 @@
     {:status 404 :body {:message "File could not be found!"}}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns 'madek.api.utils.rdbms)

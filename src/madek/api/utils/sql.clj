@@ -1,15 +1,12 @@
 (ns madek.api.utils.sql
   (:refer-clojure :exclude [format])
   (:require
+    [clojure.tools.logging :as logging]
     [honeysql.format :as format]
     [honeysql.helpers :as helpers :refer [build-clause defhelper]]
     [honeysql.types :as types]
     [honeysql.util :as util :refer [defalias]]
-
-
     [logbug.debug :as debug]
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]
     ))
 
 (defmethod format/fn-handler "~*" [_ field value]
@@ -56,9 +53,5 @@
 (defalias values helpers/values)
 (defalias where helpers/where)
 
-
-
 ;#### debug ###################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

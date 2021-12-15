@@ -2,22 +2,20 @@
   (:refer-clojure :exclude [str keyword])
   (:require [madek.api.utils.core :refer [str keyword]])
   (:require
+    [clojure.core.match :refer [match]]
+    [clojure.java.jdbc :as jdbc]
+    [clojure.set :refer [rename-keys]]
+    [clojure.string :as str]
+    [clojure.tools.logging :as logging]
+    [compojure.core :as cpj]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug :refer [I> I>> identity-with-logging]]
     [madek.api.pagination :as pagination]
     [madek.api.resources.media-entries.advanced-filter :as advanced-filter]
     [madek.api.resources.media-entries.advanced-filter.permissions :as permissions :refer [filter-by-query-params]]
     [madek.api.resources.shared :as shared]
     [madek.api.utils.rdbms :as rdbms]
     [madek.api.utils.sql :as sql]
-
-    [clojure.core.match :refer [match]]
-    [clojure.set :refer [rename-keys]]
-    [clojure.string :as str]
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [compojure.core :as cpj]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug :refer [I> I>> identity-with-logging]]
     ))
 
 ;### collection_id ############################################################
@@ -187,8 +185,6 @@
 )
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
 ;(debug/wrap-with-log-debug #'filter-by-permissions)
 ;(debug/wrap-with-log-debug #'set-order)

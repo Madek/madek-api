@@ -1,20 +1,17 @@
 (ns madek.api.resources.meta-data.meta-datum
   (:require
+    [clojure.java.jdbc :as jdbc]
+    [clojure.tools.logging :as logging]
+    [compojure.core :as cpj]
+    [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
     [madek.api.authorization :as authorization]
     [madek.api.pagination :as pagination]
     [madek.api.resources.keywords.index :as keywords]
     [madek.api.resources.shared :as shared]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [madek.api.utils.sql :as sql]
-
-    [clojure.java.jdbc :as jdbc]
-    [compojure.core :as cpj]
     [ring.util.response :as ring-response]
-
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [logbug.catcher :as catcher]
     ))
 
 ;### people ###################################################################
@@ -111,6 +108,4 @@
     {:body (prepare-meta-datum-role meta-datum-role-id)}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

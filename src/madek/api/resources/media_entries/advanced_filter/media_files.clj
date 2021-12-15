@@ -1,10 +1,10 @@
 (ns madek.api.resources.media-entries.advanced-filter.media-files
   (:require
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [madek.api.utils.sql :as sql]))
+    [madek.api.utils.sql :as sql]
+    ))
 
 (defn- sql-merge-where-media-file-spec [sqlmap media-file-spec]
   (-> sqlmap
@@ -24,8 +24,6 @@
     sqlmap))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
 ;(debug/wrap-with-log-debug #'filter-by-permissions)
 ;(debug/wrap-with-log-debug #'build-query)

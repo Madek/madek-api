@@ -1,14 +1,13 @@
 (ns madek.api.resources.vocabularies.index
   (:require
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    [madek.api.utils.sql :as sql]
-    [madek.api.resources.vocabularies.permissions :as permissions]
-
     [clojure.java.jdbc :as jdbc]
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
-    [logbug.debug :as debug]))
+    [logbug.debug :as debug]
+    [madek.api.resources.vocabularies.permissions :as permissions]
+    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.sql :as sql]
+    ))
 
 (defn- where-clause
   [user-id]
@@ -37,6 +36,4 @@
       (query-index-resources request)}}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

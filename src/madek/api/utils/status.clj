@@ -4,17 +4,14 @@
 
 (ns madek.api.utils.status
   (:require
-    [madek.api.utils.runtime :as runtime]
-
-    [madek.api.utils.rdbms :as rdbms]
+    [clj-commons-exec :as commons-exec]
     [clojure.data.json :as json]
+    [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
     [compojure.handler :as cpj.handler]
-
     [logbug.debug :as debug]
-    [clj-commons-exec :as commons-exec]
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.runtime :as runtime]
     ))
 
 (defn status-handler [request]

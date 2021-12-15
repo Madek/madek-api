@@ -1,14 +1,13 @@
 (ns madek.api.resources.media-entries.advanced-filter.meta-data
   (:require
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [madek.api.resources.meta-keys.meta-key :as meta-key]))
+    [madek.api.resources.meta-keys.meta-key :as meta-key]
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.sql :as sql]
+    ))
 
 (def ^:private match-columns {"meta_data_people" {:table "people",
                                                   :resource "person",
@@ -263,8 +262,6 @@
 
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
 ;(debug/wrap-with-log-debug #'filter-by-permissions)
 ;(debug/wrap-with-log-debug #'build-query)

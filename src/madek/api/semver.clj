@@ -3,7 +3,6 @@
     [clj-commons-exec :as commons-exec]
     [logbug.debug :as debug]
     [logbug.catcher :as catcher]
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     ))
 
@@ -20,6 +19,3 @@
 (defn get-semver []
   (str "3.0.0-beta.1+" (get-git-commit-id))
   )
-
-
-

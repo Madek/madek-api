@@ -4,10 +4,9 @@
 
 (ns madek.api.utils.runtime
   (:require
-    [logbug.debug :as debug]
     [clj-commons-exec :as commons-exec]
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
+    [logbug.debug :as debug]
     )
   (:import
     [humanize Humanize]
@@ -32,5 +31,3 @@
 
 ;### Debug #####################################################################
 ;(debug/debug-ns *ns*)
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)

@@ -1,13 +1,11 @@
 (ns madek.api.pagination
   (:require
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [clojure.walk :refer [keywordize-keys]]
     [compojure.core :as cpj]
     [logbug.debug :as debug]
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.sql :as sql]
     ))
 
 (def LIMIT 100)
@@ -34,6 +32,4 @@
 
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

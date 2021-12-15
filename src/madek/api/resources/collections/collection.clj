@@ -1,6 +1,5 @@
 (ns madek.api.resources.collections.collection
   (:require
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
     ))
@@ -14,6 +13,4 @@
     {:body (select-keys collection collection-keys)}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

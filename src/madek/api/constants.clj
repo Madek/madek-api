@@ -1,14 +1,22 @@
 (ns madek.api.constants
   (:require
-    [madek.api.utils.config :as config :refer [get-config]]
-    [clj-logging-config.log4j :as logging-config]
+    [clojure.string :refer [trim blank?]]
     [clojure.tools.logging :as logging]
     [environ.core :refer [env]]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
+    [madek.api.utils.config :as config :refer [get-config]]
     [me.raynes.fs  :as clj-fs]
-    [clojure.string :refer [trim blank?]]
     ))
+
+(def DEFAULT_LOGGING_CONFIG
+  {:min-level [[#{
+                  "madek.api.authentication.basic"
+                  "madek.api.authentication.token"
+                  } :debug]
+               [#{"madek.api.*"} :info]
+               [#{"*"} :warn]]
+   :log-level nil})
 
 (declare DEFAULT_STORAGE_DIR
          FILE_STORAGE_DIR
@@ -53,6 +61,4 @@
 
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

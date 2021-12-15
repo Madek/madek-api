@@ -1,11 +1,10 @@
 (ns madek.api.resources.roles.role
   (:require
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
-    [madek.api.utils.sql :as sql]
     [logbug.debug :as debug]
+    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.sql :as sql]
     ))
 
 (defn get-role [request]
@@ -21,6 +20,4 @@
                          :created_at])}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

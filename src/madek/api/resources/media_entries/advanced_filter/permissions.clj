@@ -1,10 +1,10 @@
 (ns madek.api.resources.media-entries.advanced-filter.permissions
   (:require
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [madek.api.utils.sql :as sql]))
+    [madek.api.utils.sql :as sql]
+    ))
 
 ; (defn- delegation-ids-subquery [user_id]
 ;   {:union
@@ -143,8 +143,6 @@
     sqlmap))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
 ;(debug/wrap-with-log-debug #'filter-by-permissions)
 ;(debug/wrap-with-log-debug #'build-query)

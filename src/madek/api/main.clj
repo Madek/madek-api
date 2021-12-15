@@ -1,25 +1,24 @@
 (ns madek.api.main
   (:gen-class)
   (:require
-    [madek.api.constants]
-    [madek.api.web]
-
-    [madek.api.utils.config :as config :refer [get-config]]
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.nrepl :as nrepl]
-
     [clojure.java.jdbc :as jdbc]
-    [pg-types.all]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
     [logbug.thrown]
+    [madek.api.constants :as constants]
+    [madek.api.utils.config :as config :refer [get-config]]
+    [madek.api.utils.nrepl :as nrepl]
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.web]
+    [pg-types.all]
+    [taoensso.timbre :as timbre :refer []]
+    [taoensso.timbre.tools.logging]
     ))
 
 
 (defn -main []
+  (timbre/merge-config! constants/DEFAULT_LOGGING_CONFIG)
   (logbug.thrown/reset-ns-filter-regex #".*madek.*")
   (catcher/snatch
     {:level :fatal
@@ -45,6 +44,4 @@
   (madek.api.web/start-server))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns 'madek.api.utils.rdbms)

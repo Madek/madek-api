@@ -1,17 +1,14 @@
 (ns madek.api.resources.collection-media-entry-arcs
   (:require
-    [madek.api.constants :refer [presence]]
-    [madek.api.pagination :as pagination]
-    [madek.api.utils.sql :as sql]
-    [madek.api.utils.rdbms :as rdbms]
-
     [clojure.java.jdbc :as jdbc]
-    [compojure.core :as cpj]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
+    [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug :refer [I> I>>]]
+    [madek.api.constants :refer [presence]]
+    [madek.api.pagination :as pagination]
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.sql :as sql]
     ))
 
 
@@ -52,6 +49,4 @@
 
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

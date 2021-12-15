@@ -1,9 +1,8 @@
 (ns madek.api.resources.collections.permissions
   (:require
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
-    [logbug.thrown :as thrown]
     [logbug.catcher :as catcher]
+    [logbug.thrown :as thrown]
     [madek.api.resources.media-resources.permissions :as mr-permissions]
     ))
 

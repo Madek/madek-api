@@ -1,16 +1,13 @@
 (ns madek.api.utils.auth
   (:require
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-
     [clj-uuid]
     [clojure.java.jdbc :as jdbc]
-    [compojure.core :as cpj]
-    [ring.util.codec :refer [url-decode]]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
+    [compojure.core :as cpj]
     [logbug.debug :as debug]
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.sql :as sql]
+    [ring.util.codec :refer [url-decode]]
     ))
 
 ;### admin check ##############################################################
@@ -40,5 +37,3 @@
 (defn wrap-authorize-admin! [handler]
   (fn [req]
     (authorize-admin! req handler)))
-
-

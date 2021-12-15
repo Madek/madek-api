@@ -1,6 +1,5 @@
 (ns madek.api.resources.shared
   (:require
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
     [logbug.debug :as debug]

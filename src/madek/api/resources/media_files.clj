@@ -1,17 +1,15 @@
 (ns madek.api.resources.media-files
   (:require
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [clojure.java.jdbc :as jdbc]
-    [compojure.core :as cpj]
-    [madek.api.resources.media-files.authorization :as media-files.authorization]
-    [madek.api.resources.media-files.media-file :as media-file]
-    [madek.api.resources.shared :as shared]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
+    [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug :refer [I> I>>]]
     [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
+    [madek.api.resources.media-files.authorization :as media-files.authorization]
+    [madek.api.resources.media-files.media-file :as media-file]
+    [madek.api.resources.shared :as shared]
+    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     ))
 
 ;##############################################################################
@@ -47,6 +45,4 @@
       wrap-find-and-add-media-file))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

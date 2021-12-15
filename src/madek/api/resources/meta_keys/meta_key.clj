@@ -1,15 +1,13 @@
 (ns madek.api.resources.meta-keys.meta-key
   (:require
-    [madek.api.utils.config :as config :refer [get-config]]
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    [madek.api.utils.sql :as sql]
-    [madek.api.resources.shared :refer [remove-internal-keys]]
-    [madek.api.resources.locales :refer [add-field-for-default-locale]]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
+    [madek.api.resources.locales :refer [add-field-for-default-locale]]
+    [madek.api.resources.shared :refer [remove-internal-keys]]
+    [madek.api.utils.config :as config :refer [get-config]]
+    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.sql :as sql]
     ))
 
 (defn- add-fields-for-default-locale
@@ -39,7 +37,7 @@
                       []
                       (get groupped io-interface-id))
       }) io-interfaces))))
-  
+
 
 (defn- include-io-mappings
   [result id]
@@ -67,6 +65,4 @@
        :body {:message "Wrong meta_key_id format! See documentation."}})))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)

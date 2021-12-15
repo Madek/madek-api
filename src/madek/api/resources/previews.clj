@@ -1,15 +1,14 @@
 (ns madek.api.resources.previews
   (:require
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    [clj-logging-config.log4j :as logging-config]
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
     [compojure.core :as cpj]
-    [logbug.debug :as debug]
     [logbug.catcher :as catcher]
+    [logbug.debug :as debug]
     [madek.api.pagination :as pagination]
     [madek.api.resources.previews.preview :as preview]
     [madek.api.resources.shared :as shared]
+    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     ))
 
 (defn- query-preview [preview-id]
@@ -36,7 +35,4 @@
       wrap-find-and-add-preview))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
-

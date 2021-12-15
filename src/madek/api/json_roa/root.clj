@@ -1,9 +1,9 @@
 (ns madek.api.json-roa.root
   (:require
-    [madek.api.json-roa.links :as links]
+    [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
-    [clj-logging-config.log4j :as logging-config]
-    [clojure.tools.logging :as logging]))
+    [madek.api.json-roa.links :as links]
+    ))
 
 (defn build [request]
   (let [context (:context request)]

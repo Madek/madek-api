@@ -4,7 +4,6 @@
 
 (ns madek.api.utils.daemon
   (:require
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     ))

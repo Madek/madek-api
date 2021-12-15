@@ -1,23 +1,14 @@
 (ns madek.api.authentication.token
   (:require
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-
-    [pandect.algo.sha256 :as algo.sha256]
-    ;[clojure.data.codec.base64 :as codec.base64]
     [clojure.java.jdbc :as jdbc]
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
-
-    )
-
+    [madek.api.utils.rdbms :as rdbms]
+    [madek.api.utils.sql :as sql]
+    [pandect.algo.sha256 :as algo.sha256])
   (:import
-    [java.util Base64]
-    )
-  )
+    [java.util Base64]))
 
 (defn ^String base64-encode [^bytes bts]
   (String. (.encode (Base64/getEncoder) bts)))
@@ -94,8 +85,5 @@
     (find-and-authenticate-token-secret-or-continue handler request)))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
 ;(debug/wrap-with-log-debug #'authenticate-token-header)
-;(logging-config/set-logger! :level :info)
-;(debug/debug-ns *ns*)
-
+(debug/debug-ns *ns*)

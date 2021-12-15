@@ -1,16 +1,12 @@
 (ns madek.api.json-roa.links
   (:require
-    [madek.api.json-roa.collection-media-entry-arcs.links :as collection-media-entry-arcs.links]
-
-    [uritemplate-clj.core :refer [uritemplate]]
     [clj-http.client :as http-client]
-    [madek.api.pagination :as pagination]
-    [ring.util.codec :refer [form-encode]]
-
-
-    [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
+    [madek.api.json-roa.collection-media-entry-arcs.links :as collection-media-entry-arcs.links]
+    [madek.api.pagination :as pagination]
+    [ring.util.codec :refer [form-encode]]
+    [uritemplate-clj.core :refer [uritemplate]]
     ))
 
 
@@ -525,8 +521,6 @@
     {:next {:href (uritemplate (apply url-fn [context qp]) qp)}}))
 
 ;### Debug ####################################################################
-;(logging-config/set-logger! :level :debug)
-;(logging-config/set-logger! :level :info)
 ;(debug/debug-ns *ns*)
 ;(debug/wrap-with-log-debug #'next-link)
 ;(debug/wrap-with-log-debug #'media-entries-path)
