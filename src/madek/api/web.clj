@@ -66,12 +66,12 @@
   ([request handler]
    (try
      (handler request)
-     (catch madek.api.WebstackException ex
-       (if-let [status (-> ex ex-data :status)]
+     (catch clojure.lang.ExceptionInfo ei
+       (if-let [status (-> ei ex-data :status)]
          {:status status
-          :body {:message (.getMessage ex)}}
+          :body {:message (.getMessage ei)}}
          {:status 500
-          :body {:message (.getMessage ex)}}))
+          :body {:message (.getMessage ei)}}))
      (catch Exception ex
        (logging/error "An exception was thrown in the webstack: "  (thrown/stringify ex))
        {:status 500

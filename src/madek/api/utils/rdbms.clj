@@ -11,7 +11,7 @@
     [pg-types.all]
     )
   (:import
-    [java.net.URI]
+    [java.net URI]
     [com.mchange.v2.c3p0 ComboPooledDataSource DataSources]
     ))
 
@@ -51,7 +51,7 @@
 
 (defn- get-url-param [db-conf name]
   (when-let [url-string (:url db-conf)]
-    (when-let [query (-> url-string java.net.URI/create .getQuery)]
+    (when-let [query (-> url-string URI/create .getQuery)]
       (-> query ring.util.codec/form-decode (get name)))))
 
 ;(get-url-param {:url "postgresql://localhost:5432/madek-v3_development?user=thomas"} "user")

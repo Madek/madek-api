@@ -8,9 +8,7 @@
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [madek.api.resources.meta-keys.meta-key :as meta-key])
-  (:import
-    [madek.api WebstackException]))
+    [madek.api.resources.meta-keys.meta-key :as meta-key]))
 
 (def ^:private match-columns {"meta_data_people" {:table "people",
                                                   :resource "person",
@@ -249,7 +247,7 @@
       sqlmap-with-joined-meta-data
 
       :else (throw
-              (WebstackException.
+              (ex-info
                 (str "Invalid meta data filter: " meta-datum-spec)
                 {:status 422})))))
 

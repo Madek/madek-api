@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euxo
+rm -f resources/build-timestamp.txt
+rm -f resources/deps.svg

@@ -1,13 +1,21 @@
 jobs:
 
-  rspec-tests:
-    name: "RSpec Tests"
+  build-uberjar:
+    name: Build uberjar
     run_when: &DEFAULT_TRIGGERS
       any branch matches:
         type: branch
         include_match: ^.+$
     context:
+      include: cider-ci/uberjar.yml
+
+  rspec-tests:
+    name: "RSpec Tests"
+    context:
       include: cider-ci/rspec-tests.yml
+    depends_on: &UBERJAR
+      rspec tests: { type: job, job_key: build-uberjar, states: [passed]}
+    run_when: *UBERJAR
 
   lint:
     name: "Linting"

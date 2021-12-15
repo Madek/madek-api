@@ -13,10 +13,7 @@
     [clj-logging-config.log4j :as logging-config]
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
-    [logbug.debug :as debug])
-
-  (:import
-    [madek.api WebstackException]))
+    [logbug.debug :as debug]))
 
 (defn- where-clause
   [user-id]
@@ -50,9 +47,9 @@
   (if-let [meta-keys (-> request :query-params :meta_keys)]
     (do
       (when-not (seq? meta-keys)
-        String (throw (WebstackException. (str "The value of the meta-keys parameter"
-                                               " must be a json encoded list of strings.")
-                                          {:status 422})))
+        String (throw (ex-info (str "The value of the meta-keys parameter"
+                                    " must be a json encoded list of strings.")
+                               {:status 422})))
       (sql/merge-where query [:in :meta_key_id meta-keys]))
     query))
 

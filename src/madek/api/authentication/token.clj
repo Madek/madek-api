@@ -4,7 +4,7 @@
     [madek.api.utils.sql :as sql]
 
     [pandect.algo.sha256 :as algo.sha256]
-    [clojure.data.codec.base64 :as codec.base64]
+    ;[clojure.data.codec.base64 :as codec.base64]
     [clojure.java.jdbc :as jdbc]
 
     [clj-logging-config.log4j :as logging-config]
@@ -12,14 +12,21 @@
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
 
-    ))
+    )
+
+  (:import
+    [java.util Base64]
+    )
+  )
+
+(defn ^String base64-encode [^bytes bts]
+  (String. (.encode (Base64/getEncoder) bts)))
+
 
 (defn hash-string [s]
   (->> s
        algo.sha256/sha256-bytes
-       codec.base64/encode
-       (map char)
-       (apply str)))
+       base64-encode))
 
 (defn find-user-token-by-some-secret [secrets]
   (->> (-> (sql/select :users.*

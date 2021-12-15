@@ -19,7 +19,7 @@
   "Checks if the authenticated-entity is an admin by either
   checking (-> request :authenticated-entity :is_admin) if present or performing
   an db query.  If so adds {:is_amdin true} to the requests an calls handler.
-  Throws a WebstackException with status 403 otherwise. "
+  Throws a ExceptionInfo with status 403 otherwise. "
   (handler
     (or
       (if (contains? (-> request :authenticated-entity) :is_admin)
@@ -32,7 +32,7 @@
                    first :is_admin)
           (assoc-in request [:authenticated-entity :is_admin] true)))
       (throw
-        (madek.api.WebstackException.
+        (ex-info
           "Only administrators are allowed to access this resource."
           {:status 403
            :body "Only administrators are allowed to access this resource." })))))

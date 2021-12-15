@@ -1,0 +1,12 @@
+traits:
+  JDK 8: true
+
+scripts:
+  uberjar:
+    exclusive_executor_resource: madek-api-uberjar
+    body: |
+      #/bin/env bash
+      set -eux
+      cd $API_DIR
+      ./bin/uberjar
+

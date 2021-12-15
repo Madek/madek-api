@@ -10,11 +10,7 @@
     [madek.api.utils.sql :as sql]
     [madek.api.pagination :as pagination]
     [madek.api.resources.collections.advanced-filter.permissions
-     :as permissions :refer [filter-by-query-params]])
-
-  (:import
-    [madek.api WebstackException]
-    ))
+     :as permissions :refer [filter-by-query-params]]))
 
 ;### collection_id ############################################################
 

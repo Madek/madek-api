@@ -1,5 +1,5 @@
 *.class
-*.jar
+.cpcache/
 .mux.yml
 /.lein-*
 /.nrepl-port
@@ -11,4 +11,5 @@
 /tmp
 pom.xml
 pom.xml.asc
+resources/built-info.yml
 spec/config/database.yml

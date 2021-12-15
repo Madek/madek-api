@@ -6,6 +6,7 @@ task_defaults:
 
   include:
     - cider-ci/task-components/database.yml
+    - cider-ci/task-components/uberjar.yml
     - path: cider-ci/task-components/bundle.yml
       submodule: [datalayer]
 
@@ -49,8 +50,6 @@ task_defaults:
       content_type: text/plain
 
   traits:
-    JDK 8: true
-    Leiningen 2: true
     curl: true
 
   scripts:
@@ -73,24 +72,20 @@ task_defaults:
         IO.write 'spec/config/database.yml', rails_db_conf.to_yaml
         IO.write 'datalayer/config/database.yml', rails_db_conf.to_yaml
 
-    precompile-api:
-      exclusive_executor_resource: precompile-madek-api
-      body: ./cider-ci/bin/compile_uberjar.sh
-
     run-api:
       body: |
         set -eux
         export JAVA_HOME=${OPENJDK8_HOME}
         export PATH=${JAVA_HOME}/bin:${PATH}
-        export CLASSPATH="../config:target/api.jar"
+        export CLASSPATH="../config:madek-api.jar"
         java madek.api.main
       start_when:
         the database has been created:
           script_key: create-database
         the database has been configured:
           script_key: configure-database
-        the api has been compiled:
-          script_key: precompile-api
+        uberjar:
+          script_key: uberjar
 
     api-is-running:
       body: |

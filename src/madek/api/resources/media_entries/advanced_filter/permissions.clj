@@ -4,9 +4,7 @@
     [clojure.tools.logging :as logging]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
-    [madek.api.utils.sql :as sql])
-  (:import
-    [madek.api WebstackException]))
+    [madek.api.utils.sql :as sql]))
 
 ; (defn- delegation-ids-subquery [user_id]
 ;   {:union
@@ -76,7 +74,7 @@
                                      permission (:id authenticated-entity)))
     "ApiClient" (sql/merge-where sqlmap (api-client-authorized-condition
                                           permission (:id authenticated-entity)))
-    (throw (WebstackException. (str "Filtering for " permission " requires a signed-in entity." )
+    (throw (ex-info (str "Filtering for " permission " requires a signed-in entity." )
                                {:status 422}))))
 
 (defn filter-by-query-params [sqlmap query-params authenticated-entity]
@@ -84,7 +82,7 @@
   (doseq [true_param ["me_get_full_size"  "me_get_metadata_and_previews"]]
     (when (contains? query-params (keyword true_param))
       (when (not= (get query-params (keyword true_param)) true)
-        (throw (WebstackException. (str "Value of " true_param " must be true when present." )
+        (throw (ex-info (str "Value of " true_param " must be true when present." )
                                    {:status 422})))))
 
   (cond-> sqlmap
@@ -112,7 +110,7 @@
              "true" true
              "false" false
              :else (throw
-                     (WebstackException.
+                     (ex-info
                        (str "Invalid filter for \"public\" permission!")
                        {:status 422})))]))
 

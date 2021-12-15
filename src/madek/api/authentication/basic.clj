@@ -5,7 +5,6 @@
 
     [camel-snake-kebab.core :refer :all]
     [cider-ci.open-session.bcrypt :refer [checkpw]]
-    [clojure.data.codec.base64 :as base64]
     [clojure.java.jdbc :as jdbc]
     [inflections.core :refer :all]
 
@@ -13,6 +12,9 @@
     [clojure.tools.logging :as logging]
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
+    )
+  (:import
+    [java.util Base64]
     ))
 
 (defn- get-by-login [table-name login]
@@ -40,15 +42,14 @@
   (or (get-api-client-by-login login-or-email)
       (get-user-by-login-or-email-address login-or-email)))
 
-(defn- decode-base64
-  [^String string]
-  (apply str (map char (base64/decode (.getBytes string)))))
+(defn base64-decode [^String encoded]
+  (String. (.decode (Base64/getDecoder) encoded)))
 
 (defn extract [request]
   (logging/debug 'extract request)
   (try (when-let [auth-header (-> request :headers :authorization)]
          (when (re-matches #"(?i)^basic\s+.+$" auth-header)
-           (let [decoded-val (decode-base64 (last (re-find #"(?i)^basic (.*)$" auth-header)))
+           (let [decoded-val (base64-decode (last (re-find #"(?i)^basic (.*)$" auth-header)))
                  [username password] (clojure.string/split (str decoded-val) #":" 2)]
              {:username username :password password})))
        (catch Exception _

@@ -18,13 +18,7 @@
     [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug :refer [I> I>> identity-with-logging]]
-    )
-
-
-  (:import
-    [madek.api WebstackException]
-    )
-  )
+    ))
 
 ;### collection_id ############################################################
 
@@ -47,7 +41,7 @@
 ;### query ####################################################################
 
 (def ^:private base-query
-  (-> (sql/select [:media_entries.id :media_entry_id] 
+  (-> (sql/select [:media_entries.id :media_entry_id]
                   [:media_entries.created_at :media_entry_created_at])
       (sql/from :media_entries)))
 
@@ -72,16 +66,16 @@
 (defn- order-by-meta-datum-text [query [meta-key-id order]]
   (let [from-name (-> meta-key-id
                       (clojure.string/replace #"\W+" "_")
-                      clojure.string/lower-case 
+                      clojure.string/lower-case
                       (#(str "meta-data-" %)))]
     (-> query
-        (sql/merge-left-join [:meta_data from-name] 
+        (sql/merge-left-join [:meta_data from-name]
                              [:= (keyword (str from-name".meta_key_id")) meta-key-id])
-        (sql/merge-order-by [(-> from-name (str ".string") keyword) 
-                             (case (keyword order) 
+        (sql/merge-order-by [(-> from-name (str ".string") keyword)
+                             (case (keyword order)
                                :asc :asc
                                :desc :desc
-                               :asc) 
+                               :asc)
                              :nulls-last])
         (sql/merge-where [:= (keyword (str from-name".media_entry_id")) :media_entries.id]))))
 
@@ -138,7 +132,7 @@
 (defn- set-order [query query-params]
   (-> (let [order (-> query-params :order)
             collection-id (-> query-params :collection_id)]
-        (cond 
+        (cond
           (nil? order) (default-order query)
           (string? order) (cond
                             (some #(= order %) available-sortings) (order-by-string query order collection-id)
