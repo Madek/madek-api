@@ -53,26 +53,30 @@
 
 
 
-;### routes ###################################################################
+;### exeption #################################################################
+
+(defonce last-ex* (atom nil))
 
 (defn- wrap-exception
   ([handler]
    (fn [request]
-     (wrap-exception request handler)
-     ))
+     (wrap-exception request handler)))
   ([request handler]
    (try
      (handler request)
      (catch clojure.lang.ExceptionInfo ei
+       (reset! last-ex* ei)
+       (logging/error "Cought ExceptionInfo in Webstack" (thrown/stringify ei))
        (if-let [status (-> ei ex-data :status)]
          {:status status
-          :body {:message (.getMessage ei)}}
+          :body (ex-message ei)}
          {:status 500
-          :body {:message (.getMessage ei)}}))
+          :body (ex-message ei)}))
      (catch Exception ex
-       (logging/error "An exception was thrown in the webstack: "  (thrown/stringify ex))
+       (reset! last-ex* ex)
+       (logging/error "Cought ExceptionInfo in Webstack" (thrown/stringify ex))
        {:status 500
-        :body {:message (.getMessage ex)}}))))
+        :body (ex-message ex)}))))
 
 
 ;### routes ###################################################################
@@ -150,10 +154,11 @@
       status/wrap
       site
       (wrap-context context)
-      wrap-exception
       json-roa_response/wrap
       (ring.middleware.json/wrap-json-body {:keywords? true})
-      ring.middleware.json/wrap-json-response))
+      ring.middleware.json/wrap-json-response
+      wrap-exception
+      ))
 
 
 ;### server ###################################################################

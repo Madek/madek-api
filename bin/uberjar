@@ -26,7 +26,7 @@ function build {
   ./bin/clean
   rm -f $JAR_NAME
   source $PROJECT_DIR/clojure/bin/activate
-  ./bin/clj-deps-graph
+  # ./bin/clj-deps-graph
   ./bin/clj-uberjar
   ./bin/clean
 }

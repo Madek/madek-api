@@ -25,11 +25,19 @@
   (-write [uuid out]
           (clojure.data.json/-write (. uuid toString) out)))
 
+(clojure.core/extend-type java.time.Instant clojure.data.json/JSONWriter
+  (-write [inst out]
+          (clojure.data.json/-write (str inst) out)))
 
 (cheshire.generate/add-encoder org.joda.time.DateTime
                            (fn [date-time jsonGenerator]
                              (.writeString jsonGenerator
                                            (date-time-to-string date-time))))
+
+(cheshire.generate/add-encoder java.time.Instant
+                           (fn [inst jsonGenerator]
+                             (.writeString jsonGenerator
+                                           (str inst))))
 
 ;(cheshire.core/generate-string {:t (time/now)})
 

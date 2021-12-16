@@ -91,14 +91,16 @@
 
 (defn -main [& args]
   (timbre/merge-config! constants/DEFAULT_LOGGING_CONFIG)
-  (logbug.thrown/reset-ns-filter-regex #".*madek.*")
+  ;(logbug.thrown/reset-ns-filter-regex #".*madek.*")
   (reset! args* args)
   (main))
 
-(defn- reload []
-  (require 'madek.api.main :reload-all)
-  (rdbms/initialize (config/get-db-spec :api))
-  (madek.api.web/start-server))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; hot reload on require
+(when @args* (main))
+
+
 
 ;### Debug ####################################################################
 ;(debug/debug-ns 'madek.api.utils.rdbms)

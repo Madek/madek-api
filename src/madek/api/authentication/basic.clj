@@ -84,4 +84,4 @@
     (authenticate request handler)))
 
 ;### Debug ####################################################################
-(debug/debug-ns *ns*)
+;(debug/debug-ns *ns*)

@@ -86,4 +86,4 @@
 
 ;### Debug ####################################################################
 ;(debug/wrap-with-log-debug #'authenticate-token-header)
-(debug/debug-ns *ns*)
+;(debug/debug-ns *ns*)

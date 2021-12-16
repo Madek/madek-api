@@ -2,7 +2,6 @@ generate_tasks:
   include_match: spec/.*_spec.rb
 
 task_defaults:
-  max_trials: 1
 
   include:
     - cider-ci/task-components/database.yml

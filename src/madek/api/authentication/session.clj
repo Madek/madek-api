@@ -1,7 +1,7 @@
 (ns madek.api.authentication.session
   (:require
-    [cider-ci.open-session.encryptor :refer [decrypt]]
-    [cider-ci.open-session.signature :refer [valid?]]
+    [madek.api.legacy.session.encryptor :refer [decrypt]]
+    [madek.api.legacy.session.signature :refer [valid?]]
     [madek.api.utils.config :refer [get-config parse-config-duration-to-seconds]]
     [madek.api.utils.rdbms :as rdbms]
     [clj-time.core :as time]
@@ -12,6 +12,7 @@
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
+    [taoensso.timbre :refer [debug info warn error spy]]
     ))
 
 (defn- get-session-secret []
@@ -70,6 +71,7 @@
   (time/in-seconds (time/interval from to)))
 
 (defn- handle [request handler]
+  (debug 'handle request)
   (if-let [cookie-value (and (session-enbabled?) (get-cookie-value request))]
     (if-let [session-object (decrypt-cookie cookie-value)]
       (if-let [user (-> session-object :user_id get-user)]

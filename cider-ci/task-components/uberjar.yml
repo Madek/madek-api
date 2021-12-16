@@ -1,5 +1,5 @@
 traits:
-  JDK 8: true
+  OpenJDK: true
 
 scripts:
   uberjar:
@@ -9,4 +9,3 @@ scripts:
       set -eux
       cd $API_DIR
       ./bin/uberjar
-
