@@ -6,12 +6,15 @@
     [logbug.catcher :as catcher]
     [logbug.debug :as debug]
     [madek.api.authorization :as authorization]
+    [madek.api.constants :as constants]
     [madek.api.pagination :as pagination]
     [madek.api.resources.shared :as shared]
     [madek.api.resources.vocabularies.permissions :as permissions]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [madek.api.utils.sql :as sql]
+    [taoensso.timbre :refer [debug info warn error spy]]
     ))
+
 
 (defn- where-clause
   [user-id]
@@ -26,6 +29,8 @@
   [user-id]
   (-> (sql/select :meta_data.id :meta_data.type :meta_data.meta_key_id)
       (sql/from :meta_data)
+      (sql/merge-where [:in :meta_data.type
+                        constants/SUPPORTED_META_DATA_TYPES])
       (sql/merge-join :meta_keys [:= :meta_data.meta_key_id :meta_keys.id])
       (sql/merge-join :vocabularies [:= :meta_keys.vocabulary_id :vocabularies.id])
       (sql/merge-where (where-clause user-id))

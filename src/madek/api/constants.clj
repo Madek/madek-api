@@ -9,9 +9,25 @@
     [me.raynes.fs  :as clj-fs]
     ))
 
+(def SUPPORTED_META_DATA_TYPES
+  #{
+      "MetaDatum::Groups"
+      "MetaDatum::JSON"
+      "MetaDatum::Keywords"
+      "MetaDatum::Licenses"
+      ;"MetaDatum::MediaEntry"
+      "MetaDatum::People"
+      "MetaDatum::Roles"
+      "MetaDatum::Text"
+      "MetaDatum::TextDate"
+      "MetaDatum::Users"
+      "MetaDatum::Vocables"
+    })
+
 (def DEFAULT_LOGGING_CONFIG
   {:min-level [[#{
                   ;"madek.api.foo"
+                  ;"madek.api.resources.meta-data.index"
                   } :debug]
                [#{"madek.api.*"} :info]
                [#{"*"} :warn]]
