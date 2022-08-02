@@ -15,7 +15,7 @@ task_defaults:
     RAILS_ENV: test
     API_DATABASE_URL: "postgresql://localhost:5432/{{DATABASE}}?pool=3"
     RUBY_ENGINE: ruby
-    RUBY_VERSION: 2.7.2
+    RUBY_VERSION: 2.7.6
 
   ports:
     API_HTTP_PORT:
