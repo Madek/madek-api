@@ -9,7 +9,6 @@
     [madek.api.resources.auth-info :as auth-info]
     [madek.api.resources.collection-media-entry-arcs :as collection-media-entry-arcs]
     [madek.api.resources.collections :as collections]
-    [madek.api.resources.filter-sets :as filter-sets]
     [madek.api.resources.groups :as groups]
     [madek.api.resources.keywords :as keywords]
     [madek.api.resources.media-entries :as media-entries]
@@ -33,8 +32,7 @@
   ([request]
    (catcher/with-logging {}
      (or (get-media-resource request :media_entry_id "media_entries" "MediaEntry")
-         (get-media-resource request :collection_id "collections" "Collection")
-         (get-media-resource request :filter_set_id "filter_sets" "FilterSet"))))
+         (get-media-resource request :collection_id "collections" "Collection"))))
   ([request id-key table-name type]
    (when-let [id (-> request :params id-key)]
      (when-let [resource (-> (jdbc/query (get-ds)
@@ -46,7 +44,6 @@
   (cpj/routes
     (cpj/GET "/media-entries/:media_entry_id*" _ get-media-resource)
     (cpj/GET "/collections/:collection_id*" _ get-media-resource)
-    (cpj/GET "/filter-sets/:filter_set_id*" _ get-media-resource)
     (cpj/GET "/previews/:preview_id*" _ #(assoc (get-media-entry-for-preview %)
                                                 :type "MediaEntry"
                                                 :table-name "media_entries"))))
@@ -59,7 +56,6 @@
       ((cpj/routes
          (cpj/ANY "/media-entries/:id*" _ response-for-not-found-media-resource)
          (cpj/ANY "/collections/:id*" _ response-for-not-found-media-resource)
-         (cpj/ANY "/filter-sets/:id*" _ response-for-not-found-media-resource)
          (cpj/ANY "*" _ handler)) request))))
 
 (defn- wrap-add-media-resource [handler]
@@ -75,7 +71,6 @@
     (cpj/routes
       (cpj/ANY "/media-entries/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/collections/:resource_id*" _ return-422-if-not-uuid-conform)
-      (cpj/ANY "/filter-sets/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/previews/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/media-files/:resource_id*" _ return-422-if-not-uuid-conform)
       (cpj/ANY "/meta-data/:resource_id*" _ return-422-if-not-uuid-conform)
@@ -101,9 +96,6 @@
       (when-let [id (:collection_id meta-datum)]
         (get-media-resource {:params {:collection_id id}}
                             :collection_id "collections" "Collection"))
-      (when-let [id (:filter_set_id meta-datum)]
-        (get-media-resource {:params {:filter_set_id id}}
-                            :filter_set_id "filter_sets" "FilterSet"))
       (throw (IllegalStateException. (str "Getting the resource for "
                                           meta-datum "
                                           is not implemented yet.")))))
@@ -148,7 +140,6 @@
   ((cpj/routes
      (cpj/GET "/media-entries/:media_entry_id*" _ #(authorize-request-for-handler % handler))
      (cpj/GET "/collections/:collection_id*" _ #(authorize-request-for-handler % handler))
-     (cpj/GET "/filter-sets/:filter_set_id*" _ #(authorize-request-for-handler % handler))
      (cpj/GET "/meta-data/:meta_datum_id*" _ #(authorize-request-for-handler % handler))
      (cpj/GET "/previews/:preview_id*" _ #(authorize-request-for-handler % handler))
      (cpj/ANY "*" _ handler)) request))
@@ -192,7 +183,6 @@
         (cpj/ANY "/:media_resource_type/:id/meta-data/" _ meta-data/routes)
         (cpj/ANY "/collection-media-entry-arcs/*" _ collection-media-entry-arcs/routes)
         (cpj/ANY "/collections*" _ collections/routes)
-        (cpj/ANY "/filter-sets*" _ filter-sets/routes)
         (cpj/ANY "/groups/*" _ groups/routes)
         (cpj/ANY "/keywords/:keyword_id*" _ keywords/routes)
         (cpj/ANY "/media-entries*" _ media-entries/routes)

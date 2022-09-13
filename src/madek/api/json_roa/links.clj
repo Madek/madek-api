@@ -246,51 +246,6 @@
 (defn collection-media-entry-arcs [& args]
   (apply collection-media-entry-arcs.links/collection-media-entry-arcs args))
 
-;### filter-sets ##################################################################
-
-; TODO filter-sets are dead in Madek, remove the whole section
-; also we are not going to fix the duplicate query params through templates here
-
-(defn filter-sets-path-base
-  ([prefix] (str prefix "/filter-sets/")))
-
-(defn filter-sets-path
-  ([prefix]
-   (filter-sets-path prefix {}))
-  ([prefix query-params]
-   (str (filter-sets-path-base prefix)
-        (let [template-params (str "order,"
-                                   "public_get_metadata_and_previews,"
-                                   "me_get_metadata_and_previews,"
-                                   "collection_id}")]
-          (if (empty? query-params)
-            (str "{?" template-params)
-            (str "?"
-                 (http-client/generate-query-string query-params)
-                 "{&"
-                 template-params))))))
-
-(defn filter-sets
-  ([prefix]
-   (filter-sets prefix {}))
-  ([prefix query-params]
-   {:name "FilterSets"
-    :href (filter-sets-path prefix query-params)
-    :relations {:api-docs {:name "API-Doc FilterSets"
-                           :href "/api/docs/resources/filter-sets.html#filter-sets"}}}))
-
-(defn filter-set
-  ([prefix]
-   (filter-set prefix "{id}"))
-  ([prefix id]
-   {:name "FilterSet"
-    :href (str prefix "/filter-sets/" id)
-    :relations {:api-docs {:name "API-Doc FilterSet"
-                           :href "/api/docs/resources/filter-set.html#filter-set"
-                           }}}))
-
-
-;### collection-media-entry-arcs ##################################################
 
 
 ;###############################################################################

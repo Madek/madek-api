@@ -76,7 +76,7 @@
                              "MetaDatum::People" get-people-index
                              "MetaDatum::Roles" find-meta-data-roles)
                            meta-datum))))}
-         (->> (select-keys meta-datum [:media_entry_id :collection_id :filter_set_id])
+         (->> (select-keys meta-datum [:media_entry_id :collection_id])
               (filter (fn [[k v]] v))
               (into {}))))
 

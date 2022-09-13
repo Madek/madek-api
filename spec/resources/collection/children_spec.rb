@@ -7,7 +7,6 @@ describe 'Getting the children of a collection' do
                                       get_metadata_and_previews: true)
       collection.media_entries << (@me = FactoryGirl.create(:media_entry, get_metadata_and_previews: true))
       collection.collections << FactoryGirl.create(:collection)
-      collection.filter_sets << FactoryGirl.create(:filter_set)
       collection
     end
 
@@ -26,12 +25,6 @@ describe 'Getting the children of a collection' do
       relation = json_roa_keyword_resource.get.relation('media-entries').get
       expect(relation.response.status).to be == 200
       expect(relation.data['media-entries'].length).to be == 1
-    end
-
-    it 'responds with 200 for filter-sets' do
-      relation = json_roa_keyword_resource.get.relation('filter-sets').get
-      expect(relation.response.status).to be == 200
-      expect(relation.data['filter-sets'].length).to be == 1
     end
 
     context 'collection-media-entry-arcs' do
@@ -79,10 +72,5 @@ describe 'Getting the children of a collection' do
       expect(relation.data['media-entries'].length).to be == 0
     end
 
-    it 'responds with 200 for filter-sets' do
-      relation = json_roa_keyword_resource.get.relation('filter-sets').get
-      expect(relation.response.status).to be == 200
-      expect(relation.data['filter-sets'].length).to be == 0
-    end
   end
 end

@@ -40,7 +40,7 @@
       :collection-media-entry-arcs (links/collection-media-entry-arcs
                                      context {:collection_id id})
       :collections (links/collections context {:collection_id id})
-      :filter-sets (links/filter-sets context {:collection_id id})}}))
+      }}))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)
