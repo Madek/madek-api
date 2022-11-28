@@ -1,8 +1,8 @@
 task_defaults:
+  traits:
+    asdf-ruby: true
+
   environment_variables:
-    RUBY_ENGINE: ruby
-    RUBY_VERSION: 2.7.6
-    RUBY: "{{RUBY_ENGINE}}-{{RUBY_VERSION}}"
     WORKING_DIR: "{{CIDER_CI_WORKING_DIR}}/docs_source"
 
   git_options:
@@ -14,25 +14,13 @@ task_defaults:
       body: env | sort
 
     bundle:
-      exclusive_executor_resource: ruby-install_{{$RUBY}}
+      exclusive_executor_resource: asdf-ruby
       timeout: 20 Minutes
       body: |
         #!/usr/bin/env bash
         set -eux
-        export PATH=~/.rubies/$RUBY/bin:$PATH
-
         cd ${WORKING_DIR}
-
-        rm -f .bundle/config
-
-        if [ ! -d ~/.rubies/$RUBY ]; then
-          ruby-install --no-install-deps $RUBY_ENGINE $RUBY_VERSION
-        fi
-
-        if [ ! -f ~/.rubies/$RUBY/bin/bundle ]; then
-          gem install bundler
-        fi
-
+        asdf install ruby
         bundle install
 
 tasks:
@@ -46,7 +34,6 @@ tasks:
         body: |
           #!/usr/bin/env bash
           set -eux
-          export PATH=~/.rubies/$RUBY/bin:$PATH
           cd ${WORKING_DIR}
           bundle exec middleman build
           cd ../docs

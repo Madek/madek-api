@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eux
 cd ${API_DIR}
-export JAVA_HOME=${OPENJDK8_HOME}
+export JAVA_HOME=${OPENJDK11_HOME}
 export PATH=${JAVA_HOME}/bin:${PATH}
 rm -rf target
 

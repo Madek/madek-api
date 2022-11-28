@@ -14,8 +14,6 @@ task_defaults:
     API_DIR: "{{CIDER_CI_WORKING_DIR}}"
     RAILS_ENV: test
     API_DATABASE_URL: "postgresql://localhost:5432/{{DATABASE}}?pool=3"
-    RUBY_ENGINE: ruby
-    RUBY_VERSION: 2.7.6
 
   ports:
     API_HTTP_PORT:
@@ -49,7 +47,9 @@ task_defaults:
       content_type: text/plain
 
   traits:
+    OpenJDK 11: true
     curl: true
+
 
   scripts:
     configure-database:
@@ -74,7 +74,7 @@ task_defaults:
     run-api:
       body: |
         set -eux
-        export JAVA_HOME=${OPENJDK8_HOME}
+        export JAVA_HOME=${OPENJDK11_HOME}
         export PATH=${JAVA_HOME}/bin:${PATH}
         export CLASSPATH="../config:madek-api.jar"
         java madek.api.main
@@ -103,7 +103,6 @@ task_defaults:
           script_key: api-is-running
       body: |
         set -eux
-        export PATH=~/.rubies/$RUBY/bin:$PATH
         bundle exec rspec $CIDER_CI_TASK_FILE
 
     shutdown:
