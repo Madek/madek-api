@@ -1,5 +1,5 @@
 traits:
-  OpenJDK 11: true
+  OpenJDK: true
 
 scripts:
   uberjar:

@@ -47,7 +47,7 @@ task_defaults:
       content_type: text/plain
 
   traits:
-    OpenJDK 11: true
+    OpenJDK: true
     curl: true
 
 
@@ -74,8 +74,6 @@ task_defaults:
     run-api:
       body: |
         set -eux
-        export JAVA_HOME=${OPENJDK11_HOME}
-        export PATH=${JAVA_HOME}/bin:${PATH}
         export CLASSPATH="../config:madek-api.jar"
         java madek.api.main
       start_when:
