@@ -1,7 +1,6 @@
 eval_gemfile 'datalayer/Gemfile'
 
 gem 'addressable'
-gem 'capybara'
 gem 'cider_ci-open_session', '>= 1.0.0', '< 2.0.0'
 gem 'faraday'
 gem 'git'
@@ -10,7 +9,6 @@ gem 'json_roa-client', '=2.0.0'
 
 gem 'rest-client'
 gem 'rspec'
-gem 'selenium-webdriver'
 gem 'timecop'
 gem 'hashdiff'
 

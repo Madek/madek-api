@@ -42,6 +42,6 @@ Either `lein run` or with-in the REPL  `(-main)`.
 
 When the server is running (!)
 
-    bundle && bundle exec rspec
+    bundle && ./bin/rspec
 
 Note, there is no special environment as in rails.

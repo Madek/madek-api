@@ -103,7 +103,7 @@ task_defaults:
           script_key: api-is-running
       body: |
         set -eux
-        bundle exec rspec $CIDER_CI_TASK_FILE
+        ./bin/rspec $CIDER_CI_TASK_FILE
 
     shutdown:
       start_when:
