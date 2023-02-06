@@ -11,13 +11,13 @@ shared_context :bunch_of_collections do
 
   let :users do
     (1..users_count).map do
-      FactoryGirl.create :user
+      FactoryBot.create :user
     end
   end
 
   let :collections do
     (1..collections_count).map do
-      FactoryGirl.create :collection,
+      FactoryBot.create :collection,
                          responsible_user: users[rand(users_count)],
                          get_metadata_and_previews: (rand <= 0.8)
     end

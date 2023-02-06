@@ -3,16 +3,16 @@ require 'spec_helper'
 describe 'getting the index of group-users' do
 
   before :each do
-    @group = FactoryGirl.create :institutional_group
+    @group = FactoryBot.create :institutional_group
 
     @group_users = 202.times.map do
-      FactoryGirl.create :user, institutional_id: SecureRandom.uuid
+      FactoryBot.create :user, institutional_id: SecureRandom.uuid
     end
 
     @group.users << @group_users
 
     @other_users = 12.times.map do
-      FactoryGirl.create :user, institutional_id: SecureRandom.uuid
+      FactoryBot.create :user, institutional_id: SecureRandom.uuid
     end
 
   end

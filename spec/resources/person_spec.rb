@@ -2,7 +2,7 @@ require 'spec_helper'
 
 context 'Getting a keyword resource without authentication' do
   before :each do
-    @person = FactoryGirl.create :person
+    @person = FactoryBot.create :person
   end
 
   let :plain_json_response do

@@ -3,7 +3,7 @@ require "#{Rails.root}/spec/resources/collection/shared.rb"
 
 describe 'Getting a collection resource without authentication' do
   before :example do
-    @collection = FactoryGirl.create(:collection,
+    @collection = FactoryBot.create(:collection,
                                      get_metadata_and_previews: false)
   end
 
@@ -19,10 +19,10 @@ end
 
 describe 'Getting a collection resource with authentication' do
   before :example do
-    @collection = FactoryGirl.create(
+    @collection = FactoryBot.create(
       :collection, get_metadata_and_previews: false,
-                   responsible_user: FactoryGirl.create(:user))
-    @entity = FactoryGirl.create(:user, password: 'password')
+                   responsible_user: FactoryBot.create(:user))
+    @entity = FactoryBot.create(:user, password: 'password')
   end
 
   include_context :auth_collection_resource_via_json_roa
@@ -30,13 +30,13 @@ describe 'Getting a collection resource with authentication' do
   context :check_forbidden_without_required_permission do
     before :example do
       @collection.user_permissions << \
-        FactoryGirl.create(:collection_user_permission,
+        FactoryBot.create(:collection_user_permission,
                            get_metadata_and_previews: false,
                            user: @entity)
-      group = FactoryGirl.create(:group)
+      group = FactoryBot.create(:group)
       @entity.groups << group
       @collection.group_permissions << \
-        FactoryGirl.create(:collection_group_permission,
+        FactoryBot.create(:collection_group_permission,
                            get_metadata_and_previews: false,
                            group: group)
     end
@@ -47,7 +47,7 @@ describe 'Getting a collection resource with authentication' do
 
   context :check_allowed_if_responsible do
     before :example do
-      @collection.update_attributes! responsible_user: @entity
+      @collection.update! responsible_user: @entity
     end
 
     it 'is allowed 200' do
@@ -59,7 +59,7 @@ describe 'Getting a collection resource with authentication' do
     before do
       delegation = create(:delegation)
       delegation.users << @entity
-      @collection.update_attributes!(
+      @collection.update!(
         responsible_user: nil,
         responsible_delegation_id: delegation.id
       )
@@ -76,7 +76,7 @@ describe 'Getting a collection resource with authentication' do
       group = create(:group)
       delegation.groups << group
       group.users << @entity
-      @collection.update_attributes!(
+      @collection.update!(
         responsible_user: nil,
         responsible_delegation_id: delegation.id
       )
@@ -90,7 +90,7 @@ describe 'Getting a collection resource with authentication' do
   context :check_allowed_if_user_permission do
     before :example do
       @collection.user_permissions << \
-        FactoryGirl.create(:collection_user_permission,
+        FactoryBot.create(:collection_user_permission,
                            get_metadata_and_previews: true,
                            user: @entity)
     end
@@ -102,10 +102,10 @@ describe 'Getting a collection resource with authentication' do
 
   context :check_allowed_if_group_permission do
     before :example do
-      group = FactoryGirl.create(:group)
+      group = FactoryBot.create(:group)
       @entity.groups << group
       @collection.group_permissions << \
-        FactoryGirl.create(:collection_group_permission,
+        FactoryBot.create(:collection_group_permission,
                            get_metadata_and_previews: true,
                            group: group)
     end

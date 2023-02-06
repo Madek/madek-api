@@ -3,10 +3,10 @@ require 'spec_helper'
 describe 'Getting the children of a collection' do
   context 'existing children' do
     let :collection_with_children do
-      collection = FactoryGirl.create(:collection,
+      collection = FactoryBot.create(:collection,
                                       get_metadata_and_previews: true)
-      collection.media_entries << (@me = FactoryGirl.create(:media_entry, get_metadata_and_previews: true))
-      collection.collections << FactoryGirl.create(:collection)
+      collection.media_entries << (@me = FactoryBot.create(:media_entry, get_metadata_and_previews: true))
+      collection.collections << FactoryBot.create(:collection)
       collection
     end
 
@@ -51,7 +51,7 @@ describe 'Getting the children of a collection' do
 
   context 'no children' do
     let :collection_without_children do
-      FactoryGirl.create(:collection,
+      FactoryBot.create(:collection,
                          get_metadata_and_previews: true)
     end
 

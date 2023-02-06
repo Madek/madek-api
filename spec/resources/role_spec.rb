@@ -2,7 +2,7 @@ require 'spec_helper'
 
 context 'Getting a role resource without authentication' do
   before :each do
-    @role = FactoryGirl.create :role
+    @role = FactoryBot.create :role
   end
 
   let :plain_json_response do

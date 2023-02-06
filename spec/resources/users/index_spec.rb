@@ -3,7 +3,7 @@ require 'spec_helper'
 context 'users' do
 
   before :each do
-    @users = 201.times.map{FactoryGirl.create :user}
+    @users = 201.times.map{FactoryBot.create :user}
   end
 
   context 'non admin user' do
@@ -43,7 +43,7 @@ context 'users' do
 
         it 'omits deactivated users' do
           deactivated_user = @users.sample
-          deactivated_user.update_attributes!(is_deactivated: true)
+          deactivated_user.update!(is_deactivated: true)
 
           all_indexed_user_ids = Set.new(users_result.collection().map(&:get).map{|x| x.data['id'].to_s})
           expect(all_indexed_user_ids).not_to include(deactivated_user.id.to_s)

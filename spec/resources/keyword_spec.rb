@@ -2,7 +2,7 @@ require 'spec_helper'
 
 context 'Getting a keyword resource without authentication' do
   before :each do
-    @keyword = FactoryGirl.create(:keyword, external_uris: ['http://example.com'])
+    @keyword = FactoryBot.create(:keyword, external_uris: ['http://example.com'])
   end
 
   let :plain_json_response do

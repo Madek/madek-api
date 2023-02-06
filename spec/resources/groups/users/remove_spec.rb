@@ -3,8 +3,8 @@ require 'spec_helper'
 context 'removing a user from a group via DELETE' do
 
   before :each do
-    @group = FactoryGirl.create :institutional_group
-    @user = FactoryGirl.create :user, institutional_id: SecureRandom.uuid
+    @group = FactoryBot.create :institutional_group
+    @user = FactoryBot.create :user, institutional_id: SecureRandom.uuid
     @group.users << @user
   end
 

@@ -11,7 +11,7 @@ end
 
 shared_context :with_public_preview_and_metadata_permission do
   before :each do
-    @media_entry.update_attributes! get_metadata_and_previews: true
+    @media_entry.update! get_metadata_and_previews: true
   end
 end
 
@@ -45,7 +45,7 @@ end
 
 context 'Getting a media-entry resource without authentication' do
   before :each do
-    @media_entry = FactoryGirl.create :media_entry
+    @media_entry = FactoryBot.create :media_entry
   end
 
   include_context :check_media_entry_resource_via_any,

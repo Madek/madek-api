@@ -3,8 +3,8 @@ require 'spec_helper'
 context 'adding a user to a group via put' do
 
   before :each do
-    @group = FactoryGirl.create :institutional_group
-    @user = FactoryGirl.create :user, institutional_id: SecureRandom.uuid
+    @group = FactoryBot.create :institutional_group
+    @user = FactoryBot.create :user, institutional_id: SecureRandom.uuid
   end
 
   it 'the user does not belong to the group' do

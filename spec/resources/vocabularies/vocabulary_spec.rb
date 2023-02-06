@@ -7,7 +7,7 @@ describe 'vocabulary' do
     # No exlicit expectations are done with them.
     before :example do
       10.times do
-        FactoryGirl.create(:vocabulary,
+        FactoryBot.create(:vocabulary,
                            enabled_for_public_view: [true, false].sample)
       end
 
@@ -16,7 +16,7 @@ describe 'vocabulary' do
                                                       view: [true, false].sample,
                                                       vocabulary: vocabulary)
 
-        group = FactoryGirl.create :group
+        group = FactoryBot.create :group
         group.users << user
         Permissions::VocabularyGroupPermission.create!(group_id: group.id,
                                                        view: [true, false].sample,
@@ -36,7 +36,7 @@ describe 'vocabulary' do
     end
 
     it 'should return 200 for an existing vocabulary' do
-      vocab = FactoryGirl.create(:vocabulary,
+      vocab = FactoryBot.create(:vocabulary,
                                  enabled_for_public_view: true)
       expect(
         json_roa_vocabulary_resource(vocab.id).get.response.status
@@ -50,7 +50,7 @@ describe 'vocabulary' do
     end
 
     it 'does not return admin_comment property' do
-      vocabulary = FactoryGirl.create(:vocabulary,
+      vocabulary = FactoryBot.create(:vocabulary,
                                       enabled_for_public_view: true)
 
       expect(json_roa_vocabulary_resource(vocabulary.id).get.response.body)
@@ -59,7 +59,7 @@ describe 'vocabulary' do
 
     describe 'accessibility' do
       it 'returns public vocabulary' do
-        vocabulary = FactoryGirl.create(:vocabulary,
+        vocabulary = FactoryBot.create(:vocabulary,
                                         enabled_for_public_view: true)
 
         data = json_roa_vocabulary_resource(vocabulary.id).get.response.body
@@ -69,7 +69,7 @@ describe 'vocabulary' do
       end
 
       it 'does not return non-public vocabulary' do
-        vocabulary = FactoryGirl.create(:vocabulary,
+        vocabulary = FactoryBot.create(:vocabulary,
                                         enabled_for_public_view: false)
 
         data = json_roa_vocabulary_resource(vocabulary.id).get.response.body
@@ -81,7 +81,7 @@ describe 'vocabulary' do
       context 'when user is authenticated' do
         context 'when view permission is true' do
           it 'returns vocabulary through the user permissions' do
-            vocabulary = FactoryGirl.create(:vocabulary,
+            vocabulary = FactoryBot.create(:vocabulary,
                                             enabled_for_public_view: false)
             Permissions::VocabularyUserPermission.create!(user_id: user.id,
                                                           view: true,
@@ -94,9 +94,9 @@ describe 'vocabulary' do
           end
 
           it 'returns vocabulary through the group permissions' do
-            vocabulary = FactoryGirl.create(:vocabulary,
+            vocabulary = FactoryBot.create(:vocabulary,
                                             enabled_for_public_view: false)
-            group = FactoryGirl.create :group
+            group = FactoryBot.create :group
             group.users << user
             Permissions::VocabularyGroupPermission.create!(group_id: group.id,
                                                            view: true,
@@ -111,7 +111,7 @@ describe 'vocabulary' do
 
         context 'when view permission is false' do
           it 'does not return vocabulary through the user permissions' do
-            vocabulary = FactoryGirl.create(:vocabulary,
+            vocabulary = FactoryBot.create(:vocabulary,
                                             enabled_for_public_view: false)
             Permissions::VocabularyUserPermission.create!(user_id: user.id,
                                                           view: false,
@@ -124,9 +124,9 @@ describe 'vocabulary' do
           end
 
           it 'does not return vocabulary through the group permissions' do
-            vocabulary = FactoryGirl.create(:vocabulary,
+            vocabulary = FactoryBot.create(:vocabulary,
                                             enabled_for_public_view: false)
-            group = FactoryGirl.create :group
+            group = FactoryBot.create :group
             group.users << user
             Permissions::VocabularyGroupPermission.create!(group_id: group.id,
                                                            view: false,
@@ -143,7 +143,7 @@ describe 'vocabulary' do
 
     describe 'multilingual labels' do
       let(:vocabulary) do
-        FactoryGirl.create(
+        FactoryBot.create(
           :vocabulary,
           labels: {
             de: 'label de',
@@ -165,7 +165,7 @@ describe 'vocabulary' do
 
     describe 'multilingual descriptions' do
       let(:vocabulary) do
-        FactoryGirl.create(
+        FactoryBot.create(
           :vocabulary,
           descriptions: {
             de: 'description de',

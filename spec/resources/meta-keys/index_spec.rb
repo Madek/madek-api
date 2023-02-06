@@ -7,8 +7,8 @@ describe 'index' do
     end
 
     it 'should return 200 with only viewable by public meta-keys' do
-      vocab = FactoryGirl.create(:vocabulary, enabled_for_public_view: false)
-      meta_key = FactoryGirl.create(:meta_key,
+      vocab = FactoryBot.create(:vocabulary, enabled_for_public_view: false)
+      meta_key = FactoryBot.create(:meta_key,
                                     id: "#{vocab.id}:#{Faker::Lorem.word}",
                                     vocabulary: vocab)
       expect(meta_keys_resource.response.status).to be == 200
@@ -18,9 +18,9 @@ describe 'index' do
     context 'when user is authenticated' do
       context 'when view permission is true' do
         it 'returns meta key in collection through the user permissions' do
-          vocabulary = FactoryGirl.create(:vocabulary,
+          vocabulary = FactoryBot.create(:vocabulary,
                                           enabled_for_public_view: false)
-          meta_key = FactoryGirl.create(:meta_key,
+          meta_key = FactoryBot.create(:meta_key,
                                         id: "#{vocabulary.id}:#{Faker::Lorem.word}",
                                         vocabulary: vocabulary)
           Permissions::VocabularyUserPermission.create!(user_id: user.id,
@@ -34,12 +34,12 @@ describe 'index' do
         end
 
         it 'returns meta key in collection through the group permissions' do
-          vocabulary = FactoryGirl.create(:vocabulary,
+          vocabulary = FactoryBot.create(:vocabulary,
                                           enabled_for_public_view: false)
-          meta_key = FactoryGirl.create(:meta_key,
+          meta_key = FactoryBot.create(:meta_key,
                                         id: "#{vocabulary.id}:#{Faker::Lorem.word}",
                                         vocabulary: vocabulary)
-          group = FactoryGirl.create :group
+          group = FactoryBot.create :group
           group.users << user
           Permissions::VocabularyGroupPermission.create!(group_id: group.id,
                                                          view: true,
@@ -54,9 +54,9 @@ describe 'index' do
 
       context 'when view permission is false' do
         it 'does not return meta key through the user permissions' do
-          vocabulary = FactoryGirl.create(:vocabulary,
+          vocabulary = FactoryBot.create(:vocabulary,
                                           enabled_for_public_view: false)
-          meta_key = FactoryGirl.create(:meta_key,
+          meta_key = FactoryBot.create(:meta_key,
                                         id: "#{vocabulary.id}:#{Faker::Lorem.word}",
                                         vocabulary: vocabulary)
           Permissions::VocabularyUserPermission.create!(user_id: user.id,
@@ -69,12 +69,12 @@ describe 'index' do
         end
 
         it 'does not return meta key through the group permissions' do
-          vocabulary = FactoryGirl.create(:vocabulary,
+          vocabulary = FactoryBot.create(:vocabulary,
                                           enabled_for_public_view: false)
-          meta_key = FactoryGirl.create(:meta_key,
+          meta_key = FactoryBot.create(:meta_key,
                                         id: "#{vocabulary.id}:#{Faker::Lorem.word}",
                                         vocabulary: vocabulary)
-          group = FactoryGirl.create :group
+          group = FactoryBot.create :group
           group.users << user
           Permissions::VocabularyGroupPermission.create!(group_id: group.id,
                                                                       view: false,

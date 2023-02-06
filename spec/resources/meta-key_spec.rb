@@ -2,7 +2,7 @@ require 'spec_helper'
 
 context 'Getting a meta-key resource without authentication' do
   before :each do
-    @meta_key = FactoryGirl.create :meta_key_text
+    @meta_key = FactoryBot.create :meta_key_text
   end
 
   let :plain_json_response do

@@ -3,7 +3,7 @@ require 'spec_helper'
 context 'users' do
 
   before :each do
-    @user = FactoryGirl.create :user
+    @user = FactoryBot.create :user
   end
 
   context 'non admin user' do
@@ -42,7 +42,7 @@ context 'users' do
 
       context 'a deactivated user can\'t be retrieved' do
         let :deactivated_user do
-          FactoryGirl.create :user, is_deactivated: true
+          FactoryBot.create :user, is_deactivated: true
         end
         let :get_user_result do
           client.get.relation('user').get(id: deactivated_user.id)
@@ -56,7 +56,7 @@ context 'users' do
 
       context 'a user (with a naughty institutional_id)' do
         before :each do
-          @inst_user = FactoryGirl.create :user,
+          @inst_user = FactoryBot.create :user,
             institutional_id: '?this#id/needs/to/be/url&encoded'
         end
         it 'can be retrieved by the institutional_id' do
@@ -83,7 +83,7 @@ context 'users' do
             '!def!xyz%abc@example.com',
             '_somename@example.com']
           @users= valid_email_addresses.map do |a|
-            FactoryGirl.create :user, email: a
+            FactoryBot.create :user, email: a
           end
         end
         it 'can be retrieved by the email_address' do

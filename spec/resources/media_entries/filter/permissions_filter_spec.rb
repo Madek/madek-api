@@ -53,7 +53,7 @@ describe 'filtering media entries' do
       include_context :json_roa_client_for_authenticated_user do
         it '200 for public permissions' do
           10.times {
-            FactoryGirl.create(:media_entry,
+            FactoryBot.create(:media_entry,
                                get_metadata_and_previews: true,
                                get_full_size: false)
           }
@@ -67,7 +67,7 @@ describe 'filtering media entries' do
 
         it '200 for responsible user' do
           10.times {
-            FactoryGirl.create(:media_entry,
+            FactoryBot.create(:media_entry,
                                responsible_user: user,
                                get_metadata_and_previews: false,
                                get_full_size: false)
@@ -82,9 +82,9 @@ describe 'filtering media entries' do
 
         it '200 for user permission' do
           10.times do
-            FactoryGirl.create \
+            FactoryBot.create \
               :media_entry_user_permission,
-              media_entry: FactoryGirl.create(:media_entry,
+              media_entry: FactoryBot.create(:media_entry,
                                               get_metadata_and_previews: false,
                                               get_full_size: false),
               user: user
@@ -99,11 +99,11 @@ describe 'filtering media entries' do
 
         it '200 for group permission' do
           10.times do
-            g = FactoryGirl.create(:group)
+            g = FactoryBot.create(:group)
             user.groups << g
-            FactoryGirl.create \
+            FactoryBot.create \
               :media_entry_group_permission,
-              media_entry: FactoryGirl.create(:media_entry,
+              media_entry: FactoryBot.create(:media_entry,
                                               get_metadata_and_previews: false,
                                               get_full_size: false),
               group: g
@@ -123,7 +123,7 @@ describe 'filtering media entries' do
       include_context :json_roa_client_for_authenticated_user do
         it '200 for public permissions' do
           10.times {
-            FactoryGirl.create(:media_entry,
+            FactoryBot.create(:media_entry,
                                get_metadata_and_previews: false,
                                get_full_size: true)
           }
@@ -137,7 +137,7 @@ describe 'filtering media entries' do
 
         it '200 for responsible user' do
           10.times {
-            FactoryGirl.create(:media_entry,
+            FactoryBot.create(:media_entry,
                                responsible_user: user,
                                get_metadata_and_previews: false,
                                get_full_size: false)
@@ -152,9 +152,9 @@ describe 'filtering media entries' do
 
         it '200 for user permission' do
           10.times do
-            FactoryGirl.create \
+            FactoryBot.create \
               :media_entry_user_permission,
-              media_entry: FactoryGirl.create(:media_entry,
+              media_entry: FactoryBot.create(:media_entry,
                                               get_metadata_and_previews: false,
                                               get_full_size: false),
               user: user
@@ -169,11 +169,11 @@ describe 'filtering media entries' do
 
         it '200 for group permission' do
           10.times do
-            g = FactoryGirl.create(:group)
+            g = FactoryBot.create(:group)
             user.groups << g
-            FactoryGirl.create \
+            FactoryBot.create \
               :media_entry_group_permission,
-              media_entry: FactoryGirl.create(:media_entry,
+              media_entry: FactoryBot.create(:media_entry,
                                               get_metadata_and_previews: false,
                                               get_full_size: false),
               group: g
@@ -193,7 +193,7 @@ describe 'filtering media entries' do
       include_context :json_roa_client_for_authenticated_api_client do
         it '200 for public permissions' do
           10.times {
-            FactoryGirl.create(:media_entry,
+            FactoryBot.create(:media_entry,
                                get_metadata_and_previews: true,
                                get_full_size: false)
           }
@@ -207,9 +207,9 @@ describe 'filtering media entries' do
 
         it '200 for api_client permission' do
           10.times do
-            FactoryGirl.create \
+            FactoryBot.create \
               :media_entry_api_client_permission,
-              media_entry: FactoryGirl.create(:media_entry,
+              media_entry: FactoryBot.create(:media_entry,
                                               get_metadata_and_previews: false,
                                               get_full_size: false),
               api_client: api_client
@@ -229,7 +229,7 @@ describe 'filtering media entries' do
       include_context :json_roa_client_for_authenticated_api_client do
         it '200 for public permissions' do
           10.times {
-            FactoryGirl.create(:media_entry,
+            FactoryBot.create(:media_entry,
                                get_metadata_and_previews: false,
                                get_full_size: true)
           }
@@ -243,9 +243,9 @@ describe 'filtering media entries' do
 
         it '200 for api_client permission' do
           10.times do
-            FactoryGirl.create \
+            FactoryBot.create \
               :media_entry_api_client_permission,
-              media_entry: FactoryGirl.create(:media_entry,
+              media_entry: FactoryBot.create(:media_entry,
                                               get_metadata_and_previews: false,
                                               get_full_size: false),
               api_client: api_client

@@ -22,5 +22,5 @@ RSpec.configure do |config|
     puts "SPEC_SEED #{@spec_seed} set env SPEC_SEED to force value"
   end
 
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
 end

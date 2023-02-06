@@ -3,8 +3,8 @@ require 'spec_helper'
 context 'groups' do
 
   before :each do
-    @group = FactoryGirl.create :group
-    @user = FactoryGirl.create :user
+    @group = FactoryBot.create :group
+    @user = FactoryBot.create :user
     @group.users << @user
   end
 
@@ -42,7 +42,7 @@ context 'groups' do
 
       context 'a institunal group (with naughty institutional_id)' do
         before :each do
-          @inst_group = FactoryGirl.create :institutional_group,
+          @inst_group = FactoryBot.create :institutional_group,
             institutional_id: '?this#id/needs/to/be/url&encoded'
         end
         it 'can be retrieved by the institutional_id' do

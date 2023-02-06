@@ -11,13 +11,13 @@ shared_context :bunch_of_media_entries do
 
   let :users do
     (1..users_count).map do
-      FactoryGirl.create :user
+      FactoryBot.create :user
     end
   end
 
   let :media_entries do
     (1..media_entries_count).map do
-      FactoryGirl.create :media_entry,
+      FactoryBot.create :media_entry,
                          responsible_user: users[rand(users_count)],
                          is_published: (rand <= 0.9),
                          get_metadata_and_previews: (rand <= 0.8),
@@ -26,10 +26,10 @@ shared_context :bunch_of_media_entries do
   end
 
   let :collection do
-    coll = FactoryGirl.create :collection
+    coll = FactoryBot.create :collection
     media_entries.each do |me|
       if me.is_published && (rand <= 0.75)
-        FactoryGirl.create :collection_media_entry_arc,
+        FactoryBot.create :collection_media_entry_arc,
           collection: coll, media_entry: me
       end
     end
@@ -67,14 +67,14 @@ end
 shared_examples 'ordering by madek_core:title' do |direction = nil|
   let(:meta_key_title) do
     with_disabled_triggers do
-      MetaKey.find_by(id: 'madek_core:title') || FactoryGirl.create(:meta_key_core_title)
+      MetaKey.find_by(id: 'madek_core:title') || FactoryBot.create(:meta_key_core_title)
     end
   end
 
   before do
     media_entries.map do |me|
-      FactoryGirl.create(:meta_datum_text,
-        media_entry: me, meta_key: meta_key_title, string: Faker::Lorem.characters(16))
+      FactoryBot.create(:meta_datum_text,
+        media_entry: me, meta_key: meta_key_title, string: Faker::Lorem.characters(number: 16))
     end
   end
 

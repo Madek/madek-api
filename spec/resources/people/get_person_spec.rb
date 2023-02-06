@@ -4,7 +4,7 @@ require 'hashdiff'
 context 'people' do
 
   before :each do
-    @person = FactoryGirl.create(:person, external_uris: ['http://example.com'])
+    @person = FactoryBot.create(:person, external_uris: ['http://example.com'])
     @person = @person.reload
   end
 
@@ -38,7 +38,7 @@ context 'people' do
 
       context 'a institunal person (with naughty institutional_id)' do
         before :each do
-          @inst_person = FactoryGirl.create :people_instgroup ,
+          @inst_person = FactoryBot.create :people_instgroup ,
             institutional_id: '?this#id/needs/to/be/url&encoded'
         end
         it 'can be retrieved by the institutional_id' do

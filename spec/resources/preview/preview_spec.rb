@@ -17,7 +17,7 @@ SHAS = \
 
 describe 'Getting a random preview for a specific media-entry' do
   before :each do
-    media_entry = FactoryGirl.create(:media_entry_with_image_media_file,
+    media_entry = FactoryBot.create(:media_entry_with_image_media_file,
                                       get_metadata_and_previews: true)
     previews = media_entry.media_file.previews
     @preview = previews.sample
@@ -51,11 +51,11 @@ describe 'Getting a random preview for a specific media-entry' do
 
         context 'for not existing file' do
           it 'responds with 404' do
-            media_entry = FactoryGirl.create(:media_entry,
+            media_entry = FactoryBot.create(:media_entry,
                                               get_metadata_and_previews: true)
-            media_file = FactoryGirl.create(:media_file,
+            media_file = FactoryBot.create(:media_file,
                                             media_entry: media_entry)
-            @preview = FactoryGirl.create(:preview,
+            @preview = FactoryBot.create(:preview,
                                           media_file: media_file)
             expect(data_stream_resource_response.status).to be == 404
           end

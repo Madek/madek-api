@@ -16,7 +16,7 @@ describe 'advanced filtering of media entries' do
 
     it 'returns 200 with correct result' do
       20.times do
-        FactoryGirl.create \
+        FactoryBot.create \
           [:media_entry_with_image_media_file,
            :media_entry_with_audio_media_file].sample,
            :fat

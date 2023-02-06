@@ -6,17 +6,17 @@ describe 'updating group-users' do
 
     C = 110
 
-    @group = FactoryGirl.create :institutional_group
+    @group = FactoryBot.create :institutional_group
 
     @current_group_users = C.times.map do
-      FactoryGirl.create :user, institutional_id: SecureRandom.uuid
+      FactoryBot.create :user, institutional_id: SecureRandom.uuid
     end
 
     @group.users << @current_group_users
 
 
     @current_non_group_users = C.times.map do
-      FactoryGirl.create :user, institutional_id: SecureRandom.uuid
+      FactoryBot.create :user, institutional_id: SecureRandom.uuid
     end
 
     @update_users = \

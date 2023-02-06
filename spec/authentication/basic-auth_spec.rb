@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_context :user_entity do |ctx|
   context 'for Database User' do
     before :each do
-      @entity = FactoryGirl.create :user, password: 'TOPSECRET'
+      @entity = FactoryBot.create :user, password: 'TOPSECRET'
     end
     let :entity_type do
       'User'
@@ -15,7 +15,7 @@ end
 shared_context :api_client_entity do |ctx|
   context 'for Database ApiClient' do
     before :each do
-      @entity = FactoryGirl.create :api_client, password: 'TOPSECRET'
+      @entity = FactoryBot.create :api_client, password: 'TOPSECRET'
     end
     let :entity_type do
       'ApiClient'

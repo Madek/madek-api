@@ -179,12 +179,12 @@ describe 'ordering media entries' do
     context "a title for each of the entries" do
 
       let :meta_key_title do
-        FactoryGirl.create :meta_key_title
+        FactoryBot.create :meta_key_title
       end
 
       let! :titles do
         media_entries.map do |me|
-          @meta_datum_text = FactoryGirl.create :meta_datum_text,
+          @meta_datum_text = FactoryBot.create :meta_datum_text,
             media_entry: me, meta_key: meta_key_title
         end
       end

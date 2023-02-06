@@ -19,13 +19,13 @@ describe 'MediaFile Resource' do
 
   describe 'the image media file' do
     let :media_entry do
-      media_entry = FactoryGirl.create :media_entry,
+      media_entry = FactoryBot.create :media_entry,
                                        get_full_size: true,
                                        get_metadata_and_previews: true
     end
 
     let :media_file do
-      FactoryGirl.create :media_file_for_image, media_entry: media_entry
+      FactoryBot.create :media_file_for_image, media_entry: media_entry
     end
 
     it do
@@ -92,7 +92,7 @@ describe 'MediaFile Resource' do
 
           context 'for not existing file' do
             let :media_file do
-              FactoryGirl.create :media_file, media_entry: media_entry
+              FactoryBot.create :media_file, media_entry: media_entry
             end
 
             it 'responds with 404' do

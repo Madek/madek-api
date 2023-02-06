@@ -38,7 +38,7 @@ describe 'Session/Cookie Authentication' do
   end
 
   let :user do
-    FactoryGirl.create :user, password: 'TOPSECRET'
+    FactoryBot.create :user, password: 'TOPSECRET'
   end
 
   let :resource do

@@ -3,7 +3,7 @@ require 'spec_helper'
 context 'people' do
 
   before :each do
-    @people = 201.times.map{FactoryGirl.create :person}
+    @people = 201.times.map{FactoryBot.create :person}
   end
 
   context 'admin user' do

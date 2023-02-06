@@ -21,7 +21,7 @@ describe 'generated runs' do
           end
           describe 'with random public view permission' do
             before :each do
-              media_resource.update_attributes! \
+              media_resource.update! \
                 get_metadata_and_previews: (rand <= 0.5)
             end
             describe 'the meta-data resource' do

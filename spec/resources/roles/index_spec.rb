@@ -4,7 +4,7 @@ describe 'roles' do
 
   before :each do
     @roles = 201.times.map do |i|
-      FactoryGirl.create :role, labels: { de: "Role #{i}" }
+      FactoryBot.create :role, labels: { de: "Role #{i}" }
     end
   end
 

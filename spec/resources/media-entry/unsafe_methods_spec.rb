@@ -6,11 +6,11 @@ describe 'Unsafe methods not possible for session auth' do
   end
 
   let :media_entry do
-    FactoryGirl.create(:media_entry)
+    FactoryBot.create(:media_entry)
   end
 
   let :user do
-    FactoryGirl.create(:user)
+    FactoryBot.create(:user)
   end
 
   let :session_cookie do

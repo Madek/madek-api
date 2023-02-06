@@ -12,9 +12,9 @@ describe 'filtering media entries' do
   context 'by collection_id' do
     include_context :json_roa_client_for_authenticated_user do
       it 'as single filter option' do
-        collection = FactoryGirl.create(:collection)
+        collection = FactoryBot.create(:collection)
         5.times do
-          collection.media_entries << FactoryGirl.create(:media_entry)
+          collection.media_entries << FactoryBot.create(:media_entry)
         end
         get_media_entries('collection_id' => collection.id)
           .each do |me|
@@ -24,15 +24,15 @@ describe 'filtering media entries' do
       end
 
       it 'combined with other filter option' do
-        collection = FactoryGirl.create(:collection)
-        media_entry_1 = FactoryGirl.create(:media_entry,
+        collection = FactoryBot.create(:collection)
+        media_entry_1 = FactoryBot.create(:media_entry,
                                            get_metadata_and_previews: false)
-        media_entry_2 = FactoryGirl.create(:media_entry,
+        media_entry_2 = FactoryBot.create(:media_entry,
                                            get_metadata_and_previews: true)
-        media_entry_3 = FactoryGirl.create(:media_entry,
+        media_entry_3 = FactoryBot.create(:media_entry,
                                            get_metadata_and_previews: false)
         media_entry_3.user_permissions << \
-          FactoryGirl.create(:media_entry_user_permission,
+          FactoryBot.create(:media_entry_user_permission,
                              user: user,
                              get_metadata_and_previews: true)
         [media_entry_1, media_entry_2, media_entry_3].each do |me|

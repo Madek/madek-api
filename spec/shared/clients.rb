@@ -8,7 +8,7 @@ end
 
 shared_context :json_roa_client_for_authenticated_user do |ctx|
   let :user do
-    FactoryGirl.create :user, password: 'TOPSECRET'
+    FactoryBot.create :user, password: 'TOPSECRET'
   end
 
   let :entity do
@@ -24,8 +24,8 @@ end
 
 shared_context :json_roa_client_for_authenticated_admin_user  do |ctx|
   let :user do
-    user = FactoryGirl.create :user, password: 'TOPSECRET'
-    FactoryGirl.create :admin, user: user
+    user = FactoryBot.create :user, password: 'TOPSECRET'
+    FactoryBot.create :admin, user: user
     user
   end
 
@@ -44,7 +44,7 @@ end
 
 shared_context :json_roa_client_for_authenticated_api_client do |ctx|
   let :api_client do
-    FactoryGirl.create :api_client, password: 'TOPSECRET'
+    FactoryBot.create :api_client, password: 'TOPSECRET'
   end
 
   let :entity do
@@ -61,7 +61,7 @@ end
 shared_context :authenticated_json_roa_client do |_ctx|
   if rand < 0.5
     let :user do
-      FactoryGirl.create :user, password: 'TOPSECRET'
+      FactoryBot.create :user, password: 'TOPSECRET'
     end
     let :api_client do
       nil
@@ -71,7 +71,7 @@ shared_context :authenticated_json_roa_client do |_ctx|
       nil
     end
     let :api_client do
-      FactoryGirl.create :api_client, password: 'TOPSECRET'
+      FactoryBot.create :api_client, password: 'TOPSECRET'
     end
   end
 

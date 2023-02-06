@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'redirects for the research video project' do
 
   let :media_entry do
-    FactoryGirl.create(:research_video_media_entry,
+    FactoryBot.create(:research_video_media_entry,
                        get_metadata_and_previews: true,
                        get_full_size: true)
   end

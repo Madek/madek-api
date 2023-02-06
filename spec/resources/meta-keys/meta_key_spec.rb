@@ -11,9 +11,9 @@ describe 'meta-key' do
     end
 
     it 'should return 200 for an existing meta_key_id' do
-      vocab = FactoryGirl.create(:vocabulary,
+      vocab = FactoryBot.create(:vocabulary,
                                  enabled_for_public_view: true)
-      meta_key = FactoryGirl.create(:meta_key,
+      meta_key = FactoryBot.create(:meta_key,
                                     id: "#{vocab.id}:#{Faker::Lorem.word}",
                                     vocabulary: vocab)
       expect(
@@ -36,9 +36,9 @@ describe 'meta-key' do
     end
 
     describe 'multilingual labels' do
-      let(:vocabulary) { FactoryGirl.create :vocabulary }
+      let(:vocabulary) { FactoryBot.create :vocabulary }
       let(:meta_key) do
-        FactoryGirl.create(
+        FactoryBot.create(
           :meta_key,
           id: "#{vocabulary.id}:#{Faker::Lorem.word}",
           vocabulary: vocabulary,
@@ -61,9 +61,9 @@ describe 'meta-key' do
     end
 
     describe 'multilingual descriptions' do
-      let(:vocabulary) { FactoryGirl.create :vocabulary }
+      let(:vocabulary) { FactoryBot.create :vocabulary }
       let(:meta_key) do
-        FactoryGirl.create(
+        FactoryBot.create(
           :meta_key,
           id: "#{vocabulary.id}:#{Faker::Lorem.word}",
           vocabulary: vocabulary,
@@ -86,9 +86,9 @@ describe 'meta-key' do
     end
 
     describe 'multilingual hints' do
-      let(:vocabulary) { FactoryGirl.create :vocabulary }
+      let(:vocabulary) { FactoryBot.create :vocabulary }
       let(:meta_key) do
-        FactoryGirl.create(
+        FactoryBot.create(
           :meta_key,
           id: "#{vocabulary.id}:#{Faker::Lorem.word}",
           vocabulary: vocabulary,
@@ -111,9 +111,9 @@ describe 'meta-key' do
     end
 
     it 'does not return admin_comment property' do
-      vocabulary = FactoryGirl.create(:vocabulary,
+      vocabulary = FactoryBot.create(:vocabulary,
                                       enabled_for_public_view: true)
-      meta_key = FactoryGirl.create(:meta_key,
+      meta_key = FactoryBot.create(:meta_key,
                                     id: "#{vocabulary.id}:#{Faker::Lorem.word}",
                                     vocabulary: vocabulary)
 
@@ -123,17 +123,17 @@ describe 'meta-key' do
 
     context 'when meta key has some mappings' do
       it 'returns io-mappings structure' do
-        vocabulary = FactoryGirl.create(:vocabulary,
+        vocabulary = FactoryBot.create(:vocabulary,
                                         enabled_for_public_view: true)
-        meta_key = FactoryGirl.create(:meta_key,
+        meta_key = FactoryBot.create(:meta_key,
                                       id: "#{vocabulary.id}:#{Faker::Lorem.word}",
                                       vocabulary: vocabulary)
-        io_interface_1 = FactoryGirl.create(:io_interface)
-        io_interface_2 = FactoryGirl.create(:io_interface)
-        io_mapping_1 = FactoryGirl.create(:io_mapping, io_interface: io_interface_1, meta_key: meta_key)
-        io_mapping_2 = FactoryGirl.create(:io_mapping, io_interface: io_interface_1, meta_key: meta_key)
-        io_mapping_3 = FactoryGirl.create(:io_mapping, io_interface: io_interface_2, meta_key: meta_key)
-        io_mapping_4 = FactoryGirl.create(:io_mapping, io_interface: io_interface_2, meta_key: meta_key)
+        io_interface_1 = FactoryBot.create(:io_interface)
+        io_interface_2 = FactoryBot.create(:io_interface)
+        io_mapping_1 = FactoryBot.create(:io_mapping, io_interface: io_interface_1, meta_key: meta_key)
+        io_mapping_2 = FactoryBot.create(:io_mapping, io_interface: io_interface_1, meta_key: meta_key)
+        io_mapping_3 = FactoryBot.create(:io_mapping, io_interface: io_interface_2, meta_key: meta_key)
+        io_mapping_4 = FactoryBot.create(:io_mapping, io_interface: io_interface_2, meta_key: meta_key)
 
         response_body = json_roa_meta_key_resource(meta_key.id).get.response.body
 
@@ -158,9 +158,9 @@ describe 'meta-key' do
 
     context 'when meta key has no mappings' do
       it 'returns an empty io-mappings structure' do
-        vocabulary = FactoryGirl.create(:vocabulary,
+        vocabulary = FactoryBot.create(:vocabulary,
                                         enabled_for_public_view: true)
-        meta_key = FactoryGirl.create(:meta_key,
+        meta_key = FactoryBot.create(:meta_key,
                                       id: "#{vocabulary.id}:#{Faker::Lorem.word}",
                                       vocabulary: vocabulary)
 

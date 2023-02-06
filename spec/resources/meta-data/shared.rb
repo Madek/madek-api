@@ -8,29 +8,29 @@ ROUNDS = begin
 
 shared_context :meta_datum_for_media_entry do |_ctx|
   let :media_resource do
-    user = FactoryGirl.create(:user)
-    FactoryGirl.create :media_entry, creator: user, responsible_user: user
+    user = FactoryBot.create(:user)
+    FactoryBot.create :media_entry, creator: user, responsible_user: user
   end
 end
 
 shared_context :meta_datum_for_random_resource_type do |_ctx|
   let :media_resource do
-    user = FactoryGirl.create(:user)
+    user = FactoryBot.create(:user)
     case
     when rand < 1.0 / 2
-      FactoryGirl.create :media_entry, creator: user, responsible_user: user
+      FactoryBot.create :media_entry, creator: user, responsible_user: user
     else
-      FactoryGirl.create :collection, creator: user, responsible_user: user
+      FactoryBot.create :collection, creator: user, responsible_user: user
     end
   end
 
   def meta_datum(type)
     case media_resource
     when MediaEntry
-      FactoryGirl.create "meta_datum_#{type}",
+      FactoryBot.create "meta_datum_#{type}",
         media_entry: media_resource
     when Collection
-      FactoryGirl.create "meta_datum_#{type}",
+      FactoryBot.create "meta_datum_#{type}",
         collection: media_resource
     end
   end

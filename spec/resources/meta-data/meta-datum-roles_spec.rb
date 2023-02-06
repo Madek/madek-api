@@ -9,7 +9,7 @@ describe 'generated runs' do
       describe 'meta_datum_roles_for_random_resource_type' do
         include_context :meta_datum_for_media_entry
         let(:meta_datum_roles) do
-          FactoryGirl.create 'meta_datum_roles',
+          FactoryBot.create 'meta_datum_roles',
                               media_entry: media_resource
         end
 
@@ -26,7 +26,7 @@ describe 'generated runs' do
           end
           describe 'with random public view permission' do
             before :each do
-              media_resource.update_attributes! \
+              media_resource.update! \
                 get_metadata_and_previews: (rand <= 0.5)
             end
             describe 'the meta-data resource' do
@@ -48,7 +48,7 @@ describe 'generated runs' do
               context 'if the response is 200' do
                 # TODO: remove this block
                 # before :each do
-                #   media_resource.update_attributes! \
+                #   media_resource.update! \
                 #     get_metadata_and_previews: true
                 # end
                 let(:value) { resource.data['value'] }

@@ -7,7 +7,7 @@ describe 'index' do
     end
 
     it 'should return 200 with only viewable by public vocabularies' do
-      FactoryGirl.create(:vocabulary, enabled_for_public_view: false)
+      FactoryBot.create(:vocabulary, enabled_for_public_view: false)
       expect(vocabularies_resource.response.status).to be == 200
       expect(vocabularies_resource.data['vocabularies'].count).to be == 0
     end
@@ -15,7 +15,7 @@ describe 'index' do
     context 'when user is authenticated' do
       context 'when view permission is true' do
         it 'returns vocabulary in collection through the user permissions' do
-          vocabulary = FactoryGirl.create(:vocabulary,
+          vocabulary = FactoryBot.create(:vocabulary,
                                           enabled_for_public_view: false)
           Permissions::VocabularyUserPermission.create!(user_id: user.id,
                                                                      view: true,
@@ -28,9 +28,9 @@ describe 'index' do
         end
 
         it 'returns vocabulary in collection through the group permissions' do
-          vocabulary = FactoryGirl.create(:vocabulary,
+          vocabulary = FactoryBot.create(:vocabulary,
                                           enabled_for_public_view: false)
-          group = FactoryGirl.create :group
+          group = FactoryBot.create :group
           group.users << user
           Permissions::VocabularyGroupPermission.create!(group_id: group.id,
                                                                       view: true,
@@ -45,7 +45,7 @@ describe 'index' do
 
       context 'when view permission is false' do
         it 'does not return vocabulary through the user permissions' do
-          vocabulary = FactoryGirl.create(:vocabulary,
+          vocabulary = FactoryBot.create(:vocabulary,
                                           enabled_for_public_view: false)
           Permissions::VocabularyUserPermission.create!(user_id: user.id,
                                                                      view: false,
@@ -57,9 +57,9 @@ describe 'index' do
         end
 
         it 'does not return vocabulary through the group permissions' do
-          vocabulary = FactoryGirl.create(:vocabulary,
+          vocabulary = FactoryBot.create(:vocabulary,
                                           enabled_for_public_view: false)
-          group = FactoryGirl.create :group
+          group = FactoryBot.create :group
           group.users << user
           Permissions::VocabularyGroupPermission.create!(group_id: group.id,
                                                                       view: false,

@@ -44,7 +44,7 @@ describe 'filtering collections' do
       include_context :json_roa_client_for_authenticated_user do
         it '200 for public permissions' do
           10.times {
-            FactoryGirl.create(:collection,
+            FactoryBot.create(:collection,
                                get_metadata_and_previews: true)
           }
 
@@ -57,7 +57,7 @@ describe 'filtering collections' do
 
         it '200 for responsible user' do
           10.times {
-            FactoryGirl.create(:collection,
+            FactoryBot.create(:collection,
                                responsible_user: user,
                                get_metadata_and_previews: false)
           }
@@ -71,9 +71,9 @@ describe 'filtering collections' do
 
         it '200 for user permission' do
           10.times do
-            FactoryGirl.create \
+            FactoryBot.create \
               :collection_user_permission,
-              collection: FactoryGirl.create(:collection,
+              collection: FactoryBot.create(:collection,
                                              get_metadata_and_previews: false),
               user: user
           end
@@ -87,11 +87,11 @@ describe 'filtering collections' do
 
         it '200 for group permission' do
           10.times do
-            g = FactoryGirl.create(:group)
+            g = FactoryBot.create(:group)
             user.groups << g
-            FactoryGirl.create \
+            FactoryBot.create \
               :collection_group_permission,
-              collection: FactoryGirl.create(:collection,
+              collection: FactoryBot.create(:collection,
                                              get_metadata_and_previews: false),
               group: g
           end
@@ -111,7 +111,7 @@ describe 'filtering collections' do
       include_context :json_roa_client_for_authenticated_api_client do
         it '200 for public permissions' do
           10.times {
-            FactoryGirl.create(:collection,
+            FactoryBot.create(:collection,
                                get_metadata_and_previews: true)
           }
 
@@ -124,9 +124,9 @@ describe 'filtering collections' do
 
         it '200 for api_client permission' do
           10.times do
-            FactoryGirl.create \
+            FactoryBot.create \
               :collection_api_client_permission,
-              collection: FactoryGirl.create(:collection,
+              collection: FactoryBot.create(:collection,
                                              get_metadata_and_previews: false),
               api_client: api_client
           end

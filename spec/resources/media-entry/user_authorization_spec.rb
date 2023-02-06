@@ -3,7 +3,7 @@ require Pathname(File.expand_path('..', __FILE__)).join('shared')
 
 describe 'Getting a media-entry resource without authentication' do
   before :example do
-    @media_entry = FactoryGirl.create(:media_entry,
+    @media_entry = FactoryBot.create(:media_entry,
                                       get_metadata_and_previews: false)
   end
 
@@ -19,10 +19,10 @@ end
 
 describe 'Getting a media-entry resource with authentication' do
   before :example do
-    @media_entry = FactoryGirl.create(
+    @media_entry = FactoryBot.create(
       :media_entry, get_metadata_and_previews: false,
-                    responsible_user: FactoryGirl.create(:user))
-    @entity = FactoryGirl.create(:user, password: 'password')
+                    responsible_user: FactoryBot.create(:user))
+    @entity = FactoryBot.create(:user, password: 'password')
   end
 
   include_context :auth_media_entry_resource_via_json_roa
@@ -30,13 +30,13 @@ describe 'Getting a media-entry resource with authentication' do
   context :check_forbidden_without_required_permission do
     before :example do
       @media_entry.user_permissions << \
-        FactoryGirl.create(:media_entry_user_permission,
+        FactoryBot.create(:media_entry_user_permission,
                            get_metadata_and_previews: false,
                            user: @entity)
-      group = FactoryGirl.create(:group)
+      group = FactoryBot.create(:group)
       @entity.groups << group
       @media_entry.group_permissions << \
-        FactoryGirl.create(:media_entry_group_permission,
+        FactoryBot.create(:media_entry_group_permission,
                            get_metadata_and_previews: false,
                            group: group)
     end
@@ -47,7 +47,7 @@ describe 'Getting a media-entry resource with authentication' do
 
   context :check_allowed_if_responsible_user do
     before :example do
-      @media_entry.update_attributes! responsible_user: @entity
+      @media_entry.update! responsible_user: @entity
     end
 
     it 'is allowed 200' do
@@ -59,7 +59,7 @@ describe 'Getting a media-entry resource with authentication' do
     before do
       delegation = create(:delegation)
       delegation.users << @entity
-      @media_entry.update_attributes!(
+      @media_entry.update!(
         responsible_user: nil,
         responsible_delegation_id: delegation.id
       )
@@ -76,7 +76,7 @@ describe 'Getting a media-entry resource with authentication' do
       group = create(:group)
       delegation.groups << group
       group.users << @entity
-      @media_entry.update_attributes!(
+      @media_entry.update!(
         responsible_user: nil,
         responsible_delegation_id: delegation.id
       )
@@ -90,7 +90,7 @@ describe 'Getting a media-entry resource with authentication' do
   context :check_allowed_if_user_permission do
     before :example do
       @media_entry.user_permissions << \
-        FactoryGirl.create(:media_entry_user_permission,
+        FactoryBot.create(:media_entry_user_permission,
                            get_metadata_and_previews: true,
                            user: @entity)
     end
@@ -102,10 +102,10 @@ describe 'Getting a media-entry resource with authentication' do
 
   context :check_allowed_if_group_permission do
     before :example do
-      group = FactoryGirl.create(:group)
+      group = FactoryBot.create(:group)
       @entity.groups << group
       @media_entry.group_permissions << \
-        FactoryGirl.create(:media_entry_group_permission,
+        FactoryBot.create(:media_entry_group_permission,
                            get_metadata_and_previews: true,
                            group: group)
     end

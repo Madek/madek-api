@@ -3,13 +3,13 @@ require Pathname(File.expand_path('..', __FILE__)).join('shared')
 
 context 'A media-entry resource with get_metadata_and_previews permission' do
   before :each do
-    @media_entry = FactoryGirl.create :media_entry,
+    @media_entry = FactoryBot.create :media_entry,
       get_metadata_and_previews: true
   end
 
   context 'a meta datum of type text' do
     before :each do
-      @meta_datum_text = FactoryGirl.create :meta_datum_text,
+      @meta_datum_text = FactoryBot.create :meta_datum_text,
         media_entry: @media_entry
     end
 
@@ -102,13 +102,13 @@ context 'A media-entry resource with get_metadata_and_previews permission' do
 
   context 'A media-entry resource without get_metadata_and_previews permission' do
     before :each do
-      @media_entry = FactoryGirl.create :media_entry,
+      @media_entry = FactoryBot.create :media_entry,
         get_metadata_and_previews: false
     end
 
     context 'a meta datum of type text' do
       before :each do
-        @meta_datum_text = FactoryGirl.create :meta_datum_text,
+        @meta_datum_text = FactoryBot.create :meta_datum_text,
           media_entry: @media_entry
       end
 

@@ -3,7 +3,7 @@ require 'spec_helper'
 context 'people' do
 
   before :each do
-    @person = FactoryGirl.create :person
+    @person = FactoryBot.create :person
   end
 
   context 'admin user' do

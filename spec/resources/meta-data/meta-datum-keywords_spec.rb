@@ -22,7 +22,7 @@ describe 'generated runs' do
           end
           describe 'with random public view permission' do
             before :each do
-              media_resource.update_attributes! \
+              media_resource.update! \
                 get_metadata_and_previews: (rand <= 0.5)
             end
             describe 'the meta-data resource' do
@@ -72,12 +72,12 @@ describe 'generated runs' do
                   include_context :datalayer_terms_for_sorting
 
                   let(:meta_datum_keywords) do
-                    meta_key = FactoryGirl.create(:meta_key_keywords,
+                    meta_key = FactoryBot.create(:meta_key_keywords,
                                                   keywords_alphabetical_order: true)
                     keywords = terms.reverse.map do |term|
-                      FactoryGirl.create(:keyword, term: term, meta_key: meta_key)
+                      FactoryBot.create(:keyword, term: term, meta_key: meta_key)
                     end
-                    FactoryGirl.create(:meta_datum_keywords,
+                    FactoryBot.create(:meta_datum_keywords,
                                        Hash[:keywords, keywords,
                                             media_resource.model_name.singular, media_resource])
                   end

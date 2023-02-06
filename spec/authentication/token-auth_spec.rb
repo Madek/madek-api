@@ -17,7 +17,7 @@ end
 
 describe 'API-Token Authentication' do
   let :user do
-    FactoryGirl.create :user, password: 'TOPSECRET'
+    FactoryBot.create :user, password: 'TOPSECRET'
   end
 
   let :auth_info do
@@ -50,7 +50,7 @@ describe 'API-Token Authentication' do
       context 'after revoking token ' do
 
         before :each do
-          token.update_attributes! revoked: true
+          token.update! revoked: true
         end
 
         context 'used in basic auth' do
@@ -89,7 +89,7 @@ describe 'API-Token Authentication' do
 
     context 'after prolonging the token' do
       before :each do
-        token.update_attributes! expires_at: (Time.zone.now + 1.day)
+        token.update! expires_at: (Time.zone.now + 1.day)
       end
       context 'used in basic auth' do
         let :client do
