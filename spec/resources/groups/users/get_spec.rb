@@ -57,16 +57,16 @@ context 'a user in a group' do
 
         describe ' via institutional ids ' do
           it 'works' do
-            url = "/api/groups/#{URI.encode(@group.institutional_id)}" \
-              "/users/#{URI.encode(@user.institutional_id)}"
+            url = "/api/groups/#{CGI.escape(@group.institutional_id)}" \
+              "/users/#{CGI.escape(@user.institutional_id)}"
             expect(client.conn.get(url).status).to be== 200
           end
         end
 
         describe ' via email ' do
           it 'works' do
-            url = "/api/groups/#{URI.encode(@group.institutional_id)}" \
-              "/users/#{URI.encode(@user.email)}"
+            url = "/api/groups/#{CGI.escape(@group.institutional_id)}" \
+              "/users/#{CGI.escape(@user.email)}"
             expect(client.conn.get(url).status).to be== 200
           end
         end
@@ -75,8 +75,8 @@ context 'a user in a group' do
 
       describe ' using the wrong id (email) ' do
         it 'returns 404' do
-          url = "/api/groups/#{URI.encode(@group.institutional_id)}" \
-            "/users/#{URI.encode('noexists@nowhere')}"
+          url = "/api/groups/#{CGI.escape(@group.institutional_id)}" \
+            "/users/#{CGI.escape('noexists@nowhere')}"
           expect(client.conn.get(url).status).to be== 404
         end
       end
