@@ -1,0 +1,34 @@
+scripts:
+  configure-rspec-database:
+    start_when:
+      datalayer-configure-rails-db:
+        script_key: datalayer-configure-rails-db 
+    body: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      cp $DATALAYER_DIR/config/database.yml spec/config/database.yml
+
+  test:
+    start_when:
+      configure-rspec-database passed:
+        script_key: configure-rspec-database
+
+  configure-api-database:
+    start_when:
+      api-bundle-ruby passed: 
+        script_key: api-bundle-ruby 
+    body: |
+      #!/usr/bin/env ruby
+      require 'yaml'
+      settings_local= YAML.load_file 'config/settings.local.yml'
+      settings_local['database']['subname']= "//localhost:#{ENV['PG10PORT']}/#{ENV['DATABASE']}"
+      settings_local['database']['user']= ENV['PG10USER']
+      settings_local['database']['password']= ENV['PG10PASSWORD']
+      IO.write 'config/settings.local.yml', settings_local.to_yaml
+
+  run-api:
+    start_when:
+      configure-api-database passed:
+        script_key: configure-api-database
+
+

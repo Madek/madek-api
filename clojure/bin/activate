@@ -1,4 +1,0 @@
-CLOJURE_DIR="$(realpath $(dirname ${BASH_SOURCE})/..)"
-export PATH=$CLOJURE_DIR/bin:$PATH
-
-# vi: ft=sh

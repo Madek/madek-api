@@ -7,12 +7,12 @@ jobs:
         type: branch
         include_match: ^.+$
     context:
-      include: cider-ci/uberjar.yml
+      include: cider-ci/context-components/uberjar.yml
 
   rspec-tests:
     name: "RSpec Tests"
     context:
-      include: cider-ci/rspec-tests.yml
+      include: cider-ci/context-components/rspec-tests.yml
     depends_on: &UBERJAR
       rspec tests: { type: job, job_key: build-uberjar, states: [passed]}
     run_when: *UBERJAR

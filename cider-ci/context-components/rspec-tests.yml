@@ -1,0 +1,81 @@
+generate_tasks:
+  include_match: spec/.*_spec.rb
+
+task_defaults:
+
+  include:
+    - cider-ci/task-components/ruby-setup.yml
+    - cider-ci/task-components/uberjar.yml
+    - submodule: [datalayer]
+      path: cider-ci/task-components/database.yml
+    - cider-ci/task-components/env.yml
+    - cider-ci/task-components/configure-database.yml
+
+  ports:
+    API_HTTP_PORT:
+      min: 3100
+      max: 3200
+
+  templates:
+    settings.local for the api:
+      src: cider-ci/templates/settings.yml
+      dest: config/settings.local.yml
+    settings.local for the datalayer:
+      src: cider-ci/templates/settings.yml
+      dest: datalayer/config/settings.local.yml
+
+  git_options:
+    submodules:
+      include_match: ^.*$
+
+  trial_attachments:
+    config:
+      content_type: text/yaml
+      include_match: config\/.*\.ya?ml$
+    logs:
+      include_match: logs?\/.*\.log$
+      content_type: text/plain
+
+  traits:
+    curl: true
+
+  scripts:
+
+    run-api:
+      body: |
+        set -eux
+        export CLASSPATH="../config:madek-api.jar"
+        java madek.api.main
+      start_when:
+        the database has been created:
+          script_key: create-database
+        uberjar:
+          script_key: uberjar
+
+    api-is-running:
+      body: |
+        until curl --silent --fail --user x:secret -I  \
+          http://localhost:${API_HTTP_PORT}/api/management/status;
+          do sleep 1;
+        done
+      start_when:
+        run api is executing:
+          script_key: run-api
+          states: [executing]
+
+    test:
+      start_when:
+        the api is running:
+          script_key: api-is-running
+      body: |
+        set -eux
+        ./bin/rspec $CIDER_CI_TASK_FILE
+
+    shutdown:
+      start_when:
+        test is terminal:
+          script_key: test
+          states: [aborted, passed, failed, skipped]
+      body: |
+        curl -X POST --silent --fail --user x:secret -I  \
+          http://localhost:${API_HTTP_PORT}/api/management/shutdown

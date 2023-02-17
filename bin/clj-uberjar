@@ -2,6 +2,7 @@
 set -euxo
 PROJECT_DIR="$(cd -- "$(dirname "${BASH_SOURCE}")" ; cd .. > /dev/null 2>&1 && pwd -P)"
 cd $PROJECT_DIR
-source $PROJECT_DIR/clojure/bin/activate
+$PROJECT_DIR/bin/env/java-setup
+$PROJECT_DIR/bin/env/clojure-setup
 clojure -Spom
 clojure -A:depstar:resources -m hf.depstar.uberjar madek-api.jar -C -m madek.api.main

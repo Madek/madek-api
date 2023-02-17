@@ -1,0 +1,18 @@
+traits:
+  asdf: true
+
+scripts:
+
+  api-bundle-ruby:
+    exclusive_executor_resource: asdf-ruby
+    timeout: 20 Minutes
+    body: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      cd $API_DIR
+      ./bin/env/ruby-setup 
+
+  test:
+    start_when:
+      api-bundle-ruby has passed:
+        script_key: api-bundle-ruby
