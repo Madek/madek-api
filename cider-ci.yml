@@ -26,6 +26,7 @@ jobs:
     run_when: *DEFAULT_TRIGGERS
     context:
       task_defaults:
+        include: [cider-ci/task-components/env.yml]
         environment_variables:
           GIT_LINEAR_HISTORY_CHECK_START_SHA: d9b3e6a1d0397d7294e85a4a189d86aa843f1dfc
       contexts:
