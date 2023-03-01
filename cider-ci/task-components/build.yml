@@ -1,0 +1,11 @@
+traits:
+  asdf: true
+
+scripts:
+  api-build:
+    exclusive_executor_resource: madek-api-build-uberjar
+    body: |
+      #/bin/env bash
+      set -euo pipefail
+      cd $API_DIR
+      ./bin/build

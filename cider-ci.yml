@@ -67,8 +67,9 @@ jobs:
     priority: 999 # "delivery" job = high priority
     context:
       include:
-        - path: cider-ci/context-components/merge-checks.yml
-          submodule: [datalayer]
+        - path: cider-ci/context-components/env.yml
+        - submodule: [datalayer]
+          path: cider-ci/context-components/merge-checks.yml
     depends_on:
       all-tests: {job_key: all-tests, type: job, states: [passed]}
       good to merge of the datalayer: {job_key: good-to-merge, type: job, submodule: [datalayer], states: [passed]}

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_NAME="madek-api"
+JAR_NAME="${PROJECT_NAME}.jar"
+PROJECT_DIR="$(cd -- "$(dirname "${BASH_SOURCE}")" ; cd .. > /dev/null 2>&1 && pwd -P)"
+
+# dirty working tree checking is problematic on CI => disabled for now
+# IGNORE_DIRTY_WORKING_DIR="${IGNORE_DIRTY_WORKING_DIR:-NO}"
+# if [ $IGNORE_DIRTY_WORKING_DIR == "NO" ]; then
+#   git diff --quiet
+# fi
+
+DIGEST="$(git -C "$PROJECT_DIR" log -n 1 HEAD --pretty=%T)"
+LOCAL_CACHE_DIR="${LOCAL_CACHE_DIR:-"${TMPDIR:-/tmp/}build-cache"}"
+mkdir -p ${LOCAL_CACHE_DIR}
+LOCAL_CACHED_ARTEFACT_PATH="${LOCAL_CACHE_DIR}/${PROJECT_NAME}_${DIGEST}.jar"
+BUILD_CACHE_DISABLED="${BUILD_CACHE_DISABLED:-NO}"
+
+function build {
+  cd $PROJECT_DIR
+  ./bin/clean
+  rm -f $JAR_NAME
+  # ./bin/clj-deps-graph
+  ./bin/clj-uberjar
+  ./bin/clean
+}
+
+if [ $BUILD_CACHE_DISABLED == "YES" ]; then
+  build
+else
+  if [ -e $LOCAL_CACHED_ARTEFACT_PATH ]; then
+    echo "INFO: locally cached jar found"
+    cp $LOCAL_CACHED_ARTEFACT_PATH $PROJECT_DIR/$JAR_NAME
+  else
+    build
+    cp $PROJECT_DIR/$JAR_NAME $LOCAL_CACHED_ARTEFACT_PATH
+  fi
+fi

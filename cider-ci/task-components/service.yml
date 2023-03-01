@@ -1,0 +1,75 @@
+include:
+  - cider-ci/task-components/build.yml
+  - cider-ci/task-components/ruby-setup.yml
+
+traits:
+  curl: true
+
+templates:
+  settings.local for the api:
+    src: cider-ci/templates/settings.yml
+    dest: config/settings.local.yml
+  settings.local for the api datalayer:
+    src: cider-ci/templates/settings.yml
+    dest: datalayer/config/settings.local.yml
+
+scripts:
+
+  api-database-configure:
+    start_when:
+      api-bundle-ruby passed: 
+        script_key: api-bundle-ruby 
+    body: |
+      #!/usr/bin/env ruby
+      require 'yaml'
+      settings_local= YAML.load_file "#{ENV['API_DIR']}/config/settings.local.yml"
+      settings_local['database']['subname']= "//localhost:#{ENV['PG10PORT']}/#{ENV['DATABASE']}"
+      settings_local['database']['user']= ENV['PG10USER']
+      settings_local['database']['password']= ENV['PG10PASSWORD']
+      IO.write "#{ENV['API_DIR']}/config/settings.local.yml", settings_local.to_yaml
+
+  api-run:
+    start_when:
+      api-database-configure passed:
+        script_key: api-database-configure
+
+  api-run:
+    body: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      cd $API_DIR
+      export CLASSPATH="../config:madek-api.jar"
+      java madek.api.main
+    start_when:
+      the database has been created:
+        script_key: create-database
+      api-database-configure:
+        script_key: api-database-configure
+      api-build:
+        script_key: api-build
+
+  api-is-running:
+    body: |
+      until curl --silent --fail --user x:secret -I  \
+        http://localhost:${API_HTTP_PORT}/api/management/status;
+        do sleep 1;
+      done
+    start_when:
+      run api is executing:
+        script_key: api-run
+        states: [executing]
+
+  api-shutdown:
+    start_when:
+      test is terminal:
+        script_key: test
+        states: [aborted, passed, failed, skipped]
+    body: |
+      curl -X POST --silent --fail --user x:secret -I  \
+        http://localhost:${API_HTTP_PORT}/api/management/shutdown
+
+  test:
+    start_when:
+      the api is running:
+        script_key: api-is-running
+
