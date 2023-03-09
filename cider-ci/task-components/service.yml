@@ -23,9 +23,9 @@ scripts:
       #!/usr/bin/env ruby
       require 'yaml'
       settings_local= YAML.load_file "#{ENV['API_DIR']}/config/settings.local.yml"
-      settings_local['database']['subname']= "//localhost:#{ENV['PG10PORT']}/#{ENV['DATABASE']}"
-      settings_local['database']['user']= ENV['PG10USER']
-      settings_local['database']['password']= ENV['PG10PASSWORD']
+      settings_local['database']['subname']= "//localhost:#{ENV['PG15PORT']}/#{ENV['DATABASE']}"
+      settings_local['database']['user']= ENV['PG15USER']
+      settings_local['database']['password']= ENV['PG15PASSWORD']
       IO.write "#{ENV['API_DIR']}/config/settings.local.yml", settings_local.to_yaml
 
   api-run:
