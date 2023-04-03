@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_context :user_entity do |ctx|
   context 'for Database User' do
     before :each do
-      @entity = FactoryBot.create :user, password: 'TOPSECRET'
+      @entity = FactoryBot.create :user, password: 'secret'
     end
     let :entity_type do
       'User'
@@ -12,10 +12,14 @@ shared_context :user_entity do |ctx|
   end
 end
 
-shared_context :api_client_entity do |ctx|
-  context 'for Database ApiClient' do
+shared_context :api_client_entity_with_legacy_password do |ctx|
+  context 'for ApiClient with legacy password' do
     before :each do
-      @entity = FactoryBot.create :api_client, password: 'TOPSECRET'
+      @entity = FactoryBot.create :api_client, 
+        password: nil,
+        password_hash: nil,
+        password_digest: "$2a$04$ogvMlPxYisDRQFIPfC2IjOpXT76Oin9voAzSTz3iLf.ZS4DXvDHuy"
+      @entity.password = 'secret' 
     end
     let :entity_type do
       'ApiClient'
@@ -23,6 +27,24 @@ shared_context :api_client_entity do |ctx|
     include_context ctx if ctx
   end
 end
+
+shared_context :api_client_entity_with_new_password do |ctx|
+  context 'for ApiClient with legacy password' do
+    before :each do
+      @entity = FactoryBot.create :api_client, 
+        password: nil,
+        password_digest: nil,
+        password_hash: "$2a$06$AUl3m2iZs6u7cpbJ53TxiOfe9TB1MgfWTCB7z1a.R.Am58C990F3."
+      @entity.password = 'secret' 
+    end
+    let :entity_type do
+      'ApiClient'
+    end
+    include_context ctx if ctx
+  end
+end
+
+
 
 shared_context :test_bad_password_basic_auth do
   context 'with proper username but bad password' do
@@ -117,8 +139,9 @@ describe '/auth-info resource' do
 
   context 'Basic Authentication' do
     include_context :user_entity, :test_proper_basic_auth
-    include_context :api_client_entity, :test_proper_basic_auth
+    include_context :api_client_entity_with_legacy_password, :test_proper_basic_auth
+    include_context :api_client_entity_with_new_password, :test_proper_basic_auth
     include_context :user_entity, :test_bad_password_basic_auth
-    include_context :api_client_entity, :test_bad_password_basic_auth
+    include_context :api_client_entity_with_legacy_password, :test_bad_password_basic_auth
   end
 end

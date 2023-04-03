@@ -32,7 +32,7 @@
 (defn- session-signature-valid? [user session-object]
   (valid? (-> session-object :signature)
           (get-session-secret)
-          (-> user :password_digest)))
+          ""))
 
 (defn- decrypt-cookie [cookie-value]
   (catcher/snatch {}

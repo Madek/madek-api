@@ -8,6 +8,7 @@
     [logbug.debug :as debug]
     [logbug.thrown :as thrown]
     [madek.api.authentication.token :as token-authentication]
+    [madek.api.constants :refer [presence]]
     [madek.api.utils.rdbms :as rdbms]
     )
   (:import
@@ -52,9 +53,25 @@
        (catch Exception _
          (logging/warn "failed to extract basic-auth properties because" _ ))))
 
-(defn user-password-authentication [login-or-email password handler request]
+(defn check-new-password [entity password {tx :tx}]
+  (when-let [table (case (:type entity)
+                     "ApiClient" "api_clients"
+                     "User" "users")]
+    (let [query-str (->>
+                      ["SELECT (password_hash = crypt(?, password_hash))"
+                       "AS pw_matches FROM" table "WHERE id = ?"]
+                      (clojure.string/join " "))
+
+          res (jdbc/query (or tx (rdbms/get-ds))
+                          [query-str password (:id entity)])]
+      (-> res first :pw_matches))))
+
+(defn password-authentication
+  [login-or-email password handler {tx :tx :as request}]
   (if-let [entity (get-entity-by-login-or-email login-or-email)]
-    (if-not (checkpw password (:password_digest entity)); if there is an entity the password must match
+    (if-not (if-let [legacy-digest (-> entity :password_digest presence)]
+              (checkpw password legacy-digest)
+              (check-new-password entity password tx))
       {:status 401 :body (str "Password mismatch for "
                               {:login-or-email-address login-or-email})}
       (handler (assoc request
@@ -76,7 +93,7 @@
       (if-let [user-token (token-authentication/find-user-token-by-some-secret
                        [username password])]
         (token-authentication/authenticate user-token handler request)
-        (user-password-authentication username password handler request)))))
+        (password-authentication username password handler request)))))
 
 
 (defn wrap [handler]
