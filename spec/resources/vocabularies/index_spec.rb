@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 describe 'index' do
+
+  # these tests rely on an empty (without seeds) db
+  # alternatively: count thigs before and compare to after something is added
+  # this would be cleaner but requires more code since let caches
+  before :each do
+    PgTasks.truncate_tables
+  end
+
   include_context :json_roa_client_for_authenticated_user do
     let :vocabularies_resource do
       json_roa_client.get.relation('vocabularies').get

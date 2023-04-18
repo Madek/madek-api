@@ -1,7 +1,4 @@
 require 'spec_helper'
-require 'madek_open_session'
-require 'cgi'
-require 'timecop'
 
 shared_examples :responds_with_success do
   it 'responds with success 200' do

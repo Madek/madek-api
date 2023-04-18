@@ -1,12 +1,9 @@
 require 'pg_tasks'
 
-def clean_db
-  PgTasks.truncate_tables
-end
-
 RSpec.configure do |config|
   config.before(:each) do
-    clean_db
+    PgTasks.truncate_tables
+    PgTasks.data_restore Rails.root.join('datalayer', 'db', 'seeds.pgbin')
   end
 end
 

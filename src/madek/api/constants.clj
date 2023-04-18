@@ -26,7 +26,7 @@
 
 (def DEFAULT_LOGGING_CONFIG
   {:min-level [[#{
-                  ;"madek.api.authentication.basic"
+                  ;"madek.api.authentication.*"
                   } :debug]
                [#{"madek.api.*"} :info]
                [#{"*"} :warn]]

@@ -13,9 +13,21 @@ describe 'Unsafe methods not possible for session auth' do
     FactoryBot.create(:user)
   end
 
+  let :auth_system do
+    AuthSystem.find_by!(id: 'password')
+  end
+
+  let :session do
+    UserSession.create!(
+      user: user, 
+      auth_system: auth_system,
+      meta_data: {http_user_agent: "API Test",
+                  remote_addr: "127.0.0.1"})
+  end
+
   let :session_cookie do
     CGI::Cookie.new('name' => Madek::Constants::MADEK_SESSION_COOKIE_NAME,
-                    'value' => MadekOpenSession.build_session_value(user))
+                    'value' => session.token)
   end
 
   let :session_client do

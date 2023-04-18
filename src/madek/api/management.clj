@@ -18,7 +18,6 @@
   {:status 204})
 
 (defn- get-status [_]
-  ; TODO possibly check DB connection
   {:body "OK"})
 
 (def ^:private management-handler

@@ -1,7 +1,5 @@
 require 'spec_helper'
-require 'madek_open_session'
 require 'cgi'
-require 'timecop'
 
 shared_examples :responds_with_success do
   it 'responds with success 200' do
@@ -19,7 +17,7 @@ shared_context :valid_session_object do |to_include|
   context 'valid session object' do
     let :session_cookie do
       CGI::Cookie.new('name' => Madek::Constants::MADEK_SESSION_COOKIE_NAME,
-                      'value' => MadekOpenSession.build_session_value(user))
+                      'value' => session.token)
     end
 
     let :client do
@@ -41,6 +39,18 @@ describe 'Session/Cookie Authentication' do
     FactoryBot.create :user, password: 'TOPSECRET'
   end
 
+  let :auth_system do
+    AuthSystem.find_by!(id: 'password')
+  end
+
+  let :session do
+    UserSession.create!(
+      user: user, 
+      auth_system: auth_system,
+      meta_data: {http_user_agent: "API Test",
+                  remote_addr: "127.0.0.1"})
+  end
+
   let :resource do
     client.get.relation('auth-info').get
   end
@@ -54,10 +64,10 @@ describe 'Session/Cookie Authentication' do
 
     context 'expired session object' do
       let :session_cookie do
-        Timecop.freeze(Time.now - 7.days) do
-          CGI::Cookie.new('name' => Madek::Constants::MADEK_SESSION_COOKIE_NAME,
-                          'value' => MadekOpenSession.build_session_value(user))
-        end
+        cookie = CGI::Cookie.new('name' => Madek::Constants::MADEK_SESSION_COOKIE_NAME,
+                                'value' => session.token)
+        auth_system.update!(session_max_lifetime_minutes: 0)
+        cookie
       end
 
       let :client do
@@ -67,9 +77,11 @@ describe 'Session/Cookie Authentication' do
       end
 
       include_examples :responds_with_not_authorized
-      it 'the body indicates that the session has expired' do
-        expect(response.body).to match(/has expired/)
+
+      it 'the body indicates that the session is not valid' do
+        expect(response.body).to match(/No valid session found/)
       end
+
     end
   end
 

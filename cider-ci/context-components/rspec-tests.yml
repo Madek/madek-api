@@ -31,7 +31,9 @@ task_defaults:
 
     test:
       body: |
-        set -eux
+        #!/usr/bin/env bash
+        set -euo pipefail
+        source $DATALAYER_DIR/cider-ci/bin/pg_env_set
         ./bin/rspec $CIDER_CI_TASK_FILE
 
 
