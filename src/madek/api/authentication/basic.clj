@@ -54,17 +54,22 @@
          (logging/warn "failed to extract basic-auth properties because" _ ))))
 
 (defn check-new-password [entity password {tx :tx}]
-  (when-let [table (case (:type entity)
-                     "ApiClient" "api_clients"
-                     "User" "users")]
-    (let [query-str (->>
-                      ["SELECT (password_hash = crypt(?, password_hash))"
-                       "AS pw_matches FROM" table "WHERE id = ?"]
-                      (clojure.string/join " "))
-
-          res (jdbc/query (or tx (rdbms/get-ds))
-                          [query-str password (:id entity)])]
-      (-> res first :pw_matches))))
+  (when-let 
+    [query-str 
+     (some->> 
+       (case (:type entity)
+         "ApiClient" (["SELECT (password_digest= crypt(?, password_digest))"
+                       "AS pw_matches FROM api_clients WHERE id = ?"])
+         "User" ["SELECT (data= crypt(?, data)) AS pw_matches "
+                 "FROM auth_systems_users " 
+                 "WHERE user_id = ? " 
+                 "AND auth_systems_users.auth_system_id = 'password'"]
+         nil) 
+       (clojure.string/join " "))]
+    (some-> 
+      (jdbc/query (or tx (rdbms/get-ds))
+                  [query-str password (:id entity)])
+      first :pw_matches)))
 
 (defn password-authentication
   [login-or-email password handler {tx :tx :as request}]

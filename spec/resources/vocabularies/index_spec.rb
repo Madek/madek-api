@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe 'index' do
 
-  # these tests rely on an empty (without seeds) db
-  # alternatively: count thigs before and compare to after something is added
-  # this would be cleaner but requires more code since let caches
+  # clear some tables filled by the seeds
   before :each do
-    PgTasks.truncate_tables
+    ActiveRecord::Base.connection.execute <<-SQL
+      TRUNCATE TABLE vocabularies CASCADE;
+    SQL
   end
 
   include_context :json_roa_client_for_authenticated_user do

@@ -17,7 +17,6 @@ shared_context :api_client_entity_with_legacy_password do |ctx|
     before :each do
       @entity = FactoryBot.create :api_client, 
         password: nil,
-        password_hash: nil,
         password_digest: "$2a$04$ogvMlPxYisDRQFIPfC2IjOpXT76Oin9voAzSTz3iLf.ZS4DXvDHuy"
       @entity.password = 'secret' 
     end
@@ -33,8 +32,7 @@ shared_context :api_client_entity_with_new_password do |ctx|
     before :each do
       @entity = FactoryBot.create :api_client, 
         password: nil,
-        password_digest: nil,
-        password_hash: "$2a$06$AUl3m2iZs6u7cpbJ53TxiOfe9TB1MgfWTCB7z1a.R.Am58C990F3."
+        password_digest: "$2a$06$AUl3m2iZs6u7cpbJ53TxiOfe9TB1MgfWTCB7z1a.R.Am58C990F3."
       @entity.password = 'secret' 
     end
     let :entity_type do
