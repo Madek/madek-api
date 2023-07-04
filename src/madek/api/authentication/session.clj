@@ -13,17 +13,10 @@
     [taoensso.timbre :refer [debug info warn error spy]]
     ))
 
-(defn- get-madek-session-cookie-name []
-  (or (-> (get-config) :madek_session_cookie_name keyword)
-      (throw (IllegalStateException.
-               ("The  madek_session_cookie_name is not configured.")))))
-
-(defn- session-enbabled? []
-  (-> (get-config) :madek_api_session_enabled boolean))
 
 (defn- get-cookie-value [request]
   (-> request keywordize-keys :cookies
-      (get (get-madek-session-cookie-name)) :value))
+      spy (get :madek-session) spy :value))
 
 (defn find-valid-user-session-sql [session-token]
   (-> (sql/select :users.*)
@@ -43,8 +36,8 @@
                                    "base64")))
       (sql/merge-where
         (sql/raw (str "now() < user_sessions.created_at + "
-                      "auth_systems.session_max_lifetime_minutes "
-                      "* interval '1 minute'")))))
+                      "auth_systems.session_max_lifetime_hours "
+                      "* interval '1 hour'")))))
 
 (defn find-valid-user-session [cookie-value]
   (some-> cookie-value
@@ -54,7 +47,7 @@
           (assoc :type "User")))
 
 (defn- handle [{:as request} handler]
-  (if-let [cookie-value (and (session-enbabled?) (get-cookie-value request))]
+  (if-let [cookie-value (get-cookie-value request)]
     (if-let [user-session (find-valid-user-session cookie-value)]
       (handler (assoc request
                       :authenticated-entity user-session
@@ -67,4 +60,4 @@
     (handle request handler)))
 
 ;### Debug ####################################################################
-;(debug/debug-ns *ns*)
+(debug/debug-ns *ns*)

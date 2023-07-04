@@ -66,7 +66,7 @@ describe 'Session/Cookie Authentication' do
       let :session_cookie do
         cookie = CGI::Cookie.new('name' => Madek::Constants::MADEK_SESSION_COOKIE_NAME,
                                 'value' => session.token)
-        auth_system.update!(session_max_lifetime_minutes: 0)
+        auth_system.update!(session_max_lifetime_hours: 0)
         cookie
       end
 
@@ -85,24 +85,4 @@ describe 'Session/Cookie Authentication' do
     end
   end
 
-  context 'Session authentication is disabled ' do
-    before :each do
-      @original_config_local = YAML.load_file(
-        'config/settings.local.yml') rescue {}
-      config_local = @original_config_local.merge(
-        'madek_api_session_enabled' => false)
-      File.open('config/settings.local.yml', 'w') do |f|
-        f.write config_local.to_yaml
-      end
-      sleep 3
-    end
-
-    after :each do
-      File.open('config/settings.local.yml', 'w') do |f|
-        f.write @original_config_local.to_yaml
-      end
-    end
-
-    include_examples :valid_session_object, :responds_with_not_authorized
-  end
 end
