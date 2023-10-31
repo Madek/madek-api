@@ -43,7 +43,7 @@ context 'users' do
 
         it 'omits deactivated users' do
           deactivated_user = @users.sample
-          deactivated_user.update!(is_deactivated: true)
+          deactivated_user.update!(active_until: Date.yesterday)
 
           all_indexed_user_ids = Set.new(users_result.collection().map(&:get).map{|x| x.data['id'].to_s})
           expect(all_indexed_user_ids).not_to include(deactivated_user.id.to_s)

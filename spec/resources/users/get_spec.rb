@@ -42,7 +42,7 @@ context 'users' do
 
       context 'a deactivated user can\'t be retrieved' do
         let :deactivated_user do
-          FactoryBot.create :user, is_deactivated: true
+          FactoryBot.create :user, :deactivated
         end
         let :get_user_result do
           client.get.relation('user').get(id: deactivated_user.id)

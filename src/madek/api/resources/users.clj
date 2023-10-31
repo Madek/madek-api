@@ -62,7 +62,7 @@
 (defn find-user-sql [some-id]
   (-> (sql-select)
       (sql-merge-where-id some-id)
-      (sql/merge-where [:= :is_deactivated false])
+      (sql/merge-where (sql/raw "now() <= users.active_until"))
       (sql/from :users)
       sql/format))
 
@@ -98,7 +98,7 @@
 (defn build-index-query [{query-params :query-params}]
   (-> (sql/select :id)
       (sql/from :users)
-      (sql/merge-where [:= :is_deactivated false])
+      (sql/merge-where (sql/raw "now() <= users.active_until"))
       (sql/order-by [:id :asc])
       (pagination/add-offset-for-honeysql query-params)
       sql/format))
