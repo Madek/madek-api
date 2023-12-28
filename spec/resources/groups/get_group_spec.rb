@@ -35,8 +35,12 @@ context 'groups' do
         end
 
         it 'has the proper data, sans :searchable and :previous_id' do
+          date_format = "%Y-%m-%dT%H:%M:%S.%6NZ"
+
           expect(get_group_result.data).to be== \
             @group.attributes.with_indifferent_access.except(:searchable, :previous_id)
+            .map { |k, v| [k, ["created_at", "updated_at"].include?(k) ? v.strftime(date_format) : v] }
+            .to_h
         end
       end
 
