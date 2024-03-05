@@ -3,7 +3,8 @@ require 'spec_helper'
 context 'groups' do
 
   before :each do
-    @groups = 201.times.map{FactoryBot.create :group}
+    201.times.map{FactoryBot.create :group}
+    @groups = Group.all # possibly includes groups from dumps like beta-feature ones
   end
 
   context 'non admin user' do
