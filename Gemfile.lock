@@ -109,6 +109,7 @@ GEM
       addressable (~> 2)
       faraday (~> 0.9)
       faraday_middleware (~> 0.9)
+    liquid (5.5.0)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -129,7 +130,6 @@ GEM
       nokogiri (~> 1)
       rake
     mini_mime (1.1.5)
-    mini_portile2 (2.8.5)
     minitest (5.22.2)
     multi_json (1.15.0)
     multipart-post (2.4.0)
@@ -144,8 +144,7 @@ GEM
       net-protocol
     netrc (0.11.0)
     nio4r (2.7.0)
-    nokogiri (1.16.2)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.16.5-x86_64-linux)
       racc (~> 1.4)
     numerizer (0.1.1)
     pg (1.5.5)
@@ -249,7 +248,7 @@ GEM
       multi_json
 
 PLATFORMS
-  ruby
+  x86_64-linux
 
 DEPENDENCIES
   addressable
@@ -262,6 +261,7 @@ DEPENDENCIES
   git
   hashdiff
   json_roa-client (= 2.0.0)
+  liquid
   listen
   mimemagic
   pg
