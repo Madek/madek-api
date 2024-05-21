@@ -130,7 +130,7 @@ GEM
       nokogiri (~> 1)
       rake
     mini_mime (1.1.5)
-    mini_portile2 (2.8.5)
+    mini_portile2 (2.8.6)
     minitest (5.22.2)
     multi_json (1.15.0)
     multipart-post (2.4.0)
@@ -145,7 +145,7 @@ GEM
       net-protocol
     netrc (0.11.0)
     nio4r (2.7.0)
-    nokogiri (1.16.2)
+    nokogiri (1.16.5)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     numerizer (0.1.1)
@@ -159,7 +159,7 @@ GEM
       pry (>= 0.10.4)
     psych (3.3.4)
     public_suffix (5.0.4)
-    racc (1.7.3)
+    racc (1.8.0)
     rack (2.2.8.1)
     rack-test (2.1.0)
       rack (>= 1.3)
