@@ -2,7 +2,11 @@ scripts:
   configure-rspec-database:
     start_when:
       datalayer-configure-rails-db:
-        script_key: datalayer-configure-rails-db 
+        script_key: datalayer-configure-rails-db
+      # we wait for the build to finish in order to not prevent caching
+      # by makeing the working directory dirty
+      api-build passed:
+          script_key: api-build
     body: |
       #!/usr/bin/env bash
       set -euo pipefail

@@ -17,8 +17,12 @@ scripts:
 
   api-database-configure:
     start_when:
-      api-bundle-ruby passed: 
-        script_key: api-bundle-ruby 
+      api-bundle-ruby passed:
+        script_key: api-bundle-ruby
+      # we wait for the build to finish in order to not prevent caching
+      # by makeing the working directory dirty
+      api-build passed:
+          script_key: api-build
     body: |
       #!/usr/bin/env ruby
       require 'yaml'

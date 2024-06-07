@@ -1,0 +1,14 @@
+- name: prepare
+  include_tasks: prepare.yml
+
+- name: build
+  include_tasks: build.yml
+
+- name: instlal
+  include_tasks: install.yml
+
+- name: systemd service
+  include_tasks: service.yml
+
+- name: reverse-proxy
+  include_tasks: reverse-proxy.yml

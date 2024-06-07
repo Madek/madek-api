@@ -1,39 +1,52 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PROJECT_NAME="madek-api"
-JAR_NAME="${PROJECT_NAME}.jar"
 PROJECT_DIR="$(cd -- "$(dirname "${BASH_SOURCE}")" ; cd .. > /dev/null 2>&1 && pwd -P)"
+TMPDIR="${TMPDIR:-/tmp}" # fallback to /tmp if TMPDIR is not set, as in Ubuntu e.g.
+BUILDCACHE_TMPDIR="${BUILDCACHE_TMPDIR:-$TMPDIR}"
+BUILDCACHE_TMPDIR=${BUILDCACHE_TMPDIR%/} # remove trailing slash
+mkdir -p $BUILDCACHE_TMPDIR
 
-# dirty working tree checking is problematic on CI => disabled for now
-# IGNORE_DIRTY_WORKING_DIR="${IGNORE_DIRTY_WORKING_DIR:-NO}"
-# if [ $IGNORE_DIRTY_WORKING_DIR == "NO" ]; then
-#   git diff --quiet
-# fi
+JAR_PREFIX_NAME=madek-api
+JAR_REL_PATH=$JAR_PREFIX_NAME.jar
+cd $PROJECT_DIR
 
-DIGEST="$(git -C "$PROJECT_DIR" log -n 1 HEAD --pretty=%T)"
-LOCAL_CACHE_DIR="${LOCAL_CACHE_DIR:-"${TMPDIR:-/tmp/}build-cache"}"
-mkdir -p ${LOCAL_CACHE_DIR}
-LOCAL_CACHED_ARTEFACT_PATH="${LOCAL_CACHE_DIR}/${PROJECT_NAME}_${DIGEST}.jar"
-BUILD_CACHE_DISABLED="${BUILD_CACHE_DISABLED:-NO}"
+# cleanup
+rm -f $JAR_REL_PATH
 
 function build {
+  echo "Building $JAR_REL_PATH"
+  rm -f $JAR_REL_PATH
   cd $PROJECT_DIR
   ./bin/clean
-  rm -f $JAR_NAME
   # ./bin/clj-deps-graph
   ./bin/clj-uberjar
   ./bin/clean
 }
 
-if [ $BUILD_CACHE_DISABLED == "YES" ]; then
-  build
-else
-  if [ -e $LOCAL_CACHED_ARTEFACT_PATH ]; then
-    echo "INFO: locally cached jar found"
-    cp $LOCAL_CACHED_ARTEFACT_PATH $PROJECT_DIR/$JAR_NAME
-  else
+if [[ -n $(git status -s) ]]; then
+    echo "WARNING uncommitted changes, (re)building from scratch, no linking"
+    git status -v
     build
-    cp $PROJECT_DIR/$JAR_NAME $LOCAL_CACHED_ARTEFACT_PATH
-  fi
+else
+    echo "OK no uncommitted changes, building or using cache"
+    DIGEST=$(git log -1 HEAD --pretty=format:%T)
+    CACHED_JAR="${BUILDCACHE_TMPDIR}/${JAR_PREFIX_NAME}_${DIGEST}.jar"
+    if [[ -f $CACHED_JAR ]]; then
+        echo "Using cached jar: $CACHED_JAR"
+        touch $CACHED_JAR
+    else
+        echo "No cached jar ${CACHED_JAR} found, building"
+        build
+        mv $JAR_REL_PATH $CACHED_JAR
+    fi
+    echo "Linking $CACHED_JAR to $JAR_REL_PATH"
+    ln -sf $CACHED_JAR $JAR_REL_PATH
 fi
+
+# Clean cached jars older than a week
+find $BUILDCACHE_TMPDIR -maxdepth 1 -name "${JAR_PREFIX_NAME}_*.jar" -type f -mtime +7 -delete
+
+
+
+# vim: set ft=sh

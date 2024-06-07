@@ -1,4 +1,5 @@
 *.class
+.cider-ci_private/
 .cpcache/
 .mux.yml
 /.lein-*

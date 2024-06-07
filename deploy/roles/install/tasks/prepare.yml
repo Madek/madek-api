@@ -1,0 +1,15 @@
+- name: stop api-service
+  service:
+    name: madek-api
+    state: stopped
+  failed_when: false
+
+- name: make sure api-service user exists
+  user:
+    name: "{{madek_api_user}}"
+    comment: "Madek API Service"
+    shell: /bin/false
+    system: yes
+    state: present
+
+

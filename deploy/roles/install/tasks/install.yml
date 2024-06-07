@@ -1,0 +1,33 @@
+- name: apt unzip
+  apt:
+    name: unzip
+    state: present
+
+- name: setup directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.owner }}"
+    mode: 0755
+  loop:
+    - { path: "{{madek_api_dir}}", owner: root }
+
+- name: copy jar
+  copy:
+    src: "{{role_path}}/../../../madek-api.jar"
+    dest: "{{madek_api_dir}}/madek-api.jar"
+    owner: root
+    mode: 0644
+
+- name: extract docs and browser from archive
+  unarchive:
+    remote_src: yes
+    src: "{{madek_api_dir}}/madek-api.jar"
+    dest: "{{madek_api_dir}}"
+    include:
+      - docs/**
+      - browser/**
+    owner: root
+    group: root
+    mode: u=rwX,go=rX

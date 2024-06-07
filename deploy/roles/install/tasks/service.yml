@@ -1,0 +1,17 @@
+- name: install service from template
+  template:
+    src: madek-api.service
+    dest: /etc/systemd/system/madek-api.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+  failed_when: false
+
+- name: (re)start api-service
+  service:
+    name: madek-api
+    state: restarted
