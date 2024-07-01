@@ -41,7 +41,8 @@
 (def ^:private base-query
   (-> (sql/select [:media_entries.id :media_entry_id]
                   [:media_entries.created_at :media_entry_created_at])
-      (sql/from :media_entries)))
+      (sql/from :media_entries)
+      (sql/merge-where [:= :media_entries.deleted_at nil])))
 
 (defn- order-by-media-entry-attribute [query [attribute order]]
   (let [order-by-arg (match [(keyword attribute) (keyword order)]
