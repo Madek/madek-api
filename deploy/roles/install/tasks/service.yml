@@ -11,7 +11,14 @@
     daemon_reload: yes
   failed_when: false
 
-- name: (re)start api-service
+- name: enable and (re)start api-service
   service:
     name: madek-api
     state: restarted
+    enabled: true
+
+- name: wait for service to start
+  wait_for:
+    port: "{{madek_api_port}}"
+    delay: 5
+    timeout: 60

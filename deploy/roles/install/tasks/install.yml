@@ -20,6 +20,14 @@
     owner: root
     mode: 0644
 
+- name: remove old docs and browser
+  file:
+    path: "{{madek_api_dir}}/{{ item }}"
+    state: absent
+  with_items:
+    - docs
+    - browser
+
 - name: extract docs and browser from archive
   unarchive:
     remote_src: yes

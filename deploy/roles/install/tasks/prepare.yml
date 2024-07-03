@@ -2,6 +2,7 @@
   service:
     name: madek-api
     state: stopped
+    enabled: false
   failed_when: false
 
 - name: make sure api-service user exists
