@@ -8,16 +8,22 @@
     [madek.api.data-streaming :as data-streaming]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
     [madek.api.utils.sql :as sql]
+    [madek.api.resources.media-files.common :refer [media-entry-undeleted-exists-cond]]
     ))
 
-(defn get-preview [request]
-  (let [id (-> request :params :preview_id)
-        query (-> (sql/select :*)
-                  (sql/from :previews)
-                  (sql/merge-where
-                    [:= :previews.id id])
-                  (sql/format))]
-    {:body (first (jdbc/query (rdbms/get-ds) query))}))
+(defn preview-query [id]
+  (-> (sql/select :*)
+      (sql/from :previews)
+      (sql/merge-where
+        [:= :previews.id id])
+      (sql/merge-where
+        (media-entry-undeleted-exists-cond :previews.media_file_id))
+      (sql/format)))
+
+
+(defn get-preview
+  [{{id :preview_id} :params :as request}]
+  {:body (first (jdbc/query (rdbms/get-ds) (preview-query id)))})
 
 (defn- preview-file-path [preview]
   (let [filename (:filename preview)

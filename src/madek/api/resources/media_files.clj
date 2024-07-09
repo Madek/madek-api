@@ -2,6 +2,7 @@
   (:require
     [clojure.java.jdbc :as jdbc]
     [clojure.tools.logging :as logging]
+    [clojure.string]
     [compojure.core :as cpj]
     [logbug.catcher :as catcher]
     [logbug.debug :as debug :refer [I> I>>]]
@@ -17,10 +18,17 @@
 (defn- query-media-file [media-file-id]
   ; we wrap this since badly formated media-file-id strings can cause an
   ; exception, note that 404 is in that case a correct response
-  (catcher/snatch {}
+  (catcher/snatch
+    {}
     (-> (jdbc/query
           (get-ds)
-          ["SELECT * FROM media_files WHERE id = ?" media-file-id])
+          [(clojure.string/join
+             ["SELECT * FROM media_files "
+              "WHERE id = ? "
+               "AND EXISTS (SELECT 1  FROM media_entries "
+                "   WHERE media_entries.id = media_files.media_entry_id "
+                "   AND (media_entries.deleted_at IS NULL OR media_entries.deleted_at >= NOW()))"
+              ]) media-file-id])
         first)))
 
 (defn- wrap-find-and-add-media-file
