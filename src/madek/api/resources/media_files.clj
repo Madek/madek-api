@@ -11,9 +11,19 @@
     [madek.api.resources.media-files.media-file :as media-file]
     [madek.api.resources.shared :as shared]
     [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+    [madek.api.utils.sql :as sql]
+    [madek.api.resources.media-files.common :refer [media-entry-undeleted-exists-cond]]
     ))
 
 ;##############################################################################
+
+
+(defn query [media-file-id]
+  (-> (sql/select :*)
+      (sql/from :media_files)
+      (sql/merge-where [:= :id media-file-id])
+      (sql/merge-where (media-entry-undeleted-exists-cond media-file-id))
+      ))
 
 (defn- query-media-file [media-file-id]
   ; we wrap this since badly formated media-file-id strings can cause an
@@ -22,13 +32,7 @@
     {}
     (-> (jdbc/query
           (get-ds)
-          [(clojure.string/join
-             ["SELECT * FROM media_files "
-              "WHERE id = ? "
-               "AND EXISTS (SELECT 1  FROM media_entries "
-                "   WHERE media_entries.id = media_files.media_entry_id "
-                "   AND (media_entries.deleted_at IS NULL OR media_entries.deleted_at >= NOW()))"
-              ]) media-file-id])
+          (query media-file-id))
         first)))
 
 (defn- wrap-find-and-add-media-file
