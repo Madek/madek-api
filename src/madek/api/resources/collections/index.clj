@@ -26,7 +26,9 @@
 (def ^:private base-query
   (-> (sql/select :collections.id, :collections.created_at)
       (sql/from :collections)
-      (sql/merge-where [:= :collections.deleted_at nil])))
+      (sql/merge-where [:or
+                        [:= :collections.deleted_at nil]
+                        [:> :collections.deleted_at (sql/raw "now()")]])))
 
 (defn- set-order [query query-params]
   (if (some #{"desc"} [(-> query-params :order)])
