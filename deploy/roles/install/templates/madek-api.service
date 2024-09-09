@@ -30,5 +30,6 @@ ExecStart=/usr/bin/env java "-Xmx{{ madek_api_service_xmx }}m" \
 
 [Install]
 WantedBy=multi-user.target
+WantedBy=madek-datalayer.service
 
 # vi: ft=systemd
