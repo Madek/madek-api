@@ -16,6 +16,7 @@
     [madek.api.resources.shared :as shared]
     [madek.api.utils.rdbms :as rdbms]
     [madek.api.utils.sql :as sql]
+    [taoensso.timbre :as timbre :refer [spy debug info warn error]]
     ))
 
 ;### collection_id ############################################################
@@ -159,7 +160,7 @@
         sql/format)))
 
 (defn- query-index-resources [request]
-  (jdbc/query (rdbms/get-ds) (build-query request)))
+  (jdbc/query (rdbms/get-ds) (spy (build-query request))))
 
 
 ;### index ####################################################################
@@ -168,6 +169,7 @@
   (catcher/with-logging {}
     (try
       (let [data (query-index-resources request)]
+        (debug 'data data)
         {:body
          (merge
            {:media-entries (->> data
@@ -182,10 +184,7 @@
                                                :arc_position :position
                                                :arc_created_at :created_at
                                                :arc_updated_at :updated_at})))}))})
-      (catch Exception e (merge (ex-data e) {:body {:message (.getMessage e)}}))
-    )
-  )
-)
+      (catch Exception e (merge (ex-data e) {:body {:message (.getMessage e)}})))))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)
