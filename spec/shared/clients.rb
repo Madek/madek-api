@@ -8,7 +8,7 @@ end
 
 shared_context :json_roa_client_for_authenticated_user do |ctx|
   let :user do
-    FactoryBot.create :user, password: 'TOPSECRET'
+    FactoryBot.create :user, password: "TOPSECRET"
   end
 
   let :entity do
@@ -17,14 +17,14 @@ shared_context :json_roa_client_for_authenticated_user do |ctx|
 
   include_context :json_roa_client_for_authenticated_entity
 
-  describe 'JSON-ROA `client` for authenticated `user`' do
+  describe "JSON-ROA `client` for authenticated `user`" do
     include_context ctx if ctx
   end
 end
 
-shared_context :json_roa_client_for_authenticated_admin_user  do |ctx|
+shared_context :json_roa_client_for_authenticated_admin_user do |ctx|
   let :user do
-    user = FactoryBot.create :user, password: 'TOPSECRET'
+    user = FactoryBot.create :user, password: "TOPSECRET"
     FactoryBot.create :admin, user: user
     user
   end
@@ -35,16 +35,14 @@ shared_context :json_roa_client_for_authenticated_admin_user  do |ctx|
 
   include_context :json_roa_client_for_authenticated_entity
 
-  describe 'JSON-ROA `client` for authenticated `user`' do
+  describe "JSON-ROA `client` for authenticated `user`" do
     include_context ctx if ctx
   end
 end
 
-
-
 shared_context :json_roa_client_for_authenticated_api_client do |ctx|
   let :api_client do
-    FactoryBot.create :api_client, password: 'TOPSECRET'
+    FactoryBot.create :api_client, password: "TOPSECRET"
   end
 
   let :entity do
@@ -53,7 +51,7 @@ shared_context :json_roa_client_for_authenticated_api_client do |ctx|
 
   include_context :json_roa_client_for_authenticated_entity
 
-  describe 'JSON-ROA `client` for authenticated `api_client`' do
+  describe "JSON-ROA `client` for authenticated `api_client`" do
     include_context ctx if ctx
   end
 end
@@ -61,7 +59,7 @@ end
 shared_context :authenticated_json_roa_client do |_ctx|
   if rand < 0.5
     let :user do
-      FactoryBot.create :user, password: 'TOPSECRET'
+      FactoryBot.create :user, password: "TOPSECRET"
     end
     let :api_client do
       nil
@@ -71,7 +69,7 @@ shared_context :authenticated_json_roa_client do |_ctx|
       nil
     end
     let :api_client do
-      FactoryBot.create :api_client, password: 'TOPSECRET'
+      FactoryBot.create :api_client, password: "TOPSECRET"
     end
   end
 

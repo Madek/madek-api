@@ -1,16 +1,16 @@
-require 'pg_tasks'
+require "pg_tasks"
 
 RSpec.configure do |config|
   config.before(:each) do
     PgTasks.truncate_tables
-    PgTasks.data_restore Rails.root.join('datalayer', 'db', 'seeds.pgbin')
+    PgTasks.data_restore Rails.root.join("datalayer", "db", "seeds.pgbin")
     create(:app_setting, id: 0)
   end
 end
 
 def with_disabled_triggers
-  ActiveRecord::Base.connection.execute 'SET session_replication_role = REPLICA;'
+  ActiveRecord::Base.connection.execute "SET session_replication_role = REPLICA;"
   result = yield
-  ActiveRecord::Base.connection.execute 'SET session_replication_role = DEFAULT;'
+  ActiveRecord::Base.connection.execute "SET session_replication_role = DEFAULT;"
   result
 end

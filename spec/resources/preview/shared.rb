@@ -1,10 +1,10 @@
-require 'spec_helper'
+require "spec_helper"
 
 def client_for_preview(&block)
   JSON_ROA::Client.connect \
     "#{api_base_url}/previews/#{@preview.id}",
     raise_error: false,
-    &block
+      &block
 end
 
 shared_context :preview_resource_via_json_roa do
@@ -28,6 +28,7 @@ shared_context :auth_preview_resource_via_json_roa do
       conn.basic_auth(@entity.login, @entity.password)
     end
   end
+
   let :resource do
     auth_client_for_preview.get
   end

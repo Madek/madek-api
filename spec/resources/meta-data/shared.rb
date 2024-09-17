@@ -1,10 +1,10 @@
-require 'spec_helper'
+require "spec_helper"
 
 ROUNDS = begin
-           Integer(ENV['ROUNDS'].presence)
-         rescue
-           25
-         end
+    Integer(ENV["ROUNDS"].presence)
+  rescue
+    25
+  end
 
 shared_context :meta_datum_for_media_entry do |_ctx|
   let :media_resource do

@@ -1,9 +1,8 @@
-require 'spec_helper'
+require "spec_helper"
 
 shared_context :media_entry_resource_via_json_roa do
   let :resource do
-    json_roa_client.get.relation('media-entry') \
-      .get('id' => @media_entry.id)
+    json_roa_client.get.relation("media-entry").get("id" => @media_entry.id)
   end
   let :response do
     resource.response
@@ -17,7 +16,7 @@ shared_context :auth_media_entry_resource_via_json_roa do
     end
   end
   let :resource do
-    client.get.relation('media-entry').get('id' => @media_entry.id)
+    client.get.relation("media-entry").get("id" => @media_entry.id)
   end
   let :response do
     resource.response

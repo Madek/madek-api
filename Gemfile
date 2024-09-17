@@ -9,4 +9,4 @@ gem 'json_roa-client', '=2.0.0'
 gem 'rest-client'
 gem 'rspec'
 gem 'hashdiff'
-
+gem 'rufo'

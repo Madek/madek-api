@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 shared_context :bunch_of_collections do
   let :users_count do
@@ -18,8 +18,8 @@ shared_context :bunch_of_collections do
   let :collections do
     (1..collections_count).map do
       FactoryBot.create :collection,
-                         responsible_user: users[rand(users_count)],
-                         get_metadata_and_previews: (rand <= 0.8)
+                        responsible_user: users[rand(users_count)],
+                        get_metadata_and_previews: (rand <= 0.8)
     end
   end
 end

@@ -1,30 +1,28 @@
-require 'spec_helper'
-require 'hashdiff'
+require "spec_helper"
+require "hashdiff"
 
-context 'people' do
-
+context "people" do
   before :each do
-    @person = FactoryBot.create(:person, external_uris: ['http://example.com'])
+    @person = FactoryBot.create(:person, external_uris: ["http://example.com"])
     @person = @person.reload
   end
 
-  context 'admin user' do
+  context "admin user" do
     include_context :json_roa_client_for_authenticated_admin_user do
-
-      context 'retriving a standard person' do
+      context "retriving a standard person" do
         let :get_person_result do
-          client.get.relation('person').get(id: @person.id)
+          client.get.relation("person").get(id: @person.id)
         end
 
-        it 'works' do
-          expect(get_person_result.response.status).to be==200
+        it "works" do
+          expect(get_person_result.response.status).to be == 200
         end
 
-        it 'lets us navigate to the person itself via the self-relation' do
-          expect(get_person_result.json_roa_data['self-relation']['href']).to match /#{@person.id}/
+        it "lets us navigate to the person itself via the self-relation" do
+          expect(get_person_result.json_roa_data["self-relation"]["href"]).to match /#{@person.id}/
         end
 
-        it 'has the proper data' do
+        it "has the proper data" do
           person = get_person_result.data
           expect(
             person.except(:searchable, :created_at, :updated_at)
@@ -36,21 +34,20 @@ context 'people' do
         end
       end
 
-      context 'a institunal person (with naughty institutional_id)' do
+      context "a institunal person (with naughty institutional_id)" do
         before :each do
-          @inst_person = FactoryBot.create :people_instgroup ,
-            institutional_id: '?this#id/needs/to/be/url&encoded'
+          @inst_person = FactoryBot.create :people_instgroup,
+                                           institutional_id: "?this#id/needs/to/be/url&encoded"
         end
-        it 'can be retrieved by the institutional_id' do
+        it "can be retrieved by the institutional_id" do
           expect(
-            client.get.relation('person').get(id: @inst_person.institutional_id).response.status
-          ).to be== 200
+            client.get.relation("person").get(id: @inst_person.institutional_id).response.status
+          ).to be == 200
           expect(
-            client.get.relation('person').get(id: @inst_person.institutional_id).data["id"]
-          ).to be== @inst_person["id"]
+            client.get.relation("person").get(id: @inst_person.institutional_id).data["id"]
+          ).to be == @inst_person["id"]
         end
       end
-
     end
   end
 end

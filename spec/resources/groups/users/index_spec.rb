@@ -1,7 +1,6 @@
-require 'spec_helper'
+require "spec_helper"
 
-describe 'getting the index of group-users' do
-
+describe "getting the index of group-users" do
   before :each do
     @group = FactoryBot.create :institutional_group
 
@@ -14,34 +13,30 @@ describe 'getting the index of group-users' do
     @other_users = 12.times.map do
       FactoryBot.create :user, institutional_id: SecureRandom.uuid
     end
-
   end
 
-  context 'admin user' do
+  context "admin user" do
     include_context :json_roa_client_for_authenticated_admin_user do
-
-      describe 'geting the group_users ' do
-
+      describe "geting the group_users " do
         let :group_users_result do
-          client.get.relation('group').get(id: @group.id).relation('users').get()
+          client.get.relation("group").get(id: @group.id).relation("users").get()
         end
 
-        it 'works' do
-          expect(group_users_result.response.status).to be== 200
+        it "works" do
+          expect(group_users_result.response.status).to be == 200
         end
 
-        it 'returns some data but less than created because we paginate' do
+        it "returns some data but less than created because we paginate" do
           expect(
-            group_users_result.data()['users'].count
-          ).to be< @group_users.count
+            group_users_result.data()["users"].count
+          ).to be < @group_users.count
         end
 
-        describe 'the roa collection' do
-          it 'contains excactly the group users' do
+        describe "the roa collection" do
+          it "contains excactly the group users" do
             added_ids = Set.new(@group_users.map(&:id))
-            retrieved_ids = Set.new(group_users_result.collection() \
-              .map(&:get).map{|x| x.data['id']})
-            expect(added_ids).to be== retrieved_ids
+            retrieved_ids = Set.new(group_users_result.collection().map(&:get).map { |x| x.data["id"] })
+            expect(added_ids).to be == retrieved_ids
           end
         end
       end

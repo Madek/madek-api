@@ -29,6 +29,17 @@ jobs:
         include: [cider-ci/task-components/env.yml]
         environment_variables:
           GIT_LINEAR_HISTORY_CHECK_START_SHA: d9b3e6a1d0397d7294e85a4a189d86aa843f1dfc
+        git_options:
+          submodules:
+            include_match: ^.*$
+      tasks:
+        ruby_spec_formated:
+          scripts:
+            check:
+              body: |
+                #!/usr/bin/env bash
+                set -euo pipefail
+                ./bin/check-ruby-spec-format
       contexts:
         include:
           - path: cider-ci/context-components/lint/git-lint.yml
