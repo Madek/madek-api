@@ -1,10 +1,9 @@
 (ns madek.api.json-roa.meta-keys
   (:require
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [madek.api.json-roa.links :as links]
-    [madek.api.pagination :as pagination]
-    ))
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]
+   [madek.api.json-roa.links :as links]
+   [madek.api.pagination :as pagination]))
 
 (defn index [request response]
   (let [context (:context request)
@@ -16,10 +15,10 @@
      :collection
      {:relations
       (into {} (map-indexed
-                 (fn [i id]
-                   [(+ 1 i (pagination/compute-offset query-params))
-                    (links/meta-key context id)])
-                 ids))}}))
+                (fn [i id]
+                  [(+ 1 i (pagination/compute-offset query-params))
+                   (links/meta-key context id)])
+                ids))}}))
 
 (defn meta-key [request response]
   (let [context (:context request)
@@ -30,9 +29,7 @@
      :self-relation (links/meta-key context id)
      :relations
      {:root (links/root context)
-      :vocabulary (links/vocabulary context vocabulary-id)
-      }}))
-
+      :vocabulary (links/vocabulary context vocabulary-id)}}))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

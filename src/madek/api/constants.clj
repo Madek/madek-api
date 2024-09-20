@@ -1,40 +1,35 @@
 (ns madek.api.constants
   (:require
-    [clojure.string :refer [trim blank?]]
-    [clojure.tools.logging :as logging]
-    [environ.core :refer [env]]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [madek.api.utils.config :as config :refer [get-config]]
-    [me.raynes.fs  :as clj-fs]
-    ))
+   [clojure.string :refer [trim blank?]]
+   [clojure.tools.logging :as logging]
+   [environ.core :refer [env]]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]
+   [madek.api.utils.config :as config :refer [get-config]]
+   [me.raynes.fs :as clj-fs]))
 
 (def SUPPORTED_META_DATA_TYPES
-  #{
-      "MetaDatum::Groups"
-      "MetaDatum::JSON"
-      "MetaDatum::Keywords"
-      "MetaDatum::Licenses"
+  #{"MetaDatum::Groups"
+    "MetaDatum::JSON"
+    "MetaDatum::Keywords"
+    "MetaDatum::Licenses"
       ;"MetaDatum::MediaEntry"
-      "MetaDatum::People"
-      "MetaDatum::Roles"
-      "MetaDatum::Text"
-      "MetaDatum::TextDate"
-      "MetaDatum::Users"
-      "MetaDatum::Vocables"
-    })
+    "MetaDatum::People"
+    "MetaDatum::Roles"
+    "MetaDatum::Text"
+    "MetaDatum::TextDate"
+    "MetaDatum::Users"
+    "MetaDatum::Vocables"})
 
 (def DEFAULT_LOGGING_CONFIG
-  {:min-level [[#{
-                  "madek.api.authentication.*"
-                  } :debug]
+  {:min-level [[#{"madek.api.authentication.*"} :debug]
                [#{"madek.api.*"} :info]
                [#{"*"} :warn]]
    :log-level nil})
 
 (declare DEFAULT_STORAGE_DIR
          FILE_STORAGE_DIR
-         THUMBNAIL_STORAGE_DIR )
+         THUMBNAIL_STORAGE_DIR)
 
 (defn presence [v]
   "Returns nil if v is a blank string. Returns v otherwise."
@@ -52,27 +47,25 @@
 
   (def DEFAULT_STORAGE_DIR
     (str (clj-fs/absolute
-           (or (:default_storage_dir (get-config))
-               (clojure.string/join (java.io.File/separator)
-                                    [(System/getProperty "user.dir") "tmp" (madek-env)])))))
+          (or (:default_storage_dir (get-config))
+              (clojure.string/join (java.io.File/separator)
+                                   [(System/getProperty "user.dir") "tmp" (madek-env)])))))
 
   (def FILE_STORAGE_DIR
     (str (clj-fs/absolute
-           (or (:file_storage_dir (get-config))
-               (clojure.string/join (java.io.File/separator)
-                                    [DEFAULT_STORAGE_DIR "originals"])))))
+          (or (:file_storage_dir (get-config))
+              (clojure.string/join (java.io.File/separator)
+                                   [DEFAULT_STORAGE_DIR "originals"])))))
   (def THUMBNAILS_STORAGE_DIR
     (str (clj-fs/absolute
-           (or (:thumbnail_storage_dir (get-config))
-               (clojure.string/join (java.io.File/separator)
-                                    [DEFAULT_STORAGE_DIR "thumbnails"])))))
+          (or (:thumbnail_storage_dir (get-config))
+              (clojure.string/join (java.io.File/separator)
+                                   [DEFAULT_STORAGE_DIR "thumbnails"])))))
 
   (logging/info
-    {:DEFAULT_STORAGE_DIR DEFAULT_STORAGE_DIR
-     :FILE_STORAGE_DIR FILE_STORAGE_DIR
-     :THUMBNAILS_STORAGE_DIR THUMBNAILS_STORAGE_DIR})
-  )
-
+   {:DEFAULT_STORAGE_DIR DEFAULT_STORAGE_DIR
+    :FILE_STORAGE_DIR FILE_STORAGE_DIR
+    :THUMBNAILS_STORAGE_DIR THUMBNAILS_STORAGE_DIR}))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

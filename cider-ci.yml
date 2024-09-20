@@ -33,13 +33,21 @@ jobs:
           submodules:
             include_match: ^.*$
       tasks:
-        ruby_spec_formated:
+        ruby_spec_formatted:
           scripts:
             check:
               body: |
                 #!/usr/bin/env bash
                 set -euo pipefail
                 ./bin/check-ruby-spec-format
+        clojure_code_formatted:
+          scripts:
+            test:
+              body: |
+                #!/usr/bin/env bash
+                set -euo pipefail
+                cd ${API_DIR}
+                ./bin/clj-fmt check src
       contexts:
         include:
           - path: cider-ci/context-components/lint/git-lint.yml

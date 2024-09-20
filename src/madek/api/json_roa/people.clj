@@ -1,10 +1,9 @@
 (ns madek.api.json-roa.people
   (:require
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [madek.api.json-roa.links :as links]
-    [madek.api.pagination :as pagination]
-    ))
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]
+   [madek.api.json-roa.links :as links]
+   [madek.api.pagination :as pagination]))
 
 (defn person [request response]
   (let [context (:context request)
@@ -24,16 +23,14 @@
        {:root (links/root context)}
        :collection
        (conj
-         {:relations
-          (into {} (map-indexed
-                     (fn [i id]
-                       [(+ 1 i (pagination/compute-offset query-params))
-                        (links/person context id)])
-                     ids))}
-         (when (seq ids)
-           (links/next-link links/people-path context query-params)
-           ))})))
-
+        {:relations
+         (into {} (map-indexed
+                   (fn [i id]
+                     [(+ 1 i (pagination/compute-offset query-params))
+                      (links/person context id)])
+                   ids))}
+        (when (seq ids)
+          (links/next-link links/people-path context query-params)))})))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

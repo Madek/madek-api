@@ -1,14 +1,13 @@
 (ns madek.api.resources.vocabularies.permissions
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [logbug.thrown :as thrown]
-    [madek.api.authentication.basic :refer [extract]]
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    [madek.api.utils.sql :as sql]
-    ))
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]
+   [logbug.thrown :as thrown]
+   [madek.api.authentication.basic :refer [extract]]
+   [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+   [madek.api.utils.sql :as sql]))
 
 (defn- execute-query
   [query]
@@ -31,8 +30,8 @@
     (-> (sql/select :vocabulary_id)
         (sql/from :vocabulary_user_permissions)
         (sql/merge-where
-          [:= :vocabulary_user_permissions.user_id user-id]
-          [:= :vocabulary_user_permissions.view true])
+         [:= :vocabulary_user_permissions.user_id user-id]
+         [:= :vocabulary_user_permissions.view true])
         (sql/format))))
 
 (defn- pluck-vocabulary-ids
@@ -49,15 +48,15 @@
       (-> (sql/select :vocabulary_id)
           (sql/from :vocabulary_group_permissions)
           (sql/where
-            [:in :vocabulary_group_permissions.group_id (group-ids user-id)]
-            [:= :vocabulary_group_permissions.view true])
+           [:in :vocabulary_group_permissions.group_id (group-ids user-id)]
+           [:= :vocabulary_group_permissions.view true])
           (sql/format)))))
 
 (defn accessible-vocabulary-ids
   [user-id]
   (concat
-    (pluck-vocabulary-ids (user-permissions-query user-id))
-    (pluck-vocabulary-ids (group-permissions-query user-id))))
+   (pluck-vocabulary-ids (user-permissions-query user-id))
+   (pluck-vocabulary-ids (group-permissions-query user-id))))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

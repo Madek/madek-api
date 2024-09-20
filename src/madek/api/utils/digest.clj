@@ -1,6 +1,6 @@
 (ns madek.api.utils.digest
   (:import
-    [java.security MessageDigest]))
+   [java.security MessageDigest]))
 
 (def sha256-message-digest (MessageDigest/getInstance "SHA-256"))
 

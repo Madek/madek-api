@@ -1,18 +1,17 @@
 (ns madek.api.resources.meta-data.meta-datum
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [compojure.core :as cpj]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [madek.api.authorization :as authorization]
-    [madek.api.pagination :as pagination]
-    [madek.api.resources.keywords.index :as keywords]
-    [madek.api.resources.shared :as shared]
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    [madek.api.utils.sql :as sql]
-    [ring.util.response :as ring-response]
-    ))
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [compojure.core :as cpj]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]
+   [madek.api.authorization :as authorization]
+   [madek.api.pagination :as pagination]
+   [madek.api.resources.keywords.index :as keywords]
+   [madek.api.resources.shared :as shared]
+   [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+   [madek.api.utils.sql :as sql]
+   [ring.util.response :as ring-response]))
 
 ;### people ###################################################################
 
@@ -20,21 +19,18 @@
 ; here and now, the following is a Hack so the server so it won't fail when
 ; groups are requested
 (defn groups-with-ids [meta-datum]
-  []
-  )
+  [])
 
 (defn get-people-index [meta-datum]
   (let [query (-> (sql/select :people.*)
                   (sql/from :people)
                   (sql/merge-join
-                    :meta_data_people
-                    [:= :meta_data_people.person_id :people.id])
+                   :meta_data_people
+                   [:= :meta_data_people.person_id :people.id])
                   (sql/merge-where
-                    [:= :meta_data_people.meta_datum_id (:id meta-datum)])
+                   [:= :meta_data_people.meta_datum_id (:id meta-datum)])
                   (sql/format))]
     (jdbc/query (rdbms/get-ds) query)))
-
-
 
 ;### meta-datum ###############################################################
 
@@ -48,17 +44,16 @@
   (let [query (-> (sql/select :meta_data_roles.*)
                   (sql/from :meta_data_roles)
                   (sql/merge-where
-                    [:= :meta_data_roles.meta_datum_id (:id meta-datum)])
+                   [:= :meta_data_roles.meta_datum_id (:id meta-datum)])
                   (sql/format))]
-    (jdbc/query (rdbms/get-ds) query))
-  )
+    (jdbc/query (rdbms/get-ds) query)))
 
 (defn- find-meta-datum-role
   [id]
   (let [query (-> (sql/select :meta_data_roles.*)
                   (sql/from :meta_data_roles)
                   (sql/merge-where
-                    [:= :meta_data_roles.id id])
+                   [:= :meta_data_roles.id id])
                   (sql/format))]
     (first (jdbc/query (rdbms/get-ds) query))))
 
@@ -83,8 +78,7 @@
 (defn- prepare-meta-datum-role
   [id]
   (let [meta-datum (find-meta-datum-role id)]
-    (select-keys meta-datum [:id :meta_datum_id :person_id :role_id :position])
-  ))
+    (select-keys meta-datum [:id :meta_datum_id :person_id :role_id :position])))
 
 (defn get-meta-datum [request]
   (let [meta-datum (:meta-datum request)]
@@ -97,7 +91,7 @@
                        "text/plain; charset=utf-8")
         value (-> meta-datum prepare-meta-datum :value)]
     (cond
-      (nil? value)  {:status 422}
+      (nil? value) {:status 422}
       (str value) (-> {:body value}
                       (ring-response/header "Content-Type" content-type))
       :else {:body value})))

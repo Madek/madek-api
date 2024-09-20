@@ -1,5 +1,4 @@
-(ns madek.api.scratch
-  )
+(ns madek.api.scratch)
 
 ;(ns-publics 'cheshire.core)
 ;(type (cheshire.core/parse-string "true"))

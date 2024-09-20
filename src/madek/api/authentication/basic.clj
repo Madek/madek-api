@@ -1,19 +1,17 @@
 (ns madek.api.authentication.basic
   (:require
-    [camel-snake-kebab.core :refer :all]
-    [cider-ci.open-session.bcrypt :refer [checkpw]]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [inflections.core :refer :all]
-    [logbug.debug :as debug]
-    [logbug.thrown :as thrown]
-    [madek.api.authentication.token :as token-authentication]
-    [madek.api.constants :refer [presence]]
-    [madek.api.utils.rdbms :as rdbms]
-    )
+   [camel-snake-kebab.core :refer :all]
+   [cider-ci.open-session.bcrypt :refer [checkpw]]
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [inflections.core :refer :all]
+   [logbug.debug :as debug]
+   [logbug.thrown :as thrown]
+   [madek.api.authentication.token :as token-authentication]
+   [madek.api.constants :refer [presence]]
+   [madek.api.utils.rdbms :as rdbms])
   (:import
-    [java.util Base64]
-    ))
+   [java.util Base64]))
 
 (defn- get-by-login [table-name login]
   (->> (jdbc/query (rdbms/get-ds)
@@ -51,25 +49,25 @@
                  [username password] (clojure.string/split (str decoded-val) #":" 2)]
              {:username username :password password})))
        (catch Exception _
-         (logging/warn "failed to extract basic-auth properties because" _ ))))
+         (logging/warn "failed to extract basic-auth properties because" _))))
 
 (defn check-new-password [entity password {tx :tx}]
-  (when-let 
-    [query-str 
-     (some->> 
-       (case (:type entity)
-         "ApiClient" (["SELECT (password_digest= crypt(?, password_digest))"
-                       "AS pw_matches FROM api_clients WHERE id = ?"])
-         "User" ["SELECT (data= crypt(?, data)) AS pw_matches "
-                 "FROM auth_systems_users " 
-                 "WHERE user_id = ? " 
-                 "AND auth_systems_users.auth_system_id = 'password'"]
-         nil) 
-       (clojure.string/join " "))]
-    (some-> 
-      (jdbc/query (or tx (rdbms/get-ds))
-                  [query-str password (:id entity)])
-      first :pw_matches)))
+  (when-let
+   [query-str
+    (some->>
+     (case (:type entity)
+       "ApiClient" (["SELECT (password_digest= crypt(?, password_digest))"
+                     "AS pw_matches FROM api_clients WHERE id = ?"])
+       "User" ["SELECT (data= crypt(?, data)) AS pw_matches "
+               "FROM auth_systems_users "
+               "WHERE user_id = ? "
+               "AND auth_systems_users.auth_system_id = 'password'"]
+       nil)
+     (clojure.string/join " "))]
+    (some->
+     (jdbc/query (or tx (rdbms/get-ds))
+                 [query-str password (:id entity)])
+     first :pw_matches)))
 
 (defn password-authentication
   [login-or-email password handler {tx :tx :as request}]
@@ -96,10 +94,9 @@
     (if-not username
       (handler request); carry on without authenticated entity
       (if-let [user-token (token-authentication/find-user-token-by-some-secret
-                       [username password])]
+                           [username password])]
         (token-authentication/authenticate user-token handler request)
         (password-authentication username password handler request)))))
-
 
 (defn wrap [handler]
   (fn [request]

@@ -4,14 +4,12 @@
 ;
 
 (ns madek.api.utils.duration
-  #?(:clj (:require [clj-time.core :as time]))
-  )
+  #?(:clj (:require [clj-time.core :as time])))
 
 (def FILL-REXS
   [#"(?i)and"
    #"(?i)plus"
-   #","
-   ])
+   #","])
 
 (defn drop-fillwords [sq]
   (->> sq
@@ -52,7 +50,7 @@
        (partition 2 2 "NO-TYPE-GIVEN")
        (map (fn [[d t]]
               [(* (parse-float d) (duration-type-into-secs-factor t))]))
-       flatten ))
+       flatten))
 
 (defn parse-string-to-seconds [duration]
   (->> duration
@@ -62,15 +60,14 @@
        (reduce +)))
 
 #?(:clj
-    (defn period [duration]
-      "Converts the duration into a org.joda.time.ReadablePeriod.
+   (defn period [duration]
+     "Converts the duration into a org.joda.time.ReadablePeriod.
       This function should be used in favor of (-> s parse-string-to-seconds time/seconds)
       because the latter will fail for very long durations, e.g. 100 years. "
-      (let [secs (parse-string-to-seconds duration)]
-        (cond
-          (> (/ secs (* 60 60 24 365)) 50) (time/days (/ secs (* 60 60 24)))
-          :else (time/seconds secs)
-          ))))
+     (let [secs (parse-string-to-seconds duration)]
+       (cond
+         (> (/ secs (* 60 60 24 365)) 50) (time/days (/ secs (* 60 60 24)))
+         :else (time/seconds secs)))))
 
 (defn valid? [duration]
   (try

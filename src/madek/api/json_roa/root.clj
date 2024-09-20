@@ -1,9 +1,8 @@
 (ns madek.api.json-roa.root
   (:require
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [madek.api.json-roa.links :as links]
-    ))
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]
+   [madek.api.json-roa.links :as links]))
 
 (defn build [request]
   (let [context (:context request)]
@@ -28,5 +27,4 @@
                  :roles (links/roles context)
                  :users (links/users context)
                  :user (links/user context)
-                 :vocabularies (links/vocabularies context)
-                 }}))
+                 :vocabularies (links/vocabularies context)}}))

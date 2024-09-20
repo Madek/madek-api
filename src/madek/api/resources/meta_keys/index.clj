@@ -1,15 +1,14 @@
 (ns madek.api.resources.meta-keys.index
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [madek.api.pagination :as pagination]
-    [madek.api.resources.shared :as shared]
-    [madek.api.resources.vocabularies.permissions :as permissions]
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-    ))
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]
+   [madek.api.pagination :as pagination]
+   [madek.api.resources.shared :as shared]
+   [madek.api.resources.vocabularies.permissions :as permissions]
+   [madek.api.utils.rdbms :as rdbms]
+   [madek.api.utils.sql :as sql]))
 
 (defn- where-clause
   [user-id]
@@ -17,8 +16,8 @@
     (if (empty? vocabulary-ids)
       [:= :vocabularies.enabled_for_public_view true]
       [:or
-        [:= :vocabularies.enabled_for_public_view true]
-        [:in :vocabularies.id vocabulary-ids]])))
+       [:= :vocabularies.enabled_for_public_view true]
+       [:in :vocabularies.id vocabulary-ids]])))
 
 (defn- base-query
   [user-id]

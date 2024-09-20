@@ -1,32 +1,31 @@
 (ns madek.api.main
   (:gen-class)
   (:require
-    [clojure.pprint :refer [pprint]]
-    [clojure.tools.cli :as cli]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [logbug.thrown]
-    [madek.api.constants :as constants]
-    [madek.api.utils.config :as config :refer [get-config]]
-    [madek.api.utils.exit :as exit]
-    [madek.api.utils.nrepl :as nrepl]
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.web]
-    [pg-types.all]
-    [taoensso.timbre :as timbre :refer []]
-    [taoensso.timbre.tools.logging]
-    ))
+   [clojure.java.jdbc :as jdbc]
+   [clojure.pprint :refer [pprint]]
+   [clojure.tools.cli :as cli]
+   [clojure.tools.logging :as logging]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]
+   [logbug.thrown]
+   [madek.api.constants :as constants]
+   [madek.api.utils.config :as config :refer [get-config]]
+   [madek.api.utils.exit :as exit]
+   [madek.api.utils.nrepl :as nrepl]
+   [madek.api.utils.rdbms :as rdbms]
+   [madek.api.web]
+   [pg-types.all]
+   [taoensso.timbre :as timbre :refer []]
+   [taoensso.timbre.tools.logging]))
 
 ;; cli ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def cli-options
   (concat
-    [["-h" "--help"]
-     ["-d" "--dev-mode"]]
-    exit/cli-options
-    nrepl/cli-options))
+   [["-h" "--help"]
+    ["-d" "--dev-mode"]]
+   exit/cli-options
+   nrepl/cli-options))
 
 (defn main-usage [options-summary & more]
   (->> ["Madek API"
@@ -43,34 +42,31 @@
            "-------------------------------------------------------------------"])]
        flatten (clojure.string/join \newline)))
 
-
 (defn helpnexit [summary args options]
   (println (main-usage summary {:args args :options options})))
-
 
 ;; run ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn run [options]
   (catcher/snatch
-    {:level :fatal
-     :throwable Throwable
-     :return-fn (fn [e] (System/exit -1))}
-    (logging/info 'madek.api.main "initializing ...")
-    (madek.api.utils.config/initialize
-      {:filenames ["./config/settings.yml"
-                   "../config/settings.yml",
-                   "./datalayer/config/settings.yml",
-                   "../webapp/datalayer/config/settings.yml",
-                   "./config/settings.local.yml"
-                   "../config/settings.local.yml"]})
-    (logging/info "Effective startup options " options)
-    (logging/info "Effective startup config " (get-config))
-    (rdbms/initialize (config/get-db-spec :api))
-    (nrepl/init (-> (get-config) :services :api :nrepl) options)
-    (madek.api.web/initialize)
-    (madek.api.constants/initialize (get-config))
-    (logging/info 'madek.api.main "... initialized")))
-
+   {:level :fatal
+    :throwable Throwable
+    :return-fn (fn [e] (System/exit -1))}
+   (logging/info 'madek.api.main "initializing ...")
+   (madek.api.utils.config/initialize
+    {:filenames ["./config/settings.yml"
+                 "../config/settings.yml",
+                 "./datalayer/config/settings.yml",
+                 "../webapp/datalayer/config/settings.yml",
+                 "./config/settings.local.yml"
+                 "../config/settings.local.yml"]})
+   (logging/info "Effective startup options " options)
+   (logging/info "Effective startup config " (get-config))
+   (rdbms/initialize (config/get-db-spec :api))
+   (nrepl/init (-> (get-config) :services :api :nrepl) options)
+   (madek.api.web/initialize)
+   (madek.api.constants/initialize (get-config))
+   (logging/info 'madek.api.main "... initialized")))
 
 ;; main ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -99,8 +95,6 @@
 
 ; hot reload on require
 (when @args* (main))
-
-
 
 ;### Debug ####################################################################
 ;(debug/debug-ns 'madek.api.utils.rdbms)

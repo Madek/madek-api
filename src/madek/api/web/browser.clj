@@ -1,13 +1,12 @@
 (ns madek.api.web.browser
   (:require
-    [clojure.tools.logging :as logging]
-    [compojure.core :as cpj :refer [defroutes GET PUT POST DELETE ANY]]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug :refer [I> I>>]]
-    [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
-    [logbug.thrown :as thrown]
-    [ring.middleware.resource :as resource]
-    ))
+   [clojure.tools.logging :as logging]
+   [compojure.core :as cpj :refer [defroutes GET PUT POST DELETE ANY]]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug :refer [I> I>>]]
+   [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
+   [logbug.thrown :as thrown]
+   [ring.middleware.resource :as resource]))
 
 (defn- remove-context [request]
   (let [context (:context request)
@@ -29,9 +28,8 @@
 
 (defn wrap [default-handler]
   (cpj/routes
-    (cpj/GET "/browser*" request static-resources-handler)
-    (cpj/ANY "*" request default-handler)))
-
+   (cpj/GET "/browser*" request static-resources-handler)
+   (cpj/ANY "*" request default-handler)))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

@@ -1,16 +1,14 @@
 (ns madek.api.resources.collection-media-entry-arcs
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [compojure.core :as cpj]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug :refer [I> I>>]]
-    [madek.api.constants :refer [presence]]
-    [madek.api.pagination :as pagination]
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-    ))
-
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [compojure.core :as cpj]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug :refer [I> I>>]]
+   [madek.api.constants :refer [presence]]
+   [madek.api.pagination :as pagination]
+   [madek.api.utils.rdbms :as rdbms]
+   [madek.api.utils.sql :as sql]))
 
 (defn arc-query [request]
   (-> (sql/select :*)
@@ -43,10 +41,8 @@
 
 (def routes
   (cpj/routes
-    (cpj/GET "/collection-media-entry-arcs/:id" [] #'arc)
-    (cpj/GET "/collection-media-entry-arcs/" [] #'arcs)
-    ))
-
+   (cpj/GET "/collection-media-entry-arcs/:id" [] #'arc)
+   (cpj/GET "/collection-media-entry-arcs/" [] #'arcs)))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

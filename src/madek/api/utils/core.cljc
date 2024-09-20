@@ -3,9 +3,7 @@
 ; See the "LICENSE.txt" file provided with this software.
 
 (ns madek.api.utils.core
-  (:refer-clojure :exclude [str keyword])
-  )
-
+  (:refer-clojure :exclude [str keyword]))
 
 ;### override some very basic vars in clojure.core ############################
 
@@ -17,7 +15,7 @@
      (subs (clojure.core/str x) 1)
      (clojure.core/str x)))
   ([x & yx]
-   (apply clojure.core/str  (concat [(str x)] (apply str yx)))))
+   (apply clojure.core/str (concat [(str x)] (apply str yx)))))
 
 (defn keyword
   "Like clojure.core/keyword but coerces an unknown single argument x
@@ -56,13 +54,13 @@
   to-cistr. Inverse of to-cisetmap."
   (cond
     (map? value) (->> value
-                   (filter (fn [[_ v]] v))
-                   (map (fn [[k _]] k))
-                   (map to-cistr)
-                   set)
+                      (filter (fn [[_ v]] v))
+                      (map (fn [[k _]] k))
+                      (map to-cistr)
+                      set)
     (coll? value) (->> value
-                    (map (fn [v] (to-cistr v)))
-                    set)
+                       (map (fn [v] (to-cistr v)))
+                       set)
     :else (throw (ex-info (str "I don't know how to convert a"
                                (type value) " to a ciset") {:input value}))))
 
@@ -73,11 +71,11 @@
   for to-ciset applicable types of v."
   (cond
     (map? sq) (->> sq
-                   (map (fn [[k v]] [(keyword k) v ]))
+                   (map (fn [[k v]] [(keyword k) v]))
                    (into {}))
     (coll? sq) (->> sq
-                   (map (fn [k] [(keyword k) true]))
-                   (into {}))
+                    (map (fn [k] [(keyword k) true]))
+                    (into {}))
     :else (throw (ex-info (str "I don't know how to convert a"
                                (type sq) " to a cisetmap.") {:input sq}))))
 

@@ -5,17 +5,15 @@
 (ns madek.api.utils.nrepl
   (:refer-clojure :exclude [str keyword])
   (:require
-    [camel-snake-kebab.core :refer [->snake_case]]
-    [clj-yaml.core :as yaml]
-    [clojure.java.io :as io]
-    [clojure.string :refer [upper-case]]
-    [clojure.tools.logging :as logging :refer [debug info]]
-    [environ.core :refer [env]]
-    [logbug.catcher :as catcher]
-    [madek.api.utils.core :refer [presence keyword str]]
-    [nrepl.server :as nrepl-server :refer [start-server stop-server]]
-    ))
-
+   [camel-snake-kebab.core :refer [->snake_case]]
+   [clj-yaml.core :as yaml]
+   [clojure.java.io :as io]
+   [clojure.string :refer [upper-case]]
+   [clojure.tools.logging :as logging :refer [debug info]]
+   [environ.core :refer [env]]
+   [logbug.catcher :as catcher]
+   [madek.api.utils.core :refer [presence keyword str]]
+   [nrepl.server :as nrepl-server :refer [start-server stop-server]]))
 
 ;;; cli-options ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -36,16 +34,14 @@
     :parse-fn #(yaml/parse-string %)
     :validate [boolean? "Must parse to a boolean"]]
    [nil (long-opt-for-key repl-port-key) "nREPL port"
-    :default  (some-> repl-port-key env Integer/parseInt)
+    :default (some-> repl-port-key env Integer/parseInt)
     :parse-fn #(Integer/parseInt %)
     :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
    [nil (long-opt-for-key repl-bind-key) "nREPL bind interface"
     :default (some-> repl-bind-key env)]
-   [nil (long-opt-for-key repl-port-file-key ) "write port to this file; NO (or any YAML falsy) disables this"
+   [nil (long-opt-for-key repl-port-file-key) "write port to this file; NO (or any YAML falsy) disables this"
     :default (or (some-> repl-port-file-key env yaml/parse-string) ".nrepl-port")
     :validate [#(or (false? %) (presence %)) "Must be false or present"]]])
-
-
 
 ;;; server ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

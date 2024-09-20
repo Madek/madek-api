@@ -1,10 +1,9 @@
 (ns madek.api.json-roa.meta-data
   (:require
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [madek.api.json-roa.links :as links]
-    [madek.api.pagination :as pagination]
-    ))
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]
+   [madek.api.json-roa.links :as links]
+   [madek.api.pagination :as pagination]))
 
 (defn build-meta-datum-collection-item [context idx meta-datum]
   [(format "%07d" idx)
@@ -20,23 +19,23 @@
 (defn- meta-datum-relations
   [response context]
   {:meta-key (links/meta-key
-               context (-> response :body :meta_key_id))
+              context (-> response :body :meta_key_id))
    :media-entry (links/media-entry
-                  context (-> response :body :media_entry_id))
+                 context (-> response :body :media_entry_id))
    :data-stream (links/meta-datum-data-stream
-                  context (-> response :body))})
+                 context (-> response :body))})
 
 (defn- meta-datum-role-relations
   [response context]
   (conj {}
-    {:meta-datum (links/meta-datum
-                 context {:id (-> response :body :meta_datum_id)})
-     :person (links/person
-             context (-> response :body :person_id))}
-    (if (some? (-> response :body :role_id))
-      {:role (links/role
-             context (-> response :body :role_id))}
-      {})))
+        {:meta-datum (links/meta-datum
+                      context {:id (-> response :body :meta_datum_id)})
+         :person (links/person
+                  context (-> response :body :person_id))}
+        (if (some? (-> response :body :role_id))
+          {:role (links/role
+                  context (-> response :body :role_id))}
+          {})))
 
 (defn- relations
   [response context]
@@ -48,7 +47,7 @@
   (let [context (:context request)
         query-params (:query-params request)]
     {:name "Meta-Data"
-     :relations (conj {:root (links/root context) }
+     :relations (conj {:root (links/root context)}
                       ; slight duplicative structure here; could be avoided
                       ; with dynamic resolution via resolve; but not worth yet,
                       (when-let [id (-> response :body :media_entry_id)]

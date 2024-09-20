@@ -1,10 +1,9 @@
 (ns madek.api.resources.media-entries.advanced-filter.permissions
   (:require
-    [clojure.tools.logging :as logging]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [madek.api.utils.sql :as sql]
-    ))
+   [clojure.tools.logging :as logging]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]
+   [madek.api.utils.sql :as sql]))
 
 ; (defn- delegation-ids-subquery [user_id]
 ;   {:union
@@ -71,48 +70,48 @@
 (defn- filter-by-permission-for-auth-entity [sqlmap permission authenticated-entity]
   (case (:type authenticated-entity)
     "User" (sql/merge-where sqlmap (user-authorized-condition
-                                     permission (:id authenticated-entity)))
+                                    permission (:id authenticated-entity)))
     "ApiClient" (sql/merge-where sqlmap (api-client-authorized-condition
-                                          permission (:id authenticated-entity)))
-    (throw (ex-info (str "Filtering for " permission " requires a signed-in entity." )
-                               {:status 422}))))
+                                         permission (:id authenticated-entity)))
+    (throw (ex-info (str "Filtering for " permission " requires a signed-in entity.")
+                    {:status 422}))))
 
 (defn filter-by-query-params [sqlmap query-params authenticated-entity]
 
-  (doseq [true_param ["me_get_full_size"  "me_get_metadata_and_previews"]]
+  (doseq [true_param ["me_get_full_size" "me_get_metadata_and_previews"]]
     (when (contains? query-params (keyword true_param))
       (when (not= (get query-params (keyword true_param)) true)
-        (throw (ex-info (str "Value of " true_param " must be true when present." )
-                                   {:status 422})))))
+        (throw (ex-info (str "Value of " true_param " must be true when present.")
+                        {:status 422})))))
 
   (cond-> sqlmap
 
     (:public_get_metadata_and_previews query-params)
-      (sql/merge-where [:= :media_entries.get_metadata_and_previews true])
+    (sql/merge-where [:= :media_entries.get_metadata_and_previews true])
 
     (:public_get_full_size query-params)
-      (sql/merge-where [:= :media_entries.get_full_size true])
+    (sql/merge-where [:= :media_entries.get_full_size true])
 
     (= (:me_get_full_size query-params) true)
-      (filter-by-permission-for-auth-entity "get_full_size" authenticated-entity)
+    (filter-by-permission-for-auth-entity "get_full_size" authenticated-entity)
 
     (= (:me_get_metadata_and_previews query-params) true)
-      (filter-by-permission-for-auth-entity "get_metadata_and_previews" authenticated-entity)))
+    (filter-by-permission-for-auth-entity "get_metadata_and_previews" authenticated-entity)))
 
 (defn- sql-merge-where-permission-spec [sqlmap permission-spec]
   (case (:key permission-spec)
     "public"
     (-> sqlmap
         (sql/merge-where
-          [:=
-           :media_entries.get_metadata_and_previews
-           (case (:value permission-spec)
-             "true" true
-             "false" false
-             :else (throw
-                     (ex-info
-                       (str "Invalid filter for \"public\" permission!")
-                       {:status 422})))]))
+         [:=
+          :media_entries.get_metadata_and_previews
+          (case (:value permission-spec)
+            "true" true
+            "false" false
+            :else (throw
+                   (ex-info
+                    (str "Invalid filter for \"public\" permission!")
+                    {:status 422})))]))
 
     "responsible_user"
     (-> sqlmap
@@ -123,17 +122,17 @@
     "entrusted_to_user"
     (-> sqlmap
         (sql/merge-where
-          [:or
-           (user-permission-exists-condition "get_metadata_and_previews"
-                                             (:value permission-spec))
-           (group-permission-for-user-exists-condition "get_metadata_and_previews"
-                                                       (:value permission-spec))]))
+         [:or
+          (user-permission-exists-condition "get_metadata_and_previews"
+                                            (:value permission-spec))
+          (group-permission-for-user-exists-condition "get_metadata_and_previews"
+                                                      (:value permission-spec))]))
 
     "entrusted_to_group"
     (-> sqlmap
         (sql/merge-where
-          (group-permission-exists-condition "get_metadata_and_previews"
-                                             (:value permission-spec))))))
+         (group-permission-exists-condition "get_metadata_and_previews"
+                                            (:value permission-spec))))))
 
 (defn sql-filter-by [sqlmap permission-specs]
   (if-not (empty? permission-specs)

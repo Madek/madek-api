@@ -4,15 +4,13 @@
 
 (ns madek.api.utils.fs
   (:require
-    [clj-uuid]
-    [clojure.string :as string]
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    )
+   [clj-uuid]
+   [clojure.string :as string]
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug])
   (:import
-    [java.io File]
-    [org.apache.commons.lang3 SystemUtils]
-    ))
+   [java.io File]
+   [org.apache.commons.lang3 SystemUtils]))
 
 (defn directory? [path]
   (let [file (clojure.java.io/file path)]
@@ -23,7 +21,6 @@
   (when-not (directory? path)
     (throw (IllegalStateException. "Directory does not exist."))))
 
-
 (defn path-proof
   "Returns a unique - whenever (str x) is unique - representation of x that can
   be safely used as a filename or as a part of a path."
@@ -32,8 +29,7 @@
            str
            (string/replace #"[\W_-]+" "-")
            (string/replace #"^-" "")
-           (string/replace #"-$" "")
-           )
+           (string/replace #"-$" ""))
        "_"
        (clj-uuid/v5 clj-uuid/+null+ (str x))))
 
@@ -46,4 +42,4 @@
   (if-not SystemUtils/IS_OS_WINDOWS
     (str (File/separator) (apply system-path args))
     (throw (UnsupportedOperationException.
-             "`system-path-abs` is not implement for this platform."))))
+            "`system-path-abs` is not implement for this platform."))))

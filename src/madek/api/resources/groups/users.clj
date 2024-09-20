@@ -1,23 +1,22 @@
 (ns madek.api.resources.groups.users
   (:require
-    [clj-uuid]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [compojure.core :as cpj]
-    [logbug.debug :as debug]
-    [madek.api.constants :refer [presence]]
-    [madek.api.pagination :as pagination]
-    [madek.api.pagination :as pagination]
-    [madek.api.resources.groups.shared :as groups]
-    [madek.api.resources.media-entries.index :refer [get-index]]
-    [madek.api.resources.media-entries.media-entry :refer [get-media-entry]]
-    [madek.api.resources.shared :as shared]
-    [madek.api.resources.users :as users]
-    [madek.api.utils.auth :refer [wrap-authorize-admin!]]
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-    [ring.util.codec :refer [url-decode]]
-    ))
+   [clj-uuid]
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [compojure.core :as cpj]
+   [logbug.debug :as debug]
+   [madek.api.constants :refer [presence]]
+   [madek.api.pagination :as pagination]
+   [madek.api.pagination :as pagination]
+   [madek.api.resources.groups.shared :as groups]
+   [madek.api.resources.media-entries.index :refer [get-index]]
+   [madek.api.resources.media-entries.media-entry :refer [get-media-entry]]
+   [madek.api.resources.shared :as shared]
+   [madek.api.resources.users :as users]
+   [madek.api.utils.auth :refer [wrap-authorize-admin!]]
+   [madek.api.utils.rdbms :as rdbms]
+   [madek.api.utils.sql :as sql]
+   [ring.util.codec :refer [url-decode]]))
 
 (defn group-user-query [group-id user-id]
   (-> (users/sql-select)
@@ -51,7 +50,6 @@
                                          :user_id (:id user)})
             {:body (find-group-user group-id user-id)})))))
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn remove-user [group-id user-id]
@@ -62,7 +60,6 @@
                     ["group_id = ? AND user_id = ?"
                      (:id group) (:id user)])
       {:status 204})))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -126,36 +123,34 @@
     (let [current-group-users-ids (current-group-users-ids tx group-id)
           target-group-users-ids (target-group-users-ids tx (:users data))]
       (jdbc/execute!
-        tx
-        (update-delete-query
-          group-id (clojure.set/difference current-group-users-ids target-group-users-ids)))
+       tx
+       (update-delete-query
+        group-id (clojure.set/difference current-group-users-ids target-group-users-ids)))
       (jdbc/execute!
-        tx
-        (update-insert-query
-          group-id (clojure.set/difference target-group-users-ids current-group-users-ids)))
+       tx
+       (update-insert-query
+        group-id (clojure.set/difference target-group-users-ids current-group-users-ids)))
       {:status 204})))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (def routes
   (cpj/routes
-    (cpj/GET "/groups/:group-id/users/:user-id"
-             [group-id user-id]
-             (get-group-user group-id user-id))
-    (cpj/PUT "/groups/:group-id/users/:user-id"
-             [group-id user-id]
-             (add-user group-id user-id))
-    (cpj/DELETE "/groups/:group-id/users/:user-id"
-                [group-id user-id]
-                (remove-user group-id user-id))
-    (cpj/GET "/groups/:group-id/users/"
-             [group-id :as request]
-             (get-group-users group-id request))
-    (cpj/PUT "/groups/:group-id/users/"
-             [group-id :as {data :body}]
-             (update-group-users group-id data))))
+   (cpj/GET "/groups/:group-id/users/:user-id"
+     [group-id user-id]
+     (get-group-user group-id user-id))
+   (cpj/PUT "/groups/:group-id/users/:user-id"
+     [group-id user-id]
+     (add-user group-id user-id))
+   (cpj/DELETE "/groups/:group-id/users/:user-id"
+     [group-id user-id]
+     (remove-user group-id user-id))
+   (cpj/GET "/groups/:group-id/users/"
+     [group-id :as request]
+     (get-group-users group-id request))
+   (cpj/PUT "/groups/:group-id/users/"
+     [group-id :as {data :body}]
+     (update-group-users group-id data))))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

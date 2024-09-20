@@ -1,21 +1,20 @@
 (ns madek.api.authorization
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [logbug.thrown :as thrown]
-    [madek.api.resources.collections.permissions :as collection-perms :only [viewable-by-auth-entity?]]
-    [madek.api.resources.media-entries.permissions :as media-entry-perms :only [viewable-by-auth-entity?]]
-    [madek.api.utils.rdbms :as rdbms]
-    ))
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]
+   [logbug.thrown :as thrown]
+   [madek.api.resources.collections.permissions :as collection-perms :only [viewable-by-auth-entity?]]
+   [madek.api.resources.media-entries.permissions :as media-entry-perms :only [viewable-by-auth-entity?]]
+   [madek.api.utils.rdbms :as rdbms]))
 
 (defn authorized? [auth-entity resource]
   (case (:type resource)
     "MediaEntry" (media-entry-perms/viewable-by-auth-entity?
-                   resource auth-entity)
+                  resource auth-entity)
     "Collection" (collection-perms/viewable-by-auth-entity?
-                   resource auth-entity)
+                  resource auth-entity)
     false))
 
 (defn authorized?! [request resource]

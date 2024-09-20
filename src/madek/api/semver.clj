@@ -1,10 +1,9 @@
 (ns madek.api.semver
   (:require
-    [clj-commons-exec :as commons-exec]
-    [logbug.debug :as debug]
-    [logbug.catcher :as catcher]
-    [clojure.tools.logging :as logging]
-    ))
+   [clj-commons-exec :as commons-exec]
+   [clojure.tools.logging :as logging]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]))
 
 (defn get-git-commit-id []
   (try
@@ -17,5 +16,4 @@
       "UNKNOWN")))
 
 (defn get-semver []
-  (str "3.0.0-beta.1+" (get-git-commit-id))
-  )
+  (str "3.0.0-beta.1+" (get-git-commit-id)))

@@ -1,11 +1,10 @@
 (ns madek.api.resources.media-entries.media-entry
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-    ))
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]
+   [madek.api.utils.rdbms :as rdbms]
+   [madek.api.utils.sql :as sql]))
 
 (def ^:private media-entry-keys
   [:id :created_at :responsible_user_id

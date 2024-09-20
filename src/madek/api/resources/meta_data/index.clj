@@ -1,20 +1,18 @@
 (ns madek.api.resources.meta-data.index
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [compojure.core :as cpj]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [madek.api.authorization :as authorization]
-    [madek.api.constants :as constants]
-    [madek.api.pagination :as pagination]
-    [madek.api.resources.shared :as shared]
-    [madek.api.resources.vocabularies.permissions :as permissions]
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    [madek.api.utils.sql :as sql]
-    [taoensso.timbre :refer [debug info warn error spy]]
-    ))
-
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [compojure.core :as cpj]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]
+   [madek.api.authorization :as authorization]
+   [madek.api.constants :as constants]
+   [madek.api.pagination :as pagination]
+   [madek.api.resources.shared :as shared]
+   [madek.api.resources.vocabularies.permissions :as permissions]
+   [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
+   [madek.api.utils.sql :as sql]
+   [taoensso.timbre :refer [debug info warn error spy]]))
 
 (defn- where-clause
   [user-id]
@@ -22,8 +20,8 @@
     (if (empty? vocabulary-ids)
       [:= :vocabularies.enabled_for_public_view true]
       [:or
-        [:= :vocabularies.enabled_for_public_view true]
-        [:in :vocabularies.id vocabulary-ids]])))
+       [:= :vocabularies.enabled_for_public_view true]
+       [:in :vocabularies.id vocabulary-ids]])))
 
 (defn- base-query
   [user-id]
@@ -44,7 +42,7 @@
 
 (defn- meta-data-query-for-collection [collection-id user-id]
   (-> (base-query user-id)
-      (sql/merge-where [:= :meta_data.collection_id  collection-id])))
+      (sql/merge-where [:= :meta_data.collection_id collection-id])))
 
 (defn filter-meta-data-by-meta-key-ids [query request]
   (if-let [meta-keys (-> request :query-params :meta_keys)]
@@ -75,10 +73,10 @@
     (when-let [meta-data (get-meta-data request media-resource)]
       {:body
        (conj
-         {:meta-data meta-data}
-         (case (:type media-resource)
-           "MediaEntry" {:media_entry_id (:id media-resource)}
-           "Collection" {:collection_id (:id media-resource)}))})))
+        {:meta-data meta-data}
+        (case (:type media-resource)
+          "MediaEntry" {:media_entry_id (:id media-resource)}
+          "Collection" {:collection_id (:id media-resource)}))})))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

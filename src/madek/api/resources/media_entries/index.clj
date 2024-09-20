@@ -2,21 +2,20 @@
   (:refer-clojure :exclude [str keyword])
   (:require [madek.api.utils.core :refer [str keyword]])
   (:require
-    [clojure.core.match :refer [match]]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.set :refer [rename-keys]]
-    [clojure.string :as str]
-    [clojure.tools.logging :as logging]
-    [compojure.core :as cpj]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug :refer [I> I>> identity-with-logging]]
-    [madek.api.pagination :as pagination]
-    [madek.api.resources.media-entries.advanced-filter :as advanced-filter]
-    [madek.api.resources.media-entries.advanced-filter.permissions :as permissions :refer [filter-by-query-params]]
-    [madek.api.resources.shared :as shared]
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-    ))
+   [clojure.core.match :refer [match]]
+   [clojure.java.jdbc :as jdbc]
+   [clojure.set :refer [rename-keys]]
+   [clojure.string :as str]
+   [clojure.tools.logging :as logging]
+   [compojure.core :as cpj]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug :refer [I> I>> identity-with-logging]]
+   [madek.api.pagination :as pagination]
+   [madek.api.resources.media-entries.advanced-filter :as advanced-filter]
+   [madek.api.resources.media-entries.advanced-filter.permissions :as permissions :refer [filter-by-query-params]]
+   [madek.api.resources.shared :as shared]
+   [madek.api.utils.rdbms :as rdbms]
+   [madek.api.utils.sql :as sql]))
 
 ;### collection_id ############################################################
 
@@ -28,13 +27,12 @@
                         [:= :arcs.media_entry_id :media_entries.id])
         (sql/merge-where [:= :arcs.collection_id collection_id])
         (sql/merge-select
-          [:arcs.created_at :arc_created_at]
-          [:arcs.order :arc_order]
-          [:arcs.position :arc_position]
-          [:arcs.created_at :arc_created_at]
-          [:arcs.updated_at :arc_updated_at]
-          [:arcs.id :arc_id]))))
-
+         [:arcs.created_at :arc_created_at]
+         [:arcs.order :arc_order]
+         [:arcs.position :arc_position]
+         [:arcs.created_at :arc_created_at]
+         [:arcs.updated_at :arc_updated_at]
+         [:arcs.id :arc_id]))))
 
 ;### query ####################################################################
 
@@ -48,21 +46,20 @@
 
 (defn- order-by-media-entry-attribute [query [attribute order]]
   (let [order-by-arg (match [(keyword attribute) (keyword order)]
-                            [:created_at :desc] [:media-entries.created_at :desc :nulls-last]
-                            [:created_at _] [:media-entries.created_at]
-                            [:edit_session_updated_at _] [:media_entries.edit_session_updated_at])]
+                       [:created_at :desc] [:media-entries.created_at :desc :nulls-last]
+                       [:created_at _] [:media-entries.created_at]
+                       [:edit_session_updated_at _] [:media_entries.edit_session_updated_at])]
     (sql/merge-order-by query order-by-arg)))
 
 (defn- order-by-arc-attribute [query [attribute order]]
   (let [order-by-arg (match [(keyword attribute) (keyword order)]
-                            [:order :desc] [:arcs.order :desc :nulls-last]
-                            [:order _] [:arcs.order]
-                            [:position :asc] [:arcs.position :asc]
-                            [:position :desc] [:arcs.position :desc :nulls-last]
-                            [:created_at :desc] [:arcs.created_at :desc :nulls-last]
-                            [:created_at _] [:arcs.created_at])]
+                       [:order :desc] [:arcs.order :desc :nulls-last]
+                       [:order _] [:arcs.order]
+                       [:position :asc] [:arcs.position :asc]
+                       [:position :desc] [:arcs.position :desc :nulls-last]
+                       [:created_at :desc] [:arcs.created_at :desc :nulls-last]
+                       [:created_at _] [:arcs.created_at])]
     (sql/merge-order-by query order-by-arg)))
-
 
 (defn- order-by-meta-datum-text [query [meta-key-id order]]
   (let [from-name (-> meta-key-id
@@ -71,14 +68,14 @@
                       (#(str "meta-data-" %)))]
     (-> query
         (sql/merge-left-join [:meta_data from-name]
-                             [:= (keyword (str from-name".meta_key_id")) meta-key-id])
+                             [:= (keyword (str from-name ".meta_key_id")) meta-key-id])
         (sql/merge-order-by [(-> from-name (str ".string") keyword)
                              (case (keyword order)
                                :asc :asc
                                :desc :desc
                                :asc)
                              :nulls-last])
-        (sql/merge-where [:= (keyword (str from-name".media_entry_id")) :media_entries.id]))))
+        (sql/merge-where [:= (keyword (str from-name ".media_entry_id")) :media_entries.id]))))
 
 (defn- order-reducer [query [scope & more]]
   (case scope
@@ -109,22 +106,20 @@
     "title_desc" (order-by-title query order)
     "last_change" (order-by-media-entry-attribute query [:edit_session_updated_at :asc])
     "manual_asc" (handle-missing-collection-id collection-id (order-by-arc-attribute query [:position :asc]))
-    "manual_desc" (handle-missing-collection-id collection-id (order-by-arc-attribute query [:position :desc]))
-  )
-)
+    "manual_desc" (handle-missing-collection-id collection-id (order-by-arc-attribute query [:position :desc]))))
 
 (def ^:private available-sortings '("desc" "asc" "title_asc" "title_desc"
-                                    "last_change" "manual_asc" "manual_desc"))
+                                           "last_change" "manual_asc" "manual_desc"))
 
 (defn- default-order [query]
   (sql/order-by query [:media_entries.created-at :asc]))
 
 (defn- order-by-collection-sorting [query collection-id]
   (handle-missing-collection-id collection-id
-    (if-let [sorting (find-collection-default-sorting collection-id)]
-      (let [prepared-sorting (->> (str/split (str/replace sorting "created_at " "") #" ") (str/join "_") str/lower-case)]
-        (order-by-string query prepared-sorting collection-id))
-      (sql/order-by query [:media_entries.created-at :asc]))))
+                                (if-let [sorting (find-collection-default-sorting collection-id)]
+                                  (let [prepared-sorting (->> (str/split (str/replace sorting "created_at " "") #" ") (str/join "_") str/lower-case)]
+                                    (order-by-string query prepared-sorting collection-id))
+                                  (sql/order-by query [:media_entries.created-at :asc]))))
 
 (def ^:private not-allowed-order-param-message
   (str "only the following values are allowed as order parameter: "
@@ -140,9 +135,8 @@
                             (= order "stored_in_collection") (order-by-collection-sorting query collection-id)
                             :else (throw (ex-info not-allowed-order-param-message
                                                   {:status 422})))
-          (seq? order)(reduce order-reducer query order)
-          :else (default-order query))
-      )
+          (seq? order) (reduce order-reducer query order)
+          :else (default-order query)))
       (sql/merge-order-by :media_entries.id)))
 
 (defn- build-query [request]
@@ -161,7 +155,6 @@
 (defn- query-index-resources [request]
   (jdbc/query (rdbms/get-ds) (build-query request)))
 
-
 ;### index ####################################################################
 
 (defn get-index [{{collection-id :collection_id} :query-params :as request}]
@@ -170,22 +163,19 @@
       (let [data (query-index-resources request)]
         {:body
          (merge
-           {:media-entries (->> data
-                                (map #(select-keys % [:media_entry_id :media_entry_created_at]))
-                                (map #(rename-keys % {:media_entry_id :id
-                                                      :media_entry_created_at :created_at})))}
-           (when collection-id
-             {:arcs (->> data
-                         (map #(select-keys % [:arc_id :media_entry_id :arc_order :arc_position :arc_created_at :arc_updated_at]))
-                         (map #(rename-keys % {:arc_id :id
-                                               :arc_order :order
-                                               :arc_position :position
-                                               :arc_created_at :created_at
-                                               :arc_updated_at :updated_at})))}))})
-      (catch Exception e (merge (ex-data e) {:body {:message (.getMessage e)}}))
-    )
-  )
-)
+          {:media-entries (->> data
+                               (map #(select-keys % [:media_entry_id :media_entry_created_at]))
+                               (map #(rename-keys % {:media_entry_id :id
+                                                     :media_entry_created_at :created_at})))}
+          (when collection-id
+            {:arcs (->> data
+                        (map #(select-keys % [:arc_id :media_entry_id :arc_order :arc_position :arc_created_at :arc_updated_at]))
+                        (map #(rename-keys % {:arc_id :id
+                                              :arc_order :order
+                                              :arc_position :position
+                                              :arc_created_at :created_at
+                                              :arc_updated_at :updated_at})))}))})
+      (catch Exception e (merge (ex-data e) {:body {:message (.getMessage e)}})))))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

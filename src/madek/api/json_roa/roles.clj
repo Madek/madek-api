@@ -1,10 +1,9 @@
 (ns madek.api.json-roa.roles
   (:require
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [madek.api.json-roa.links :as links]
-    [madek.api.pagination :as pagination]
-    ))
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]
+   [madek.api.json-roa.links :as links]
+   [madek.api.pagination :as pagination]))
 
 (defn role
   [request response]
@@ -25,16 +24,14 @@
        :relations {:root (links/root context)}
        :collection
        (conj
-         {:relations
-          (into {} (map-indexed
-                     (fn [i id]
-                       [(+ 1 i (pagination/compute-offset query-params))
-                        (links/role context id)])
-                     ids))}
-         (when (seq ids)
-           (links/next-link links/roles-path context query-params)
-           ))
-      })))
+        {:relations
+         (into {} (map-indexed
+                   (fn [i id]
+                     [(+ 1 i (pagination/compute-offset query-params))
+                      (links/role context id)])
+                   ids))}
+        (when (seq ids)
+          (links/next-link links/roles-path context query-params)))})))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

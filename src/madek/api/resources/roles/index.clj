@@ -1,12 +1,11 @@
 (ns madek.api.resources.roles.index
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [madek.api.pagination :as pagination]
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-    ))
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]
+   [madek.api.pagination :as pagination]
+   [madek.api.utils.rdbms :as rdbms]
+   [madek.api.utils.sql :as sql]))
 
 (defn- query
   [query-params]
@@ -19,8 +18,8 @@
   [request]
   (let [query-params (-> request :query-params)]
     {:body
-      {:roles
-        (jdbc/query (rdbms/get-ds) (query query-params))}}))
+     {:roles
+      (jdbc/query (rdbms/get-ds) (query query-params))}}))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

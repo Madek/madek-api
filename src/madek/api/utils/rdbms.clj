@@ -4,17 +4,14 @@
 
 (ns madek.api.utils.rdbms
   (:require
-    [logbug.catcher :as catcher]
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [ring.util.codec]
-    [pg-types.all]
-    )
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [logbug.catcher :as catcher]
+   [pg-types.all]
+   [ring.util.codec])
   (:import
-    [java.net URI]
-    [com.mchange.v2.c3p0 ComboPooledDataSource DataSources]
-    ))
-
+   [com.mchange.v2.c3p0 ComboPooledDataSource DataSources]
+   [java.net URI]))
 
 (defonce ^:private ds (atom nil))
 (defn get-ds [] @ds)
@@ -23,21 +20,20 @@
   (if-not @ds
     {:OK? true :message "RDBMS is not initialized!"}
     (catcher/snatch
-      {:return-fn (fn [e] {:OK? false :error (.getMessage e)})}
-      (assert (->> (jdbc/query @ds
-                               ["SELECT true AS state FROM schema_migrations LIMIT 1"])
-                   first :state))
-      (let [c3p0ds (-> @ds :datasource)
-            max (.getMaxPoolSize c3p0ds)
-            conns (.getNumConnectionsDefaultUser c3p0ds)
-            busy (.getNumBusyConnectionsDefaultUser c3p0ds)
-            idle (.getNumIdleConnectionsDefaultUser c3p0ds)
-            usage (double (/ busy conns))]
-        {:OK? true
-         :Max max
-         :Allocated conns
-         :usage (Double/parseDouble (String/format "%.2f" (into-array [usage])))
-         }))))
+     {:return-fn (fn [e] {:OK? false :error (.getMessage e)})}
+     (assert (->> (jdbc/query @ds
+                              ["SELECT true AS state FROM schema_migrations LIMIT 1"])
+                  first :state))
+     (let [c3p0ds (-> @ds :datasource)
+           max (.getMaxPoolSize c3p0ds)
+           conns (.getNumConnectionsDefaultUser c3p0ds)
+           busy (.getNumBusyConnectionsDefaultUser c3p0ds)
+           idle (.getNumIdleConnectionsDefaultUser c3p0ds)
+           usage (double (/ busy conns))]
+       {:OK? true
+        :Max max
+        :Allocated conns
+        :usage (Double/parseDouble (String/format "%.2f" (into-array [usage])))}))))
 
 (defn reset []
   (logging/info "resetting c3p0 datasource")
@@ -55,7 +51,6 @@
       (-> query ring.util.codec/form-decode (get name)))))
 
 ;(get-url-param {:url "postgresql://localhost:5432/madek-v3_development?user=thomas"} "user")
-
 
 (defn- get-user [db-conf]
   "Retrieves first non nil value of :user of db-conf,
@@ -92,10 +87,9 @@
              (.setMaxPoolSize (or (get-max-pool-size db-conf) 10))
              (.setMinPoolSize (or (:min-pool-size db-conf) 3))
              (.setMaxConnectionAge
-               (or (:max-connection-age db-conf) (* 3 60 60)))
+              (or (:max-connection-age db-conf) (* 3 60 60)))
              (.setMaxIdleTimeExcessConnections
-               (or (:max-idle-time-exess-connections db-conf) (* 10 60)))
-             )}))
+              (or (:max-idle-time-exess-connections db-conf) (* 10 60))))}))
 
 (defn initialize [db-conf]
   (logging/info initialize [db-conf])

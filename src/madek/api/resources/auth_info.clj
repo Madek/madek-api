@@ -1,10 +1,8 @@
 (ns madek.api.resources.auth-info
   (:require
-    [clojure.tools.logging :as logging]
-    [compojure.core :as cpj]
-    [logbug.debug :as debug]
-    ))
-
+   [clojure.tools.logging :as logging]
+   [compojure.core :as cpj]
+   [logbug.debug :as debug]))
 
 (defn- auth-info [request]
   (if-let [auth-entity (:authenticated-entity request)]
@@ -15,8 +13,7 @@
 
 (def routes
   (cpj/routes
-    (cpj/GET "/auth-info" _ auth-info)))
-
+   (cpj/GET "/auth-info" _ auth-info)))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

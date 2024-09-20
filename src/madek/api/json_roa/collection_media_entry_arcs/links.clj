@@ -1,9 +1,8 @@
 (ns madek.api.json-roa.collection-media-entry-arcs.links
   (:require
-    [clj-http.client :as http-client]
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    ))
+   [clj-http.client :as http-client]
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]))
 
 (defn collection-media-entry-arcs-path-base
   ([prefix] (str prefix "/collection-media-entry-arcs/")))
@@ -12,8 +11,8 @@
 
 (defn unbound-template-params [template-params query-params]
   (clojure.set/difference
-    template-params
-    (->> query-params keys (map name) set)))
+   template-params
+   (->> query-params keys (map name) set)))
 
 (defn collection-media-entry-arcs-path
   ([prefix]
@@ -22,8 +21,8 @@
    (str (collection-media-entry-arcs-path-base prefix)
         "?" (http-client/generate-query-string query-params)
         (when-let [utp (seq (unbound-template-params
-                              arcs-query-template-params
-                              query-params))]
+                             arcs-query-template-params
+                             query-params))]
           (str "{&" (clojure.string/join "," utp) "}")))))
 
 (defn collection-media-entry-arcs
@@ -34,8 +33,7 @@
     :href (collection-media-entry-arcs-path prefix query-params)
     :relations
     {:api-docs {:name "API-Doc Collection-Media-Entry-Arcs"
-                :href "/api/docs/resources/collection-media-entry-arcs.html"
-                }}}))
+                :href "/api/docs/resources/collection-media-entry-arcs.html"}}}))
 
 (defn collection-media-entry-arc
   ([prefix id]
@@ -43,8 +41,7 @@
     :href (str (collection-media-entry-arcs-path-base prefix) id)
     :relations
     {:api-docs {:name "API-Doc Collection-Media-Entry-Arc"
-                :href "/api/docs/resources/collection-media-entry-arc.html"
-                }}}))
+                :href "/api/docs/resources/collection-media-entry-arc.html"}}}))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

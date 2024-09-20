@@ -1,17 +1,16 @@
 (ns madek.api.resources.media-files
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [clojure.string]
-    [compojure.core :as cpj]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug :refer [I> I>>]]
-    [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
-    [madek.api.resources.media-files.authorization :as media-files.authorization]
-    [madek.api.resources.media-files.media-file :as media-file]
-    [madek.api.resources.shared :as shared]
-    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
-    ))
+   [clojure.java.jdbc :as jdbc]
+   [clojure.string]
+   [clojure.tools.logging :as logging]
+   [compojure.core :as cpj]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug :refer [I> I>>]]
+   [logbug.ring :as logbug-ring :refer [wrap-handler-with-logging]]
+   [madek.api.resources.media-files.authorization :as media-files.authorization]
+   [madek.api.resources.media-files.media-file :as media-file]
+   [madek.api.resources.shared :as shared]
+   [madek.api.utils.rdbms :as rdbms :refer [get-ds]]))
 
 ;##############################################################################
 
@@ -19,17 +18,16 @@
   ; we wrap this since badly formated media-file-id strings can cause an
   ; exception, note that 404 is in that case a correct response
   (catcher/snatch
-    {}
-    (-> (jdbc/query
-          (get-ds)
-          [(clojure.string/join
-             ["SELECT * FROM media_files "
-              "WHERE id = ? "
-               "AND EXISTS (SELECT 1  FROM media_entries "
-                "   WHERE media_entries.id = media_files.media_entry_id "
-                "   AND (media_entries.deleted_at IS NULL OR media_entries.deleted_at >= NOW()))"
-              ]) media-file-id])
-        first)))
+   {}
+   (-> (jdbc/query
+        (get-ds)
+        [(clojure.string/join
+          ["SELECT * FROM media_files "
+           "WHERE id = ? "
+           "AND EXISTS (SELECT 1  FROM media_entries "
+           "   WHERE media_entries.id = media_files.media_entry_id "
+           "   AND (media_entries.deleted_at IS NULL OR media_entries.deleted_at >= NOW()))"]) media-file-id])
+       first)))
 
 (defn- wrap-find-and-add-media-file
   ([handler] #(wrap-find-and-add-media-file % handler))
@@ -41,14 +39,14 @@
 ;##############################################################################
 
 (def routes
-  (I>  wrap-handler-with-logging
+  (I> wrap-handler-with-logging
       (cpj/routes
-        (cpj/GET "/media-files/:media_file_id" _
-                 #'media-file/get-media-file)
-        (cpj/GET "/media-files/:media_file_id/data-stream" _
-                 (media-files.authorization/wrap-authorize
-                   #'media-file/get-media-file-data-stream :get_full_size))
-        (cpj/ANY "*" _ shared/dead-end-handler))
+       (cpj/GET "/media-files/:media_file_id" _
+         #'media-file/get-media-file)
+       (cpj/GET "/media-files/:media_file_id/data-stream" _
+         (media-files.authorization/wrap-authorize
+          #'media-file/get-media-file-data-stream :get_full_size))
+       (cpj/ANY "*" _ shared/dead-end-handler))
       (media-files.authorization/wrap-authorize :get_metadata_and_previews)
       wrap-find-and-add-media-file))
 

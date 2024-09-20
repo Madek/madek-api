@@ -1,14 +1,12 @@
 (ns madek.api.json-roa.links
   (:require
-    [clj-http.client :as http-client]
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [madek.api.json-roa.collection-media-entry-arcs.links :as collection-media-entry-arcs.links]
-    [madek.api.pagination :as pagination]
-    [ring.util.codec :refer [form-encode]]
-    [uritemplate-clj.core :refer [uritemplate]]
-    ))
-
+   [clj-http.client :as http-client]
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]
+   [madek.api.json-roa.collection-media-entry-arcs.links :as collection-media-entry-arcs.links]
+   [madek.api.pagination :as pagination]
+   [ring.util.codec :refer [form-encode]]
+   [uritemplate-clj.core :refer [uritemplate]]))
 
 ;### helpers ######################################################################
 
@@ -17,10 +15,10 @@
   already used in the query-params. The Madek-API does not use duplicate
   keys in the query params. "
   (->> (clojure.set/difference
-         template-keys
-         (->> query-params
-              keys
-              (map keyword)))
+        template-keys
+        (->> query-params
+             keys
+             (map keyword)))
        (map name)
        (clojure.string/join ",")))
 
@@ -35,11 +33,9 @@
 
 ;### auth-info ####################################################################
 
-
 (defn auth-info [prefix]
   {:name "Authentication-Info"
-   :href (str prefix "/auth-info")
-   })
+   :href (str prefix "/auth-info")})
 
 ;### groups #######################################################################
 
@@ -67,9 +63,7 @@
     :methods {:get {}
               :post {}}
     :relations {:api-docs {:name "API-Doc Group"
-                           :href "/api/docs/resources/group.html#group"
-                           }}}))
-
+                           :href "/api/docs/resources/group.html#group"}}}))
 
 ;### groups-users #################################################################
 
@@ -99,7 +93,6 @@
     :relations {:api-docs {:name "API-Doc Group-Users"
                            :href "/api/docs/resources/group-users.html"}}}))
 
-
 ;### meta data ####################################################################
 
 (defn collection-meta-data
@@ -110,9 +103,7 @@
     :href (str prefix "/collections/" id "/meta-data/"
                "{?meta_keys}")
     :relations {:api-docs {:name "API-Doc Meta-Data"
-                           :href "/api/docs/resources/meta-data.html#meta-data"
-                           }}}))
-
+                           :href "/api/docs/resources/meta-data.html#meta-data"}}}))
 
 ;### meta data ####################################################################
 
@@ -125,8 +116,7 @@
                (when-let [meta-key-id (:meta_key_id meta-datum)]
                  (str " of " meta-key-id)))
     :relations {:api-docs {:name "API-Doc Meta-Datum"
-                           :href "/api/docs/resources/meta-datum.html#meta-datum"
-                           }}}))
+                           :href "/api/docs/resources/meta-datum.html#meta-datum"}}}))
 
 (defn meta-datum-data-stream
   ([prefix]
@@ -137,8 +127,7 @@
                (when-let [meta-key-id (:meta_key_id meta-datum)]
                  (str " of " meta-key-id)))
     :relations {:api-docs {:name "API-Doc Meta-Datum-Data-Stream"
-                           :href "/api/docs/resources/meta-datum.html#meta-datum-data-stream"
-                           }}}))
+                           :href "/api/docs/resources/meta-datum.html#meta-datum-data-stream"}}}))
 
 (defn meta-datum-role
   ([prefix]
@@ -147,13 +136,9 @@
    {:name "MetaDatum::Role"
     :href (str prefix "/meta-data-roles/" id)
     :relations {:api-docs {:name "API-Doc MetaDatum::Role"
-                           :href "/api/docs/resources/meta-datum.html#meta-datum"
-                           }}}))
-
+                           :href "/api/docs/resources/meta-datum.html#meta-datum"}}}))
 
 ;### media-entries ################################################################
-
-
 
 (defn media-entries-path-base
   ([prefix] (str prefix "/media-entries/")))
@@ -172,8 +157,8 @@
    (media-entries-path prefix {}))
   ([prefix query-params]
    (let [template-params (template-params-str
-                           media-entries-path-query-template-keys
-                           query-params)]
+                          media-entries-path-query-template-keys
+                          query-params)]
      (str (media-entries-path-base prefix)
           (if (empty? query-params)
             (str "{?" template-params "}")
@@ -181,7 +166,7 @@
                  "{&" template-params "}"))))))
 
 (defn media-entries
-  ([prefix ]
+  ([prefix]
    (media-entries prefix {}))
   ([prefix query-params]
    {:name "Media-Entries"
@@ -214,8 +199,8 @@
    (collections-path prefix {}))
   ([prefix query-params]
    (let [template-params (template-params-str
-                           collections-path-query-template-keys
-                           query-params)]
+                          collections-path-query-template-keys
+                          query-params)]
      (str (collections-path-base prefix)
           (if (empty? query-params)
             (str "{?" template-params "}")
@@ -238,15 +223,12 @@
    {:name "Collection"
     :href (str prefix "/collections/" id)
     :relations {:api-docs {:name "API-Doc Collection"
-                           :href "/api/docs/resources/collection.html#collection"
-                           }}}))
+                           :href "/api/docs/resources/collection.html#collection"}}}))
 
 ;### collection-media-entry­arcs ##################################################
 
 (defn collection-media-entry-arcs [& args]
   (apply collection-media-entry-arcs.links/collection-media-entry-arcs args))
-
-
 
 ;###############################################################################
 
@@ -258,10 +240,7 @@
     :href (str prefix "/media-entries/" id "/meta-data/"
                "{?meta_keys}")
     :relations {:api-docs {:name "API-Doc Meta-Data"
-                           :href "/api/docs/resources/meta-data.html#meta-data"
-                           }}
-    }))
-
+                           :href "/api/docs/resources/meta-data.html#meta-data"}}}))
 
 ;### media-file(s) #############################################################
 
@@ -271,7 +250,7 @@
   ([prefix id]
    {:name "Media-File"
     :href (str prefix "/media-files/" id)
-    :relations {} }))
+    :relations {}}))
 
 (defn media-file-data-stream
   ([prefix]
@@ -279,8 +258,7 @@
   ([prefix id]
    {:name "Media-File"
     :href (str prefix "/media-files/" id "/data-stream")
-    :relations {} }))
-
+    :relations {}}))
 
 ;### preview(s) ################################################################
 
@@ -290,7 +268,7 @@
   ([prefix id]
    {:name "Preview"
     :href (str prefix "/previews/" id)
-    :relations {} }))
+    :relations {}}))
 
 (defn preview-file-data-stream
   ([prefix]
@@ -298,8 +276,7 @@
   ([prefix id]
    {:name "Preview-File"
     :href (str prefix "/previews/" id "/data-stream")
-    :relations {} }))
-
+    :relations {}}))
 
 ;### meta-key(s) ###############################################################
 
@@ -310,8 +287,7 @@
    {:name "Meta-Key"
     :href (str prefix "/meta-keys/" id)
     :relations {:api-docs {:name "API-Doc Meta-Key"
-                           :href "/api/docs/resources/meta-key.html#meta-key"
-                           }}}))
+                           :href "/api/docs/resources/meta-key.html#meta-key"}}}))
 
 (defn meta-keys-path
   ([prefix]
@@ -329,9 +305,7 @@
    {:name "Meta-Keys"
     :href (meta-keys-path prefix query-params)
     :relations {:api-docs {:name "API-Doc Meta-Keys"
-                           :href "/api/docs/resources/meta-keys.html#meta-keys"
-                           }}}))
-
+                           :href "/api/docs/resources/meta-keys.html#meta-keys"}}}))
 
 ;### people and person #########################################################
 
@@ -359,9 +333,7 @@
     :methods {:get {}
               :post {}}
     :relations {:api-docs {:name "API-Doc Group"
-                           :href "/api/docs/resources/person.html#person"
-                           }}}))
-
+                           :href "/api/docs/resources/person.html#person"}}}))
 
 ;### users #######################################################################
 
@@ -389,10 +361,7 @@
     :methods {:get {}
               :post {}}
     :relations {:api-docs {:name "API-Doc Users"
-                           :href "/api/docs/resources/users.html#users"
-                           }}}))
-
-
+                           :href "/api/docs/resources/users.html#users"}}}))
 
 ;### keyword(s) ################################################################
 
@@ -402,8 +371,7 @@
   ([prefix id]
    {:name "Keyword"
     :href (str prefix "/keywords/" id)
-    :relations {} }))
-
+    :relations {}}))
 
 ;### vocabulary(s) ###############################################################
 
@@ -414,8 +382,7 @@
    {:name "Vocabulary"
     :href (str prefix "/vocabularies/" id)
     :relations {:api-docs {:name "API-Doc Vocabulary"
-                           :href "/api/docs/resources/vocabulary.html#vocabulary"
-                           }}}))
+                           :href "/api/docs/resources/vocabulary.html#vocabulary"}}}))
 
 (defn vocabularies-path
   ([prefix]
@@ -433,9 +400,7 @@
    {:name "Vocabularies"
     :href (vocabularies-path prefix query-params)
     :relations {:api-docs {:name "API-Doc Vocabularies"
-                           :href "/api/docs/resources/vocabularies.html#vocabularies"
-                           }}}))
-
+                           :href "/api/docs/resources/vocabularies.html#vocabularies"}}}))
 
 ;### role(s) ################################################################
 
@@ -449,19 +414,16 @@
    {:name "Role"
     :href (str prefix "/roles/" id)
     :relations {:api-docs {:name "API-Doc Role"
-                           :href "/api/docs/resources/role.html#role"
-                           }}}))
+                           :href "/api/docs/resources/role.html#role"}}}))
 
 (defn roles
   ([prefix]
-    (roles prefix {}))
+   (roles prefix {}))
   ([prefix query-params]
    {:name "Roles"
     :href (roles-path prefix query-params)
     :relations {:api-docs {:name "API-Doc Roles"
-                           :href "/api/docs/resources/roles.html#roles"
-                           }}}))
-
+                           :href "/api/docs/resources/roles.html#roles"}}}))
 
 ;### next link #################################################################
 

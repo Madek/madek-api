@@ -41,6 +41,11 @@
         }
  :aliases
  {;
+  :cljfmt {:extra-deps {io.github.weavejester/cljfmt
+                        {:git/tag "0.11.2"
+                         :sha "fb26b22f569724b05c93eb2502592dfc2de898c3"
+                         }}
+           :main-opts ["-m" "cljfmt.main"]}
   :depstar {:extra-deps {seancorfield/depstar {:mvn/version "2.0.216"}}}
   :graph {:extra-deps
           {org.clojure/tools.deps.graph

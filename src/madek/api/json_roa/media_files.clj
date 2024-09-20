@@ -1,10 +1,9 @@
 (ns madek.api.json-roa.media-files
   (:require
-    [clojure.tools.logging :as logging]
-    [logbug.debug :as debug]
-    [madek.api.json-roa.links :as links]
-    [madek.api.pagination :as pagination]
-    ))
+   [clojure.tools.logging :as logging]
+   [logbug.debug :as debug]
+   [madek.api.json-roa.links :as links]
+   [madek.api.pagination :as pagination]))
 
 (defn- previews-map [context response]
   (into {}
@@ -20,8 +19,7 @@
      :collection {:relations (previews-map context response)}
      :relations
      {:root (links/root context)
-      :data-stream (links/media-file-data-stream context (:id params))
-      }}))
+      :data-stream (links/media-file-data-stream context (:id params))}}))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

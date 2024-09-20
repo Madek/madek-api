@@ -1,13 +1,12 @@
 (ns madek.api.resources.media-resources.permissions
   (:require
-    [clojure.java.jdbc :as jdbc]
-    [clojure.tools.logging :as logging]
-    [logbug.catcher :as catcher]
-    [logbug.debug :as debug]
-    [logbug.thrown :as thrown]
-    [madek.api.utils.rdbms :as rdbms]
-    [madek.api.utils.sql :as sql]
-    ))
+   [clojure.java.jdbc :as jdbc]
+   [clojure.tools.logging :as logging]
+   [logbug.catcher :as catcher]
+   [logbug.debug :as debug]
+   [logbug.thrown :as thrown]
+   [madek.api.utils.rdbms :as rdbms]
+   [madek.api.utils.sql :as sql]))
 
 (defn- build-api-client-permissions-query
   [media-resource-id api-client-id perm-name & {:keys [mr-type]}]
@@ -50,37 +49,34 @@
 ; ============================================================
 
 (defn- delegation-ids [user_id]
-  (let [query {:union [
-                (-> (sql/select :delegation_id)
-                    (sql/from :delegations_groups)
-                    (sql/where [:in :delegations_groups.group_id (->
-                      (sql/select :group_id)
-                      (sql/from :groups_users)
-                      (sql/where [:= :groups_users.user_id user_id]))]))
-                (-> (sql/select :delegation_id)
-                    (sql/from :delegations_users)
-                    (sql/where [:= :delegations_users.user_id user_id]))]}]
-    (map #(:delegation_id %) (jdbc/query (rdbms/get-ds) (sql/format query)))
-  )
-)
+  (let [query {:union [(-> (sql/select :delegation_id)
+                           (sql/from :delegations_groups)
+                           (sql/where [:in :delegations_groups.group_id (->
+                                                                         (sql/select :group_id)
+                                                                         (sql/from :groups_users)
+                                                                         (sql/where [:= :groups_users.user_id user_id]))]))
+                       (-> (sql/select :delegation_id)
+                           (sql/from :delegations_users)
+                           (sql/where [:= :delegations_users.user_id user_id]))]}]
+    (map #(:delegation_id %) (jdbc/query (rdbms/get-ds) (sql/format query)))))
 
 (defn- query-api-client-permissions
   [resource api-client-id perm-name & {:keys [mr-type]}]
   (->> (build-api-client-permissions-query
-         (:id resource) api-client-id perm-name :mr-type mr-type)
+        (:id resource) api-client-id perm-name :mr-type mr-type)
        (jdbc/query (rdbms/get-ds))))
 
 (defn- query-user-permissions
   [resource user-id perm-name & {:keys [mr-type]}]
   (->> (build-user-permissions-query
-         (:id resource) user-id perm-name :mr-type mr-type)
+        (:id resource) user-id perm-name :mr-type mr-type)
        (jdbc/query (rdbms/get-ds))))
 
 (defn- query-group-permissions
   [resource user-id perm-name & {:keys [mr-type]}]
   (if-let [user-groups (seq (query-user-groups user-id))]
     (->> (build-group-permissions-query
-           (:id resource) (map :id user-groups) perm-name :mr-type mr-type)
+          (:id resource) (map :id user-groups) perm-name :mr-type mr-type)
          (jdbc/query (rdbms/get-ds)))))
 
 (defn permission-by-auth-entity? [resource auth-entity perm-name & {:keys [mr-type]}]

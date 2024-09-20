@@ -1,7 +1,6 @@
 (ns madek.api.resources.media-files.common
   (:require
-    [madek.api.utils.sql :as sql]))
-
+   [madek.api.utils.sql :as sql]))
 
 (defn media-entry-undeleted-exists-cond [media-file-id]
   [:exists
@@ -12,8 +11,6 @@
        (sql/merge-where [:or
                          [:= :mes.deleted_at nil]
                          [:>= :mes.deleted_at (sql/raw "now()")]]))])
-
-
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)
