@@ -31,10 +31,6 @@ shared_context :valid_session_object do |to_include|
 end
 
 describe "Session/Cookie Authentication" do
-  before :all do
-    Rails.application.secrets.secret_key_base = "secret"
-  end
-
   let :user do
     FactoryBot.create :user, password: "TOPSECRET"
   end

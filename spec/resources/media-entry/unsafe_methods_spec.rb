@@ -1,10 +1,6 @@
 require "spec_helper"
 
 describe "Unsafe methods not possible for session auth" do
-  before :all do
-    Rails.application.secrets.secret_key_base = "secret"
-  end
-
   let :media_entry do
     FactoryBot.create(:media_entry)
   end
