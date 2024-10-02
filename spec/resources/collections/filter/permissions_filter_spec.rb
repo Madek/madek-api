@@ -137,4 +137,55 @@ describe "filtering collections" do
       end
     end
   end
+
+  context "by dedicated permissions" do
+    include_context :json_roa_client_for_authenticated_user do
+      let(:other_users) { users.reject { |u| u == user } }
+
+      let!(:coll_dedicated) do
+        coll = FactoryBot.create(:collection,
+                                 responsible_user: other_users.first,
+                                 get_metadata_and_previews: false)
+        FactoryBot.create(:collection_user_permission,
+                          user: user,
+                          collection: coll,
+                          get_metadata_and_previews: true)
+        return coll
+      end
+
+      let!(:coll_public_and_dedicated) do
+        coll = FactoryBot.create(:collection,
+                                 responsible_user: other_users.first,
+                                 get_metadata_and_previews: true)
+        FactoryBot.create(:collection_user_permission,
+                          user: user,
+                          collection: coll,
+                          get_metadata_and_previews: true)
+        return coll
+      end
+
+      let!(:coll_via_group_only) do
+        coll = FactoryBot.create(:collection,
+                                 responsible_user: other_users.first,
+                                 get_metadata_and_previews: false)
+        g = FactoryBot.create(:group)
+        g.users << user
+        FactoryBot.create(:collection_group_permission,
+                          collection: coll,
+                          group: g,
+                          get_metadata_and_previews: true)
+        return coll
+      end
+
+      it "me_get_metadata_and_previews_dedicated=true" do
+        roa_res = client.get.relation("collections").get("me_get_metadata_and_previews_dedicated" => "true")
+        expect(roa_res.response.status).to be == 200
+
+        colls = get_collections("me_get_metadata_and_previews_dedicated" => "true").map { |c| c["id"] }
+        expect(colls).to include coll_dedicated.id
+        expect(colls).to include coll_public_and_dedicated.id
+        expect(colls).not_to include coll_via_group_only.id
+      end
+    end
+  end
 end

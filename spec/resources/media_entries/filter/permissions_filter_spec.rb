@@ -50,6 +50,119 @@ describe "filtering media entries" do
 
     context "me_get_metadata_and_previews for a user" do
       include_context :json_roa_client_for_authenticated_user do
+        context "two media_entries, both have private permissions for the current user " \
+                "one with and one without public permission" do
+          let(:other_users) { users.reject { |u| u == user } }
+
+          let!(:me_dedicated) do
+            me = FactoryBot.create(:media_entry,
+                                   responsible_user: other_users.first,
+                                   is_published: true,
+                                   get_metadata_and_previews: false,
+                                   get_full_size: false)
+            FactoryBot.create(:media_entry_user_permission,
+                              user: user,
+                              media_entry: me,
+                              get_full_size: true,
+                              get_metadata_and_previews: true)
+            return me
+          end
+
+          let!(:me_public_and_dedicated) do
+            me = FactoryBot.create(:media_entry,
+                                   responsible_user: other_users.first,
+                                   is_published: true,
+                                   get_metadata_and_previews: true,
+                                   get_full_size: true)
+            FactoryBot.create(:media_entry_user_permission,
+                              user: user,
+                              media_entry: me,
+                              get_full_size: true,
+                              get_metadata_and_previews: true)
+            return me
+          end
+
+          let!(:me_via_group_only) do
+            me = FactoryBot.create(:media_entry,
+                                   responsible_user: other_users.first,
+                                   is_published: true,
+                                   get_metadata_and_previews: false,
+                                   get_full_size: false)
+            g = FactoryBot.create(:group)
+            g.users << user
+            FactoryBot.create(:media_entry_group_permission,
+                              media_entry: me,
+                              group: g,
+                              get_full_size: true,
+                              get_metadata_and_previews: true)
+            return me
+          end
+
+          it "me_get_metadata_and_previews=true" do
+            mes_ids = get_media_entries(
+              "me_get_metadata_and_previews" => "true",
+            ).map { |me| me["id"] }
+            expect(mes_ids).to include me_dedicated.id
+            expect(mes_ids).to include me_public_and_dedicated.id
+            expect(mes_ids).to include me_via_group_only.id
+          end
+
+          it "me_get_metadata_and_previews=false ist not allowed" do
+            expect(
+              media_entries_relation.get(
+                "me_get_metadata_and_previews" => "false",
+              ).response.status
+            ).to be >= 400
+          end
+
+          it "public_get_metadata_and_previews=true" do
+            mes_ids = get_media_entries(
+              "public_get_metadata_and_previews" => "true",
+            ).map { |me| me["id"] }
+            expect(mes_ids).not_to include me_dedicated.id
+            expect(mes_ids).not_to include me_via_group_only
+            expect(mes_ids).to include me_public_and_dedicated.id
+          end
+
+          it "public_get_metadata_and_previews=false" do
+            mes_ids = get_media_entries(
+              "public_get_metadata_and_previews" => "false",
+            ).map { |me| me["id"] }
+            expect(mes_ids).to include me_dedicated.id
+            expect(mes_ids).to include me_via_group_only.id
+            expect(mes_ids).not_to include me_public_and_dedicated.id
+          end
+
+          it " combinding me_get_metadata_and_previews=true and \
+            public_get_metadata_and_previews=false".squish() do
+            mes_ids = get_media_entries(
+              "public_get_metadata_and_previews" => "false",
+              "me_get_metadata_and_previews" => "true",
+            ).map { |me| me["id"] }
+            expect(mes_ids).to include me_dedicated.id
+            expect(mes_ids).to include me_via_group_only.id
+            expect(mes_ids).not_to include me_public_and_dedicated.id
+          end
+
+          it "using me_get_metadata_and_previews_dedicated=true" do
+            mes_ids = get_media_entries(
+              "me_get_metadata_and_previews_dedicated" => "true",
+            ).map { |me| me["id"] }
+            expect(mes_ids).not_to include me_via_group_only.id
+            expect(mes_ids).to include me_dedicated.id
+            expect(mes_ids).to include me_public_and_dedicated.id
+          end
+
+          it "using me_get_fullsize_dedicated=true" do
+            mes_ids = get_media_entries(
+              "me_get_full_size_dedicated" => "true",
+            ).map { |me| me["id"] }
+            expect(mes_ids).not_to include me_via_group_only.id
+            expect(mes_ids).to include me_dedicated.id
+            expect(mes_ids).to include me_public_and_dedicated.id
+          end
+        end
+
         it "200 for public permissions" do
           10.times {
             FactoryBot.create(:media_entry,
