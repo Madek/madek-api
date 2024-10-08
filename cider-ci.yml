@@ -6,6 +6,7 @@ jobs:
       any branch matches:
         type: branch
         include_match: ^.+$
+        exclude_match: '^.*(no-ci|hotspot).*$'
     context:
       include: cider-ci/context-components/uberjar.yml
 
