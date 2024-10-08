@@ -25,7 +25,9 @@
       (sql/from :meta_keys)
       (sql/merge-join :vocabularies
                       [:= :meta_keys.vocabulary_id :vocabularies.id])
-      (sql/merge-where (where-clause user-id))))
+      (sql/merge-where (where-clause user-id))
+      (sql/order-by [:meta-keys.position :asc]
+                    [:meta-keys.id :asc])))
 
 (defn- filter-by-vocabulary [query request]
   (if-let [vocabulary (-> request :query-params :vocabulary)]

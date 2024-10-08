@@ -29,6 +29,9 @@
                    [:= :meta_data_people.person_id :people.id])
                   (sql/merge-where
                    [:= :meta_data_people.meta_datum_id (:id meta-datum)])
+                  (sql/order-by [:people.last_name :asc]
+                                [:people.first_name :asc]
+                                [:people.id :asc])
                   (sql/format))]
     (jdbc/query (rdbms/get-ds) query)))
 
@@ -45,6 +48,8 @@
                   (sql/from :meta_data_roles)
                   (sql/merge-where
                    [:= :meta_data_roles.meta_datum_id (:id meta-datum)])
+                  (sql/order-by [:meta_data_roles.position :asc]
+                                [:meta_data_roles.id :asc])
                   (sql/format))]
     (jdbc/query (rdbms/get-ds) query)))
 

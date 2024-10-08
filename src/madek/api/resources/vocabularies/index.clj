@@ -21,6 +21,8 @@
   [user-id]
   (-> (sql/select :id)
       (sql/from :vocabularies)
+      (sql/order-by [:position :asc]
+                    [:id :asc])
       (sql/merge-where (where-clause user-id))
       sql/format))
 

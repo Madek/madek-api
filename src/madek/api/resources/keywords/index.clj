@@ -7,14 +7,20 @@
    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
    [madek.api.utils.sql :as sql]))
 
+(def base-query
+  (-> (sql/select :keywords.*)
+      (sql/from :keywords)
+      (sql/merge-join
+       :meta_data_keywords
+       [:= :meta_data_keywords.keyword_id :keywords.id])
+      (sql/order-by [:keywords.position :asc]
+                    [:keywords.term :asc]
+                    [:keywords.id :asc])))
+
 (defn get-index [meta-datum]
   (let [meta-mey (first (jdbc/query (rdbms/get-ds)
                                     (meta-key/build-meta-key-query (:meta_key_id meta-datum))))
-        query-base (-> (sql/select :keywords.*)
-                       (sql/from :keywords)
-                       (sql/merge-join
-                        :meta_data_keywords
-                        [:= :meta_data_keywords.keyword_id :keywords.id])
+        query-base (-> base-query
                        (sql/merge-where
                         [:= :meta_data_keywords.meta_datum_id (:id meta-datum)]))
         query (sql/format (cond-> query-base
