@@ -128,6 +128,7 @@
 (def admin-protected-routes
   (->
    (cpj/routes
+    (cpj/GET "/people/" [] index)
     (cpj/POST "/people/" [] create-person)
     (cpj/DELETE "/people/:id" [id] (delete-person id))
     (cpj/PATCH "/people/:id" [] patch-person))
@@ -136,7 +137,6 @@
 (def routes
   (->
    (cpj/routes
-    (cpj/GET "/people/" [] index)
     (cpj/GET "/people/:id" [id] (get-person id))
     (cpj/ANY "*" _ admin-protected-routes))))
 
