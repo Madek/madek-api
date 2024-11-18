@@ -7,6 +7,7 @@
    [logbug.catcher :as catcher]
    [logbug.debug :as debug]
    [logbug.thrown :as thrown]
+   [madek.api.authentication.shared :refer [sql-select-user-admin-scopes]]
    [madek.api.utils.config :refer [get-config parse-config-duration-to-seconds]]
    [madek.api.utils.rdbms :as rdbms]
    [madek.api.utils.sql :as sql]
@@ -35,7 +36,8 @@
       (sql/merge-where
        (sql/raw (str "now() < user_sessions.created_at + "
                      "auth_systems.session_max_lifetime_hours "
-                     "* interval '1 hour'")))))
+                     "* interval '1 hour'")))
+      sql-select-user-admin-scopes))
 
 (defn find-valid-user-session [cookie-value]
   (some-> cookie-value

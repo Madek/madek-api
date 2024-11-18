@@ -14,7 +14,8 @@
    [madek.api.utils.auth :refer [wrap-authorize-admin!]]
    [madek.api.utils.rdbms :as rdbms]
    [madek.api.utils.sql :as sql]
-   [ring.util.codec :refer [url-decode]]))
+   [ring.util.codec :refer [url-decode]]
+   [taoensso.timbre :as timbre :refer [debug info]]))
 
 (defn id-where-clause
   [id]
@@ -63,7 +64,8 @@
    sql/format))
 
 (defn get-person
-  [id-or-institutinal-person-id]
+  [{{id-or-institutinal-person-id :id} :route-params :as request}]
+  (debug "get-person" request)
   (if-let [person
            (->>
             id-or-institutinal-person-id
@@ -137,7 +139,7 @@
 (def routes
   (->
    (cpj/routes
-    (cpj/GET "/people/:id" [id] (get-person id))
+    (cpj/GET "/people/:id" [id] get-person)
     (cpj/ANY "*" _ admin-protected-routes))))
 
 ;### Debug ####################################################################

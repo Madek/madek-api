@@ -7,9 +7,12 @@
    [inflections.core :refer :all]
    [logbug.debug :as debug]
    [logbug.thrown :as thrown]
+   [madek.api.authentication.shared :refer [sql-select-user-admin-scopes]]
    [madek.api.authentication.token :as token-authentication]
    [madek.api.constants :refer [presence]]
-   [madek.api.utils.rdbms :as rdbms])
+   [madek.api.utils.rdbms :as rdbms]
+   [madek.api.utils.sql :as sql]
+   [taoensso.timbre :refer [debug info warn error spy]])
   (:import
    [java.util Base64]))
 
@@ -27,12 +30,15 @@
        first))
 
 (defn- get-user-by-login-or-email-address [login-or-email]
-  (->> (jdbc/query (rdbms/get-ds)
-                   [(str "SELECT * FROM users WHERE login = ? OR email = ?")
-                    login-or-email login-or-email])
-       (map #(assoc % :type "User"))
-       (map #(clojure.set/rename-keys % {:email :email_address}))
-       first))
+  (let [query (-> (sql/select :users.*)
+                  (sql/from :users)
+                  (sql/merge-where [:= :login login-or-email])
+                  sql-select-user-admin-scopes)]
+    (->> (-> query spy sql/format spy)
+         (jdbc/query (rdbms/get-ds))
+         (map #(assoc % :type "User"))
+         (map #(clojure.set/rename-keys % {:email :email_address}))
+         first)))
 
 (defn get-entity-by-login-or-email [login-or-email]
   (or (get-api-client-by-login login-or-email)

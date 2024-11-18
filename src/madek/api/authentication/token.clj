@@ -4,6 +4,7 @@
    [clojure.tools.logging :as logging]
    [logbug.debug :as debug]
    [logbug.thrown :as thrown]
+   [madek.api.authentication.shared :refer [sql-select-user-admin-scopes]]
    [madek.api.utils.rdbms :as rdbms]
    [madek.api.utils.sql :as sql]
    [pandect.algo.sha256 :as algo.sha256])
@@ -32,6 +33,7 @@
            (sql/merge-where [:<> :api_tokens.revoked true])
            (sql/merge-where (sql/raw "now() < api_tokens.expires_at"))
            (sql/merge-join :users [:= :users.id :api_tokens.user_id])
+           sql-select-user-admin-scopes
            (sql/format))
        (jdbc/query (rdbms/get-ds))
        (map #(clojure.set/rename-keys % {:email :email_address}))
