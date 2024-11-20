@@ -50,4 +50,28 @@ context "people" do
       end
     end
   end
+
+  context "fields visibility" do
+    context "for an admin user" do
+      include_context :json_roa_client_for_authenticated_admin_user do
+        let :get_person_result do
+          client.get.relation("person").get(id: @person.id)
+        end
+        it "shows the otherwise hidden fields to the admin user" do
+          expect(get_person_result.data.keys).to include("admin_comment", "identification_info", "institutional_id")
+        end
+      end
+    end
+
+    context "for not an admind user" do
+      include_context :json_roa_client_for_authenticated_user do
+        let :get_person_result do
+          client.get.relation("person").get(id: @person.id)
+        end
+        it "hides fields restricted to the admin user" do
+          expect(get_person_result.data.keys).not_to include("admin_comment", "identification_info", "institutional_id")
+        end
+      end
+    end
+  end
 end

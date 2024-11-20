@@ -15,7 +15,7 @@
    [madek.api.utils.rdbms :as rdbms]
    [madek.api.utils.sql :as sql]
    [ring.util.codec :refer [url-decode]]
-   [taoensso.timbre :as timbre :refer [debug info]]))
+   [taoensso.timbre :as timbre :refer [debug info spy]]))
 
 (defn id-where-clause
   [id]
@@ -55,6 +55,18 @@
 ;### get person
 ;################################################################
 
+(def user-allowed-fields
+  [:id
+   :first_name
+   :last_name
+   :pseudonym
+   :created_at
+   :updated_at
+   :subtype
+   :description
+   :external_uris
+   :institution])
+
 (defn find-person-sql
   [id]
   (->
@@ -63,9 +75,17 @@
    (sql/from :people)
    sql/format))
 
+(defn filter-allowed-fields
+  [person is-admin]
+  (if is-admin
+    person
+    (select-keys person user-allowed-fields)))
+
 (defn get-person
-  [{{id-or-institutinal-person-id :id} :route-params :as request}]
-  (debug "get-person" request)
+  [{{id-or-institutinal-person-id :id} :route-params
+    {admin :admin_scope_read} :authenticated-entity
+    :as request}]
+  (info "get-person" request)
   (if-let [person
            (->>
             id-or-institutinal-person-id
@@ -77,7 +97,9 @@
       person
       (assoc ; support old (singular) version of field
        :external_uri (first (person :external_uris)))
-      (dissoc :previous_id :searchable))}
+      (dissoc :searchable)
+      spy
+      (filter-allowed-fields admin))}
     {:status 404, :body "No such person found"}))
 
 ;### delete person

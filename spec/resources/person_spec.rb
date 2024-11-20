@@ -1,6 +1,6 @@
 require "spec_helper"
 
-context "Getting a keyword resource without authentication" do
+context "Getting a person resource without authentication" do
   before :each do
     @person = FactoryBot.create :person
   end
@@ -15,6 +15,12 @@ context "Getting a keyword resource without authentication" do
 
   it "responds with 200" do
     expect(json_roa_person_resource.get.response.status).to be == 200
+
+    ["institution", "description", "first_name", "external_uris",
+     "updated_at", "id", "last_name", "pseudonym", "created_at", "subtype"].each do |key|
+      expect(json_roa_person_resource.get.data.keys).to include key
+    end
+
     expect(
       json_roa_person_resource
         .get.relation("root").get.response.status
