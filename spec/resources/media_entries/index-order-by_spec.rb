@@ -23,7 +23,7 @@ describe "ordering media entries" do
           expect(response.status).to eq(422)
           expect(response.body).to eq({ "message" => "only the following values are allowed as " \
                                    "order parameter: desc, asc, title_asc, " \
-                                   "title_desc, last_change, manual_asc, " \
+                                   "title_desc, last_change_asc, last_change_desc, manual_asc, " \
                                    "manual_desc and stored_in_collection" })
         end
       end
@@ -59,8 +59,16 @@ describe "ordering media entries" do
       context "last_change" do
         include_examples "ordering by last_change"
 
+        it "returns 30 media entries of descending order" do
+          expect(edit_session_updated_at_desc.size).to eq(30)
+        end
+      end
+
+      context "last_change_asc" do
+        include_examples "ordering by last_change"
+
         it "returns 30 media entries of ascending order" do
-          expect(edit_session_updated_ats.size).to eq(30)
+          expect(edit_session_updated_at_asc.size).to eq(30)
         end
       end
 
@@ -294,7 +302,7 @@ describe "ordering media entries" do
         end
 
         context "when collection has last_change sorting" do
-          before { collection.update!(sorting: "last_change") }
+          before { collection.update!(sorting: "last_change DESC") }
 
           include_examples "ordering by last_change"
         end
