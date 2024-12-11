@@ -15,9 +15,6 @@
 
 ;### people ###################################################################
 
-; TODO meta-datum groups will be moved to people, no point in implementing this
-; here and now, the following is a Hack so the server so it won't fail when
-; groups are requested
 (defn groups-with-ids [meta-datum]
   [])
 
@@ -27,6 +24,7 @@
                   (sql/merge-join
                    :meta_data_people
                    [:= :meta_data_people.person_id :people.id])
+                  (sql/merge-select [:meta_data_people.position :position])
                   (sql/merge-where
                    [:= :meta_data_people.meta_datum_id (:id meta-datum)])
                   (sql/order-by [:people.last_name :asc]
@@ -36,11 +34,6 @@
     (jdbc/query (rdbms/get-ds) query)))
 
 ;### meta-datum ###############################################################
-
-; TODO people/get-index, keywords/get-index is very un-intuitive,
-; it has nothing to do with HTTP get-index which it suggest; =>
-; delete all those namespaces and move the stuff over here, somthing like (def
-; people-with-ids [meta-datum] ...  and so on
 
 (defn find-meta-data-roles
   [meta-datum]
@@ -69,7 +62,7 @@
                      "MetaDatum::JSON" (:json meta-datum)
                      "MetaDatum::Text" (:string meta-datum)
                      "MetaDatum::TextDate" (:string meta-datum)
-                     (map #(select-keys % [:id])
+                     (map #(select-keys % [:id :position])
                           ((case meta-datum-type
                              "MetaDatum::Groups" groups-with-ids
                              "MetaDatum::Keywords" keywords/get-index
