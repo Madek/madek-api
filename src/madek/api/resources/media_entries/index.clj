@@ -106,13 +106,11 @@
     "title_asc" (order-by-title query order)
     "title_desc" (order-by-title query order)
     "last_change" (order-by-media-entry-attribute query [:edit_session_updated_at :asc])
-    "last_change_asc" (order-by-media-entry-attribute query [:edit_session_updated_at :asc])
-    "last_change_desc" (order-by-media-entry-attribute query [:edit_session_updated_at :desc])
     "manual_asc" (handle-missing-collection-id collection-id (order-by-arc-attribute query [:position :asc]))
     "manual_desc" (handle-missing-collection-id collection-id (order-by-arc-attribute query [:position :desc]))))
 
 (def ^:private available-sortings '("desc" "asc" "title_asc" "title_desc"
-                                    "last_change"  "last_change_desc" "last_change_asc" "manual_asc" "manual_desc"))
+                                           "last_change" "manual_asc" "manual_desc"))
 
 (defn- default-order [query]
   (sql/order-by query [:media_entries.created-at :asc]))

@@ -105,7 +105,7 @@ shared_examples "ordering by madek_core:title" do |direction = nil|
   end
 end
 
-shared_examples "ordering by last_change" do |direction = nil|
+shared_examples "ordering by last_change" do
   def edit_session_updated_ats
     resource("last_change")
       .data["media-entries"]
@@ -118,5 +118,4 @@ shared_examples "ordering by last_change" do |direction = nil|
       expect(pair.first < pair.last).to be true
     end
   end
-
 end

@@ -21,9 +21,10 @@ describe "ordering media entries" do
           response = resource("incorrect_value").response
 
           expect(response.status).to eq(422)
-          expect(response.body).to eq({ "message" => "only the following values are allowed as order parameter: desc, asc, " +
-                                                    "title_asc, title_desc, last_change_desc, last_change_asc, manual_asc, " +
-                                                    "manual_desc and stored_in_collection" })
+          expect(response.body).to eq({ "message" => "only the following values are allowed as " \
+                                   "order parameter: desc, asc, title_asc, " \
+                                   "title_desc, last_change, manual_asc, " \
+                                   "manual_desc and stored_in_collection" })
         end
       end
 
@@ -52,22 +53,6 @@ describe "ordering media entries" do
 
         it "returns 30 media entries for descending order" do
           expect(titles("desc").size).to eq(30)
-        end
-      end
-
-      context "last_change_desc" do
-        include_examples "ordering by last_change", "desc"
-
-        it "returns 30 media entries of descending order" do
-          expect(edit_session_updated_ats("desc").size).to eq(30)
-        end
-      end
-
-      context "last_change_asc" do
-        include_examples "ordering by last_change", "asc"
-
-        it "returns 30 media entries of ascending order" do
-          expect(edit_session_updated_ats("asc").size).to eq(30)
         end
       end
 
@@ -284,46 +269,29 @@ describe "ordering media entries" do
           )
         end
 
-        # context "when collection has created_at ASC sorting" do
-        #   before { collection.update!(sorting: "created_at ASC") }
-        #
-        #   include_examples "ordering by created_at", "asc"
-        # end
-        #
-        # context "when collection has created_at DESC sorting" do
-        #   before { collection.update!(sorting: "created_at DESC") }
-        #
-        #   include_examples "ordering by created_at", "desc"
-        # end
-        #
-        # context "when collection has title ASC sorting" do
-        #   before { collection.update!(sorting: "title ASC") }
-        #
-        #   include_examples "ordering by madek_core:title", "asc"
-        # end
-        #
-        # context "when collection has title DESC sorting" do
-        #   before { collection.update!(sorting: "title DESC") }
-        #
-        #   include_examples "ordering by madek_core:title", "desc"
-        # end
+        context "when collection has created_at ASC sorting" do
+          before { collection.update!(sorting: "created_at ASC") }
 
+          include_examples "ordering by created_at", "asc"
+        end
 
+        context "when collection has created_at DESC sorting" do
+          before { collection.update!(sorting: "created_at DESC") }
 
+          include_examples "ordering by created_at", "desc"
+        end
 
+        context "when collection has title ASC sorting" do
+          before { collection.update!(sorting: "title ASC") }
+
+          include_examples "ordering by madek_core:title", "asc"
+        end
 
         context "when collection has title DESC sorting" do
           before { collection.update!(sorting: "title DESC") }
 
           include_examples "ordering by madek_core:title", "desc"
         end
-
-        # context "when collection has last_change sorting asc" do
-        #   before { collection.update!(sorting: "last_change ASC") }
-        #
-        #   include_examples "ordering by last_change", "asc"
-        # end
-
 
         context "when collection has last_change sorting" do
           before { collection.update!(sorting: "last_change") }
