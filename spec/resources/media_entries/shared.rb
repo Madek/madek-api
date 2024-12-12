@@ -105,17 +105,43 @@ shared_examples "ordering by madek_core:title" do |direction = nil|
   end
 end
 
-shared_examples "ordering by last_change" do
-  def edit_session_updated_ats
-    resource("last_change")
+# shared_examples "ordering by last_change" do
+#   def edit_session_updated_ats
+#     resource("last_change")
+#       .data["media-entries"]
+#       .map { |me| MediaEntry.unscoped.find(me["id"]) }
+#       .map { |me| me.edit_session_updated_at.to_datetime.strftime("%Q").to_i }
+#   end
+#
+#   specify "ascending order" do
+#     edit_session_updated_ats.each_cons(2) do |pair|
+#       expect(pair.first < pair.last).to be true
+#     end
+#   end
+# end
+
+shared_examples "ordering by last_change" do |direction = nil|
+  def edit_session_updated_ats(order = nil)
+    # to_datetime.strftime('%Q').to_i => int with ms precision
+    resource(order)
       .data["media-entries"]
       .map { |me| MediaEntry.unscoped.find(me["id"]) }
       .map { |me| me.edit_session_updated_at.to_datetime.strftime("%Q").to_i }
   end
 
-  specify "ascending order" do
-    edit_session_updated_ats.each_cons(2) do |pair|
-      expect(pair.first < pair.last).to be true
+  if [nil, "asc"].include?(direction)
+    specify "ascending order" do
+      edit_session_updated_ats("asc").each_cons(2) do |ca_pair|
+        expect(ca_pair.first < ca_pair.second).to be true
+      end
+    end
+  end
+
+  if [nil, "desc"].include?(direction)
+    specify "descending order" do
+      edit_session_updated_ats("desc").each_cons(2) do |ca_pair|
+        expect(ca_pair.first > ca_pair.second).to be true
+      end
     end
   end
 end
