@@ -294,7 +294,7 @@ describe "ordering media entries" do
         end
 
         context "when collection has last_change sorting" do
-          before { collection.update!(sorting: "last_change") }
+          before { collection.update!(sorting: "last_change DESC") }
 
           include_examples "ordering by last_change"
         end
