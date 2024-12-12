@@ -107,7 +107,7 @@ end
 
 shared_examples "ordering by last_change" do
   def edit_session_updated_ats
-    resource("last_change")
+    resource("last_change_desc")
       .data["media-entries"]
       .map { |me| MediaEntry.unscoped.find(me["id"]) }
       .map { |me| me.edit_session_updated_at.to_datetime.strftime("%Q").to_i }
