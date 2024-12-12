@@ -114,6 +114,14 @@ shared_examples "ordering by last_change" do |direction = nil|
       .map { |me| me.edit_session_updated_at.to_datetime.strftime("%Q").to_i }
   end
 
+  if [nil, "desc"].include?(direction)
+    specify "descending order" do
+      edit_session_updated_ats("desc").each_cons(2) do |ca_pair|
+        expect(ca_pair.first > ca_pair.second).to be true
+      end
+    end
+  end
+
   if [nil, "asc"].include?(direction)
     specify "ascending order" do
       edit_session_updated_ats("asc").each_cons(2) do |ca_pair|
@@ -122,11 +130,4 @@ shared_examples "ordering by last_change" do |direction = nil|
     end
   end
 
-  if [nil, "desc"].include?(direction)
-    specify "descending order" do
-      edit_session_updated_ats("desc").each_cons(2) do |ca_pair|
-        expect(ca_pair.first > ca_pair.second).to be true
-      end
-    end
-  end
 end

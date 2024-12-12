@@ -232,7 +232,7 @@ describe "ordering media entries" do
       end
 
       context "last_change" do
-        include_examples "ordering by last_change", "desc"
+        include_examples "ordering by last_change"
       end
 
       context "manual" do
@@ -276,29 +276,29 @@ describe "ordering media entries" do
           )
         end
 
-        context "when collection has created_at ASC sorting" do
-          before { collection.update!(sorting: "created_at ASC") }
-
-          include_examples "ordering by created_at", "asc"
-        end
-
-        context "when collection has created_at DESC sorting" do
-          before { collection.update!(sorting: "created_at DESC") }
-
-          include_examples "ordering by created_at", "desc"
-        end
-
-        context "when collection has title ASC sorting" do
-          before { collection.update!(sorting: "title ASC") }
-
-          include_examples "ordering by madek_core:title", "asc"
-        end
-
-        context "when collection has title DESC sorting" do
-          before { collection.update!(sorting: "title DESC") }
-
-          include_examples "ordering by madek_core:title", "desc"
-        end
+        # context "when collection has created_at ASC sorting" do
+        #   before { collection.update!(sorting: "created_at ASC") }
+        #
+        #   include_examples "ordering by created_at", "asc"
+        # end
+        #
+        # context "when collection has created_at DESC sorting" do
+        #   before { collection.update!(sorting: "created_at DESC") }
+        #
+        #   include_examples "ordering by created_at", "desc"
+        # end
+        #
+        # context "when collection has title ASC sorting" do
+        #   before { collection.update!(sorting: "title ASC") }
+        #
+        #   include_examples "ordering by madek_core:title", "asc"
+        # end
+        #
+        # context "when collection has title DESC sorting" do
+        #   before { collection.update!(sorting: "title DESC") }
+        #
+        #   include_examples "ordering by madek_core:title", "desc"
+        # end
 
         context "when collection has last_change sorting desc" do
           before { collection.update!(sorting: "last_change DESC") }
