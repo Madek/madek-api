@@ -232,7 +232,7 @@ describe "ordering media entries" do
       end
 
       context "last_change" do
-        include_examples "ordering by last_change"
+        include_examples "ordering by last_change", "desc"
       end
 
       context "manual" do

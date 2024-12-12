@@ -105,21 +105,6 @@ shared_examples "ordering by madek_core:title" do |direction = nil|
   end
 end
 
-# shared_examples "ordering by last_change" do
-#   def edit_session_updated_ats
-#     resource("last_change")
-#       .data["media-entries"]
-#       .map { |me| MediaEntry.unscoped.find(me["id"]) }
-#       .map { |me| me.edit_session_updated_at.to_datetime.strftime("%Q").to_i }
-#   end
-#
-#   specify "ascending order" do
-#     edit_session_updated_ats.each_cons(2) do |pair|
-#       expect(pair.first < pair.last).to be true
-#     end
-#   end
-# end
-
 shared_examples "ordering by last_change" do |direction = nil|
   def edit_session_updated_ats(order = nil)
     # to_datetime.strftime('%Q').to_i => int with ms precision
