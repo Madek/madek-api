@@ -117,6 +117,8 @@ shared_examples "ordering by last_change" do |direction = nil|
   if [nil, "desc"].include?(direction)
     specify "descending order" do
       edit_session_updated_ats("desc").each_cons(2) do |ca_pair|
+        put ">>1 #{ca_pair.first}"
+        put ">>2 #{ca_pair.second}"
         expect(ca_pair.first > ca_pair.second).to be true
       end
     end
