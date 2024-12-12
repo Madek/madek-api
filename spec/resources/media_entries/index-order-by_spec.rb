@@ -59,7 +59,7 @@ describe "ordering media entries" do
         include_examples "ordering by last_change", "desc"
 
         it "returns 30 media entries of descending order" do
-          expect(edit_session_updated_ats.size).to eq(30)
+          expect(edit_session_updated_ats("desc").size).to eq(30)
         end
       end
 
@@ -67,7 +67,7 @@ describe "ordering media entries" do
         include_examples "ordering by last_change", "asc"
 
         it "returns 30 media entries of ascending order" do
-          expect(edit_session_updated_ats.size).to eq(30)
+          expect(edit_session_updated_ats("asc").size).to eq(30)
         end
       end
 
