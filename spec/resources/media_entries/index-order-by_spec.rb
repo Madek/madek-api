@@ -23,7 +23,7 @@ describe "ordering media entries" do
           expect(response.status).to eq(422)
           expect(response.body).to eq({ "message" => "only the following values are allowed as " \
                                    "order parameter: desc, asc, title_asc, " \
-                                   "title_desc, last_change, manual_asc, " \
+                                   "title_desc, last_change_desc, manual_asc, " \
                                    "manual_desc and stored_in_collection" })
         end
       end
