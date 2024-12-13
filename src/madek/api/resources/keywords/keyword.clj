@@ -27,7 +27,7 @@
       keyword
       (select-keys
        [:id :meta_key_id :term :description :external_uris :rdf_class
-        :created_at])
+        :position :created_at])
       (assoc ; support old (singular) version of field
        :external_uri (first (keyword :external_uris))))}))
 

@@ -13,7 +13,6 @@
       (sql/merge-join
        :meta_data_keywords
        [:= :meta_data_keywords.keyword_id :keywords.id])
-      (sql/merge-select [:meta_data_keywords.position :position])
       (sql/order-by [:keywords.position :asc]
                     [:keywords.term :asc]
                     [:keywords.id :asc])))

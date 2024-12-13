@@ -7,11 +7,11 @@
    [logbug.debug :as debug]
    [madek.api.authorization :as authorization]
    [madek.api.pagination :as pagination]
-   [madek.api.resources.keywords.index :as keywords]
    [madek.api.resources.shared :as shared]
    [madek.api.utils.rdbms :as rdbms :refer [get-ds]]
    [madek.api.utils.sql :as sql]
-   [ring.util.response :as ring-response]))
+   [ring.util.response :as ring-response]
+   [taoensso.timbre :refer [debug info warn error spy]]))
 
 ;### people ###################################################################
 
@@ -27,11 +27,39 @@
                   (sql/merge-select [:meta_data_people.position :position])
                   (sql/merge-where
                    [:= :meta_data_people.meta_datum_id (:id meta-datum)])
-                  (sql/order-by [:people.last_name :asc]
+                  (sql/order-by [:meta_data_people.position :asc]
+                                [:people.last_name :asc]
                                 [:people.first_name :asc]
                                 [:people.id :asc])
                   (sql/format))]
     (jdbc/query (rdbms/get-ds) query)))
+
+;### keywords #################################################################
+
+(defn keywords [{meta_datum_id :id :as meta-datum}]
+  (let [meta_key (-> (sql/select :meta_keys.keywords_alphabetical_order)
+                     (sql/from :meta_keys)
+                     (sql/merge-join :meta_data
+                                     [:= :meta_data.meta_key_id :meta_keys.id])
+                     (sql/merge-where [:= :meta_data.id meta_datum_id])
+                     (sql/format)
+                     (->> (jdbc/query (rdbms/get-ds)) first))
+
+        base-query (-> (sql/select :keywords.id :keywords.term)
+                       (sql/from :keywords)
+                       (sql/merge-join :meta_data_keywords
+                                       [:= :meta_data_keywords.keyword_id :keywords.id])
+                       (sql/merge-select [:meta_data_keywords.position :position])
+                       (sql/merge-where [:= :meta_data_keywords.meta_datum_id meta_datum_id]))
+        query (if (:keywords_alphabetical_order meta_key)
+                (-> base-query (sql/order-by [:keywords.term :asc]
+                                             [:meta_data_keywords.position :asc]))
+                (-> base-query (sql/order-by
+                                [:meta_data_keywords.position :asc]
+                                [:keywords.term :asc])))]
+    (-> query
+        (sql/format)
+        (->> (jdbc/query (rdbms/get-ds))))))
 
 ;### meta-datum ###############################################################
 
@@ -65,7 +93,7 @@
                      (map #(select-keys % [:id :position])
                           ((case meta-datum-type
                              "MetaDatum::Groups" groups-with-ids
-                             "MetaDatum::Keywords" keywords/get-index
+                             "MetaDatum::Keywords" keywords
                              "MetaDatum::People" get-people-index
                              "MetaDatum::Roles" find-meta-data-roles)
                            meta-datum))))}

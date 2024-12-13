@@ -32,7 +32,7 @@ context "Getting a keyword resource without authentication" do
       keyword.except(:created_at, :updated_at)
     ).to eq(
       @keyword.attributes.with_indifferent_access
-        .except(:searchable, :position, :creator_id, :created_at, :updated_at)
+        .except(:searchable, :creator_id, :created_at, :updated_at)
         .merge(external_uri: keyword[:external_uris].first)
     )
   end
