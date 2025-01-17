@@ -37,6 +37,32 @@
   {:name "Authentication-Info"
    :href (str prefix "/auth-info")})
 
+;### delegations ##################################################################
+
+(defn delegations-path [prefix query-params]
+  (str prefix "/delegations/?" (http-client/generate-query-string query-params)))
+
+(defn delegation
+  ([prefix]
+   (delegation prefix "{id}"))
+  ([prefix id]
+   {:href (str prefix "/delegations/" id)
+    :name "Delegation"
+    :methods {:get {}}
+    :relations {:api-docs {:name "API-Doc Delegation"
+                           :href "/api/docs/resources/delegation.html#delegation"}}}))
+
+(defn delegations
+  ([prefix]
+   (delegations prefix {}))
+  ([prefix query-params]
+   {:href (delegations-path prefix query-params)
+    :name "Delegations"
+    :methods {:get {}
+              :post {}}
+    :relations {:api-docs {:name "API-Doc Delegations"
+                           :href "/api/docs/resources/delegations.html#delegations"}}}))
+
 ;### groups #######################################################################
 
 (defn groups-path [prefix query-params]

@@ -6,6 +6,7 @@
    [madek.api.json-roa.auth-info :as auth-info]
    [madek.api.json-roa.collection-media-entry-arcs.core :as collection-media-entry-arcs]
    [madek.api.json-roa.collections :as collections]
+   [madek.api.json-roa.delegations :as delegations]
    [madek.api.json-roa.group-users :as group-users]
    [madek.api.json-roa.groups :as groups]
    [madek.api.json-roa.keywords :as keywords]
@@ -45,6 +46,8 @@
      (collection-media-entry-arcs/item request json-response))
    (cpj/GET "/collections/" request (collections/index request json-response))
    (cpj/GET "/collections/:id" request (collections/collection request json-response))
+
+   (cpj/GET "/delegations/:id" request (delegations/delegation request json-response))
 
    (cpj/GET "/groups/" request (groups/groups request json-response))
    (cpj/GET "/groups/:id" request (groups/group request json-response))
