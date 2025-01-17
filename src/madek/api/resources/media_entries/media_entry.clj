@@ -8,7 +8,8 @@
 
 (def ^:private media-entry-keys
   [:id :created_at :responsible_user_id
-   :is_published :updated_at :edit_session_updated_at :meta_data_updated_at])
+   :is_published :updated_at :edit_session_updated_at :meta_data_updated_at
+   :responsible_delegation_id])
 
 (defn get-media-entry-for-preview [request]
   (let [preview-id (-> request :params :preview_id)

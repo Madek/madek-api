@@ -5,6 +5,7 @@
 
 (def ^:private collection-keys
   [:id :created_at :responsible_user_id :updated_at
+   :responsible_delegation_id
    :edit_session_updated_at :meta_data_updated_at])
 
 (defn get-collection [request]

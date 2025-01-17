@@ -32,6 +32,7 @@ shared_context :check_success_and_data_with_public_permission do
                        [:created_at, :id, :is_published,
                         :responsible_user_id,
                         :updated_at, :edit_session_updated_at,
+                        :responsible_delegation_id,
                         :meta_data_updated_at]
     end
   end

@@ -11,6 +11,7 @@
         clojure-humanize/clojure-humanize {:mvn/version "0.2.2"}
         com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
         com.github.mfornos/humanize-slim {:mvn/version "1.2.2"}
+        com.github.seancorfield/honeysql {:mvn/version "2.4.1066"}
         com.mchange/c3p0 {:mvn/version "0.9.5.5"}
         com.taoensso/timbre {:mvn/version "5.1.2"}
         compojure/compojure {:mvn/version "1.6.2"}

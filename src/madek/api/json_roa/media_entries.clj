@@ -34,19 +34,26 @@
              " ORDER BY created_at ASC LIMIT 1") media-entry-id])
       first :id))
 
-(defn media-entry [request response]
-  (let [context (:context request)
-        params (:params request)
-        media-entry-id (:id params)]
-    {:name "Media-Entry"
-     :self-relation (links/media-entry context media-entry-id)
-     :relations (merge {:root (links/root context)
-                        :meta-data (links/media-entry-meta-data context media-entry-id)
-                        :collection-media-entry-arcs
-                        (collection-media-entry-arcs.links/collection-media-entry-arcs
-                         context {:media_entry_id media-entry-id})}
-                       (if-let [media-file-id (get-first-media-file-id media-entry-id)]
-                         {:media-file (links/media-file context media-file-id)} {}))}))
-
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)
+
+(defn media-entry
+  [{context :context
+    {media-entry-id :id}
+    :params :as request}
+   {responsible-delegation-id :responsible_delegation_id
+    responsible-user-id :responsible_user_id
+    :as response}]
+  {:name "Media-Entry"
+   :self-relation (links/media-entry context media-entry-id)
+   :relations (merge {:root (links/root context)
+                      :meta-data (links/media-entry-meta-data context media-entry-id)
+                      :collection-media-entry-arcs
+                      (collection-media-entry-arcs.links/collection-media-entry-arcs
+                       context {:media_entry_id media-entry-id})}
+                     (if responsible-user-id
+                       {:user (links/user context responsible-user-id)} {})
+                     (if responsible-delegation-id
+                       {:delegation (links/delegation context responsible-delegation-id)} {})
+                     (if-let [media-file-id (get-first-media-file-id media-entry-id)]
+                       {:media-file (links/media-file context media-file-id)} {}))})

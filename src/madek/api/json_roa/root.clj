@@ -11,6 +11,7 @@
      :relations {:auth-info (links/auth-info context)
                  :collection (links/collection context)
                  :collections (links/collections context)
+                 :delegation (links/delegation context)
                  :group (links/group context)
                  :groups (links/groups context)
                  :media-entries (links/media-entries context)

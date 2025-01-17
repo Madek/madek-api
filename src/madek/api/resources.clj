@@ -9,6 +9,7 @@
    [madek.api.resources.auth-info :as auth-info]
    [madek.api.resources.collection-media-entry-arcs :as collection-media-entry-arcs]
    [madek.api.resources.collections :as collections]
+   [madek.api.resources.delegations.main :as delegations]
    [madek.api.resources.groups :as groups]
    [madek.api.resources.keywords :as keywords]
    [madek.api.resources.media-entries :as media-entries]
@@ -178,6 +179,7 @@
        (cpj/ANY "/:media_resource_type/:id/meta-data/" _ meta-data/routes)
        (cpj/ANY "/collection-media-entry-arcs/*" _ collection-media-entry-arcs/routes)
        (cpj/ANY "/collections*" _ collections/routes)
+       (cpj/ANY "/delegations/*" _ delegations/routes)
        (cpj/ANY "/groups/*" _ groups/routes)
        (cpj/ANY "/keywords/:keyword_id*" _ keywords/routes)
        (cpj/ANY "/media-entries*" _ media-entries/routes)
