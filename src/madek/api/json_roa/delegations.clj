@@ -8,7 +8,7 @@
 (defn delegation [request response]
   (let [context (:context request)
         delegation (-> response :body)]
-    {:name "User"
+    {:name "Delegation"
      :self-relation (links/delegation context (:id delegation))
      :relations
      {:root (links/root context)}}))
@@ -17,20 +17,10 @@
   (let [context (:context request)
         query-params (:query-params request)]
     (let [ids (->> response :body :delegations (map :id))]
-      {:name "Users"
+      {:name "Delegations"
        :self-relation (links/delegations context query-params)
        :relations
-       {:root (links/root context)}
-       :collection
-       (conj
-        {:relations
-         (into {} (map-indexed
-                   (fn [i id]
-                     [(+ 1 i (pagination/compute-offset query-params))
-                      (links/delegation context id)])
-                   ids))}
-        (when (seq ids)
-          (links/next-link links/delegations-path context query-params)))})))
+       {:root (links/root context)}})))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

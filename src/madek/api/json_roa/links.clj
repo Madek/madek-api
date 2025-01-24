@@ -48,9 +48,7 @@
   ([prefix id]
    {:href (str prefix "/delegations/" id)
     :name "Delegation"
-    :methods {:delete {}
-              :get {}
-              :patch {}}
+    :methods {:get {}}
     :relations {:api-docs {:name "API-Doc Delegation"
                            :href "/api/docs/resources/delegation.html#delegation"}}}))
 
