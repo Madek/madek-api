@@ -1,4 +1,6 @@
 task_defaults:
+  traits:
+    ci-ax101-06: true
   environment_variables:
     API_DIR: "{{CIDER_CI_WORKING_DIR}}"
   include:

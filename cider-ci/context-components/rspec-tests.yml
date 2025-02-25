@@ -2,6 +2,9 @@ generate_tasks:
   include_match: spec/.*_spec.rb
 
 task_defaults:
+  traits:
+    ci-ax101-06: true
+
   include:
     - cider-ci/task-components/service.yml
     - cider-ci/task-components/ruby-setup.yml
