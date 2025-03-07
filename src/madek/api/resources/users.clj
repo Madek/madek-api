@@ -41,9 +41,12 @@
 ;### create user #############################################################
 
 (defn create-user [request]
-  (let [params (as-> (:body request) params
+  (let [user-id (-> request :authenticated-entity :id)
+        params (as-> (:body request) params
                  (or params {})
-                 (assoc params :id (or (:id params) (clj-uuid/v4))))]
+                 (assoc params
+                        :id (or (:id params) (clj-uuid/v4))
+                        :creator_id user-id))]
     {:body (dissoc
             (->> (jdbc/insert!
                   (rdbms/get-ds) :users params)
@@ -79,8 +82,11 @@
 
 ;### patch user ##############################################################
 
-(defn patch-user [{body :body {id :id} :params}]
-  (if (= 1 (first (jdbc/update! (rdbms/get-ds) :users body (jdbc-id-where-clause id))))
+(defn patch-user [{body :body, {id :id} :params,
+                   {user-id :id} :authenticated-entity}]
+  (if (= 1 (first (jdbc/update! (rdbms/get-ds) :users
+                                (assoc body :updator_id user-id)
+                                (jdbc-id-where-clause id))))
     {:body (find-user id)}
     {:status 404}))
 
