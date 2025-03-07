@@ -39,10 +39,13 @@
 
 (defn create-person
   [request]
-  (let [params
+  (let [user-id (-> request :authenticated-entity :id)
+        params
         (as-> (:body request) params
           (or params {})
-          (assoc params :id (or (:id params) (clj-uuid/v4))))]
+          (assoc params
+                 :id (or (:id params) (clj-uuid/v4))
+                 :creator_id user-id))]
     {:body
      (dissoc
       (->>
@@ -118,12 +121,15 @@
 ;##############################################################
 
 (defn patch-person
-  [{body :body, {id :id} :params}]
+  [{body :body, {id :id} :params,
+    {user-id :id} :authenticated-entity}]
   (if
    (=
     1
     (first
-     (jdbc/update! (rdbms/get-ds) :people body (jdbc-id-where-clause id))))
+     (jdbc/update! (rdbms/get-ds) :people
+                   (assoc body :updator_id user-id)
+                   (jdbc-id-where-clause id))))
     {:body
      (->>
       id
