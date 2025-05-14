@@ -9,6 +9,7 @@
    [logbug.debug :as debug]
    [logbug.thrown]
    [madek.api.constants :as constants]
+   [madek.api.reload :as reload]
    [madek.api.utils.config :as config :refer [get-config]]
    [madek.api.utils.exit :as exit]
    [madek.api.utils.nrepl :as nrepl]
@@ -70,31 +71,27 @@
 
 ;; main ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defonce args* (atom nil))
-
-(defn main []
+(defn main [args]
   (logging/info "main")
-  (let [args @args*]
-    (let [args @args*
-          {:keys [options arguments errors summary]}
-          (cli/parse-opts args cli-options :in-order true)
-          options (merge (sorted-map) options)]
-      (logging/info "options" options)
-      (exit/init options)
-      (cond
-        (:help options) (helpnexit summary args options)
-        :else (run options)))))
+  (let [{:keys [options arguments errors summary]}
+        (cli/parse-opts args cli-options :in-order true)
+        options (merge (sorted-map) options)]
+    (logging/info "options" options)
+    (exit/init options)
+    (cond
+     (:help options) (helpnexit summary args options)
+     :else (run options))))
 
 (defn -main [& args]
   (timbre/merge-config! constants/DEFAULT_LOGGING_CONFIG)
   ;(logbug.thrown/reset-ns-filter-regex #".*madek.*")
-  (reset! args* args)
-  (main))
+  (reset! reload/args* args)
+  (main args))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; hot reload on require
-(when @args* (main))
+(when @reload/args* (main @reload/args*))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns 'madek.api.utils.rdbms)
