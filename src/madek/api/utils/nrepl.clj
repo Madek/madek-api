@@ -6,6 +6,7 @@
   (:refer-clojure :exclude [str keyword])
   (:require
    [camel-snake-kebab.core :refer [->snake_case]]
+   [cider.nrepl :refer [cider-nrepl-handler]]
    [clj-yaml.core :as yaml]
    [clojure.java.io :as io]
    [clojure.string :refer [upper-case]]
@@ -67,10 +68,8 @@
           (let [bind (or (:bind config) (repl-bind-key @options*))
                 port (or (:port config) (repl-port-key @options*))]
             (info "starting nREPL server " port bind)
-            (reset! server* (start-server :bind bind :port port))
+            (reset! server* (start-server :bind bind :port port :handler cider-nrepl-handler))
             (when (:dev-mode options)
               (when-let [port-file (repl-port-file-key @options*)]
                 (spit port-file (str port))))
             (info "started nREPL server "))))))
-
-
