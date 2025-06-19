@@ -1,12 +1,16 @@
 (ns madek.api.resources.media-entries.advanced-filter.meta-data
   (:require
    [clojure.java.jdbc :as jdbc]
+   [clojure.string]
    [clojure.tools.logging :as logging]
    [logbug.catcher :as catcher]
    [logbug.debug :as debug]
    [madek.api.resources.meta-keys.meta-key :as meta-key]
    [madek.api.utils.rdbms :as rdbms]
    [madek.api.utils.sql :as sql]))
+
+(defn sql-escape [s]
+  (clojure.string/replace s "'" "''"))
 
 (def ^:private match-columns {"meta_data_people" {:table "people",
                                                   :resource "person",
@@ -69,7 +73,7 @@
     ; we need to pass 'english' because it was also used
     ; when creating indexes
    (str "to_tsvector('english', " column ")"
-        " @@ plainto_tsquery('english', '" search-string "')")))
+        " @@ plainto_tsquery('english', '" (sql-escape search-string) "')")))
 
 (defn- sql-merge-where-with-match
   [sqlmap related-meta-data-table match]
@@ -82,7 +86,7 @@
            "."
            (get-in match-columns
                    [related-meta-data-table :match_column]))
-      match))))
+      (sql-escape match)))))
 
 (defn- primitive-type? [md-object-type]
   (or (= md-object-type "MetaDatum::Text")
