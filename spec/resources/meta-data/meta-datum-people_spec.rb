@@ -6,7 +6,16 @@ describe "generated runs" do
     describe "ROUND #{round}" do
       describe "meta_datum_people_for_random_resource_type" do
         include_context :meta_datum_for_random_resource_type
-        let(:meta_datum_people) { meta_datum("people") }
+        let(:meta_datum_people) do
+          case media_resource
+          when MediaEntry
+            FactoryBot.create "meta_datum_people",
+                              media_entry: media_resource
+          when Collection
+            FactoryBot.create "meta_datum_people",
+                              collection: media_resource
+          end
+        end
 
         describe "authenticated_json_roa_client" do
           include_context :authenticated_json_roa_client
@@ -28,6 +37,8 @@ describe "generated runs" do
                 authenticated_json_roa_client.get.relation("meta-datum").get("id" => meta_datum_people.id)
               end
 
+              let(:value) { resource.data["value"] }
+
               let :response do
                 resource.response
               end
@@ -38,27 +49,40 @@ describe "generated runs" do
               end
 
               context "if the response is 200" do
-                let(:value) { resource.data["value"] }
-
                 it "it holds the proper uuid array value" do
                   if response.status == 200
-                    value.map { |v| v["id"] }.each do |person_id|
+                    value.map { |v| v["id"] }.each do |mtr_id|
                       expect(MetaDatum::Person.find_by(meta_datum_id: resource.data["id"],
-                                                       person_id: person_id)).to be
+                                                       id: mtr_id)).to be
                     end
                   end
                 end
 
-                it "it provides valid collection and relations" do
-                  if response.status == 200
-                    resource.collection.each do |c_entry|
-                      expect(c_entry.get.response.status).to be == 200
-                      expect(value.map { |v| v["id"] }).to include c_entry.get.data["id"]
-                    end
+                context "MetaDatum::Person resource" do
+                  let(:root) { authenticated_json_roa_client.get }
 
-                    expect(resource.relation("meta-key").get.response.status).to be == 200
-                    expect(resource.relation("media-entry").get.response.status).to be == 200
+                  it "provides valid relations" do
+                    if response.status == 200
+                      resource.data["value"].each do |v|
+                        meta_data_person = root.relation("meta-datum-person").get("id" => v["id"])
+
+                        expect(meta_data_person.relation("meta-datum").get.response.status).to be == 200
+                        expect(meta_data_person.relation("person").get.response.status).to be == 200
+                      end
+                    end
                   end
+                end
+              end
+
+              it "it provides valid collection and relations" do
+                if response.status == 200
+                  resource.collection.each do |c_entry|
+                    expect(c_entry.get.response.status).to be == 200
+                    expect(value.map { |v| v["id"] }).to include c_entry.get.data["id"]
+                  end
+
+                  expect(resource.relation("meta-key").get.response.status).to be == 200
+                  expect(resource.relation("media-entry").get.response.status).to be == 200
                 end
               end
             end
