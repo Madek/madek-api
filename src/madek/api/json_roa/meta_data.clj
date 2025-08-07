@@ -9,7 +9,7 @@
   [(format "%07d" idx)
    (links/meta-datum context meta-datum)])
 
-(defn- meta-datum-role?
+(defn- meta-datum-person?
   [response]
   (let [params (-> response :body)]
     (and (contains? params :meta_datum_id)
@@ -25,7 +25,7 @@
    :data-stream (links/meta-datum-data-stream
                  context (-> response :body))})
 
-(defn- meta-datum-role-relations
+(defn- meta-datum-person-relations
   [response context]
   (conj {}
         {:meta-datum (links/meta-datum
@@ -39,8 +39,8 @@
 
 (defn- relations
   [response context]
-  (if (meta-datum-role? response)
-    (meta-datum-role-relations response context)
+  (if (meta-datum-person? response)
+    (meta-datum-person-relations response context)
     (meta-datum-relations response context)))
 
 (defn index [request response]
@@ -72,9 +72,8 @@
              {:relations
               (into {}
                     (map #(hash-map % ((case meta-datum-type
-                                         "MetaDatum::People" links/person
                                          "MetaDatum::Keywords" links/keyword-term
-                                         "MetaDatum::Roles" links/meta-datum-role)
+                                         "MetaDatum::People" links/meta-datum-person)
                                        context %))
                          (map :id (-> response :body :value))))}}))))
 

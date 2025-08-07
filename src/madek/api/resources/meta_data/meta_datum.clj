@@ -63,23 +63,23 @@
 
 ;### meta-datum ###############################################################
 
-(defn find-meta-data-roles
+(defn find-meta-data-people
   [meta-datum]
-  (let [query (-> (sql/select :meta_data_roles.*)
-                  (sql/from :meta_data_roles)
+  (let [query (-> (sql/select :meta_data_people.*)
+                  (sql/from :meta_data_people)
                   (sql/merge-where
-                   [:= :meta_data_roles.meta_datum_id (:id meta-datum)])
-                  (sql/order-by [:meta_data_roles.position :asc]
-                                [:meta_data_roles.id :asc])
+                   [:= :meta_data_people.meta_datum_id (:id meta-datum)])
+                  (sql/order-by [:meta_data_people.position :asc]
+                                [:meta_data_people.id :asc])
                   (sql/format))]
     (jdbc/query (rdbms/get-ds) query)))
 
-(defn- find-meta-datum-role
+(defn- find-meta-datum-person
   [id]
-  (let [query (-> (sql/select :meta_data_roles.*)
-                  (sql/from :meta_data_roles)
+  (let [query (-> (sql/select :meta_data_people.*)
+                  (sql/from :meta_data_people)
                   (sql/merge-where
-                   [:= :meta_data_roles.id id])
+                   [:= :meta_data_people.id id])
                   (sql/format))]
     (first (jdbc/query (rdbms/get-ds) query))))
 
@@ -94,16 +94,15 @@
                           ((case meta-datum-type
                              "MetaDatum::Groups" groups-with-ids
                              "MetaDatum::Keywords" keywords
-                             "MetaDatum::People" get-people-index
-                             "MetaDatum::Roles" find-meta-data-roles)
+                             "MetaDatum::People" find-meta-data-people)
                            meta-datum))))}
          (->> (select-keys meta-datum [:media_entry_id :collection_id])
               (filter (fn [[k v]] v))
               (into {}))))
 
-(defn- prepare-meta-datum-role
+(defn- prepare-meta-datum-person
   [id]
-  (let [meta-datum (find-meta-datum-role id)]
+  (let [meta-datum (find-meta-datum-person id)]
     (select-keys meta-datum [:id :meta_datum_id :person_id :role_id :position])))
 
 (defn get-meta-datum [request]
@@ -122,10 +121,10 @@
                       (ring-response/header "Content-Type" content-type))
       :else {:body value})))
 
-(defn get-meta-datum-role
+(defn get-meta-datum-person
   [request]
-  (let [meta-datum-role-id (-> request :params :meta_datum_id)]
-    {:body (prepare-meta-datum-role meta-datum-role-id)}))
+  (let [meta-datum-person-id (-> request :params :meta_datum_id)]
+    {:body (prepare-meta-datum-person meta-datum-person-id)}))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

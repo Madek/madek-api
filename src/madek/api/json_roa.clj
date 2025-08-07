@@ -62,7 +62,7 @@
 
    (cpj/GET "/media-files/:id" request (media-files/media-file request json-response))
    (cpj/GET "/meta-data/:id" request (meta-data/meta-datum request json-response))
-   (cpj/GET "/meta-data-roles/:id" request (meta-data/meta-datum request json-response))
+   (cpj/GET "/meta-data-people/:id" request (meta-data/meta-datum request json-response))
    (cpj/GET "/meta-keys/:id" request (meta-keys/meta-key request json-response))
    (cpj/GET "/meta-keys/" request (meta-keys/index request json-response))
 
