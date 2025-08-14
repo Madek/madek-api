@@ -18,6 +18,7 @@
         environ/environ {:mvn/version "1.2.0"}
         honeysql/honeysql {:mvn/version "1.0.461"}
         inflections/inflections {:mvn/version "0.13.2"}
+        io.github.tonsky/clj-reload {:mvn/version "0.9.8"}
         json-roa/clj-utils {:mvn/version "1.0.0"}
         logbug/logbug {:mvn/version "5.0.0"}
         me.raynes/fs {:mvn/version "1.4.6"}
