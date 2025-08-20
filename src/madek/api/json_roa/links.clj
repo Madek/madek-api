@@ -155,13 +155,13 @@
     :relations {:api-docs {:name "API-Doc Meta-Datum-Data-Stream"
                            :href "/api/docs/resources/meta-datum.html#meta-datum-data-stream"}}}))
 
-(defn meta-datum-role
+(defn meta-datum-person
   ([prefix]
-   (meta-datum-role prefix "{id}"))
+   (meta-datum-person prefix "{id}"))
   ([prefix id]
-   {:name "MetaDatum::Role"
-    :href (str prefix "/meta-data-roles/" id)
-    :relations {:api-docs {:name "API-Doc MetaDatum::Role"
+   {:name "MetaDatum::Person"
+    :href (str prefix "/meta-data-people/" id)
+    :relations {:api-docs {:name "API-Doc MetaDatum::Person"
                            :href "/api/docs/resources/meta-datum.html#meta-datum"}}}))
 
 ;### media-entries ################################################################

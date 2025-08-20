@@ -11,9 +11,7 @@
   [query-params]
   (-> (sql/select :roles.*)
       (sql/from :roles)
-      (sql/join :meta_keys [:= :roles.meta_key_id :meta_keys.id])
-      (sql/order-by [:meta_keys.position :asc]
-                    [:roles.id :asc])
+      (sql/order-by [:roles.id :asc])
       (pagination/add-offset-for-honeysql query-params)
       (sql/format)))
 

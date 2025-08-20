@@ -15,7 +15,6 @@
     "MetaDatum::Licenses"
       ;"MetaDatum::MediaEntry"
     "MetaDatum::People"
-    "MetaDatum::Roles"
     "MetaDatum::Text"
     "MetaDatum::TextDate"
     "MetaDatum::Users"

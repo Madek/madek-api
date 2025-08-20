@@ -1,6 +1,7 @@
 (ns madek.api.main
   (:gen-class)
   (:require
+   [clj-reload.core]
    [clojure.java.jdbc :as jdbc]
    [clojure.pprint :refer [pprint]]
    [clojure.tools.cli :as cli]
@@ -72,29 +73,27 @@
 
 (defonce args* (atom nil))
 
-(defn main []
+(defn main [args]
   (logging/info "main")
-  (let [args @args*]
-    (let [args @args*
-          {:keys [options arguments errors summary]}
-          (cli/parse-opts args cli-options :in-order true)
-          options (merge (sorted-map) options)]
-      (logging/info "options" options)
-      (exit/init options)
-      (cond
-        (:help options) (helpnexit summary args options)
-        :else (run options)))))
+  (let [{:keys [options arguments errors summary]}
+        (cli/parse-opts args cli-options :in-order true)
+        options (merge (sorted-map) options)]
+    (logging/info "options" options)
+    (exit/init options)
+    (cond
+      (:help options) (helpnexit summary args options)
+      :else (run options))))
 
 (defn -main [& args]
   (timbre/merge-config! constants/DEFAULT_LOGGING_CONFIG)
   ;(logbug.thrown/reset-ns-filter-regex #".*madek.*")
   (reset! args* args)
-  (main))
+  (main args))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; hot reload on require
-(when @args* (main))
+(when @args* (main @args*))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns 'madek.api.utils.rdbms)

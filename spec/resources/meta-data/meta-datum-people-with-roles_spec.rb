@@ -6,10 +6,10 @@ ROUNDS = 3.freeze
 describe "generated runs" do
   (1..ROUNDS).each do |round|
     describe "ROUND #{round}" do
-      describe "meta_datum_roles_for_random_resource_type" do
+      describe "meta_datum_people_with_roles_for_media_entry" do
         include_context :meta_datum_for_media_entry
-        let(:meta_datum_roles) do
-          FactoryBot.create "meta_datum_roles",
+        let(:meta_datum_people_with_roles) do
+          FactoryBot.create "meta_datum_people_with_roles",
                             media_entry: media_resource
         end
 
@@ -30,7 +30,7 @@ describe "generated runs" do
             end
             describe "the meta-data resource" do
               let :resource do
-                authenticated_json_roa_client.get.relation("meta-datum").get("id" => meta_datum_roles.id)
+                authenticated_json_roa_client.get.relation("meta-datum").get("id" => meta_datum_people_with_roles.id)
               end
 
               let :response do
@@ -43,34 +43,29 @@ describe "generated runs" do
               end
 
               context "if the response is 200" do
-                # TODO: remove this block
-                # before :each do
-                #   media_resource.update! \
-                #     get_metadata_and_previews: true
-                # end
                 let(:value) { resource.data["value"] }
 
                 it "it holds the proper uuid array value" do
                   if response.status == 200
                     value.map { |v| v["id"] }.each do |mtr_id|
-                      expect(MetaDatum::Role.find_by(meta_datum_id: resource.data["id"],
-                                                     id: mtr_id)).to be
+                      expect(MetaDatum::Person.find_by(meta_datum_id: resource.data["id"],
+                                                       id: mtr_id)).to be
                     end
                   end
                 end
 
-                context "MetaDatum::Role resource" do
+                context "MetaDatum::Person with Role resource" do
                   let(:root) { authenticated_json_roa_client.get }
 
                   it "provides valid relations" do
                     if response.status == 200
                       resource.data["value"].each do |v|
-                        meta_data_role = root.relation("meta-datum-role").get("id" => v["id"])
+                        meta_data_person = root.relation("meta-datum-person").get("id" => v["id"])
 
-                        expect(meta_data_role.relation("meta-datum").get.response.status).to be == 200
-                        expect(meta_data_role.relation("person").get.response.status).to be == 200
-                        unless meta_data_role.data["role_id"].nil?
-                          expect(meta_data_role.relation("role").get.response.status).to be == 200
+                        expect(meta_data_person.relation("meta-datum").get.response.status).to be == 200
+                        expect(meta_data_person.relation("person").get.response.status).to be == 200
+                        unless meta_data_person.data["role_id"].nil?
+                          expect(meta_data_person.relation("role").get.response.status).to be == 200
                         end
                       end
                     end
@@ -80,10 +75,10 @@ describe "generated runs" do
                     it "has role relation" do
                       if response.status == 200
                         resource.data["value"].each do |v|
-                          meta_data_role = root.relation("meta-datum-role").get("id" => v["id"])
+                          meta_data_person = root.relation("meta-datum-person").get("id" => v["id"])
 
-                          unless meta_data_role.data["role_id"].nil?
-                            expect(meta_data_role.json_roa_data["relations"]).to have_key "role"
+                          unless meta_data_person.data["role_id"].nil?
+                            expect(meta_data_person.json_roa_data["relations"]).to have_key "role"
                           end
                         end
                       end
@@ -94,10 +89,10 @@ describe "generated runs" do
                     it "has no role relation" do
                       if response.status == 200
                         resource.data["value"].each do |v|
-                          meta_data_role = root.relation("meta-datum-role").get("id" => v["id"])
+                          meta_data_person = root.relation("meta-datum-person").get("id" => v["id"])
 
-                          if meta_data_role.data["role_id"].nil?
-                            expect(meta_data_role.json_roa_data["relations"]).not_to have_key "role"
+                          if meta_data_person.data["role_id"].nil?
+                            expect(meta_data_person.json_roa_data["relations"]).not_to have_key "role"
                           end
                         end
                       end
