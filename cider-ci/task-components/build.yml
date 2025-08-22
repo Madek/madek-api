@@ -1,6 +1,10 @@
 traits:
   asdf: true
 
+git_options:
+  submodules:
+    include_match: ^.*$
+
 scripts:
   api-build:
     exclusive_executor_resource: madek-api-build-uberjar
