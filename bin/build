@@ -19,7 +19,7 @@ function build {
   rm -f $JAR_REL_PATH
   cd $PROJECT_DIR
   ./bin/clean
-  # ./bin/clj-deps-graph
+  [ -f "resources/browser/index.html" ] || { echo "Error: File resources/browser/index.html not found" >&2; exit 1; }
   ./bin/clj-uberjar
   ./bin/clean
 }
