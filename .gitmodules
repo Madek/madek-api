@@ -7,6 +7,3 @@
 [submodule "docs"]
 	path = docs
 	url = https://github.com/Madek/madek_api-docs.git
-[submodule "docs_source"]
-	path = docs_source
-	url = https://github.com/Madek/madek_api-docs_source.git
