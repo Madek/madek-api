@@ -45,11 +45,19 @@ describe "generated runs" do
               context "if the response is 200" do
                 let(:value) { resource.data["value"] }
 
-                it "it holds the proper uuid array value" do
+                it "it holds the proper uuid array value with both old and new fields" do
                   if response.status == 200
-                    value.map { |v| v["id"] }.each do |mtr_id|
+                    value.each do |v|
+                      # New way: meta-data-people-id should reference MetaDatum::Person record
+                      expect(v).to have_key("meta-data-people-id")
                       expect(MetaDatum::Person.find_by(meta_datum_id: resource.data["id"],
-                                                       id: mtr_id)).to be
+                                                       id: v["meta-data-people-id"])).to be
+
+                      # Old way: id should reference person_id for backwards compatibility
+                      expect(v).to have_key("id")
+                      meta_datum_person = MetaDatum::Person.find_by(meta_datum_id: resource.data["id"],
+                                                                    id: v["meta-data-people-id"])
+                      expect(meta_datum_person.person_id).to eq(v["id"])
                     end
                   end
                 end
@@ -60,7 +68,7 @@ describe "generated runs" do
                   it "provides valid relations" do
                     if response.status == 200
                       resource.data["value"].each do |v|
-                        meta_data_person = root.relation("meta-datum-person").get("id" => v["id"])
+                        meta_data_person = root.relation("meta-datum-person").get("id" => v["meta-data-people-id"])
 
                         expect(meta_data_person.relation("meta-datum").get.response.status).to be == 200
                         expect(meta_data_person.relation("person").get.response.status).to be == 200
@@ -75,7 +83,7 @@ describe "generated runs" do
                     it "has role relation" do
                       if response.status == 200
                         resource.data["value"].each do |v|
-                          meta_data_person = root.relation("meta-datum-person").get("id" => v["id"])
+                          meta_data_person = root.relation("meta-datum-person").get("id" => v["meta-data-people-id"])
 
                           unless meta_data_person.data["role_id"].nil?
                             expect(meta_data_person.json_roa_data["relations"]).to have_key "role"
@@ -89,7 +97,7 @@ describe "generated runs" do
                     it "has no role relation" do
                       if response.status == 200
                         resource.data["value"].each do |v|
-                          meta_data_person = root.relation("meta-datum-person").get("id" => v["id"])
+                          meta_data_person = root.relation("meta-datum-person").get("id" => v["meta-data-people-id"])
 
                           if meta_data_person.data["role_id"].nil?
                             expect(meta_data_person.json_roa_data["relations"]).not_to have_key "role"
@@ -102,9 +110,14 @@ describe "generated runs" do
 
                 it "it provides valid collection and relations" do
                   if response.status == 200
+                    # Collection should contain both person links (old way) and meta-datum-person links (new way)
+                    person_ids = value.map { |v| v["id"] }
+                    meta_data_people_ids = value.map { |v| v["meta-data-people-id"] }
+                    all_ids = person_ids + meta_data_people_ids
+
                     resource.collection.each do |c_entry|
                       expect(c_entry.get.response.status).to be == 200
-                      expect(value.map { |v| v["id"] }).to include c_entry.get.data["id"]
+                      expect(all_ids).to include c_entry.get.data["id"]
                     end
 
                     expect(resource.relation("meta-key").get.response.status).to be == 200

@@ -68,14 +68,24 @@
            :relations (conj {:root (links/root context)}
                             (relations response context))}
           (when-not (#{"MetaDatum::JSON" "MetaDatum::Text" "MetaDatum::TextDate"} meta-datum-type)
-            {:collection
-             {:relations
-              (into {}
-                    (map #(hash-map % ((case meta-datum-type
-                                         "MetaDatum::Keywords" links/keyword-term
-                                         "MetaDatum::People" links/meta-datum-person)
-                                       context %))
-                         (map :id (-> response :body :value))))}}))))
+            (when (contains? #{"MetaDatum::Keywords" "MetaDatum::People"} meta-datum-type)
+              {:collection
+               {:relations
+                (into {}
+                      (case meta-datum-type
+                        "MetaDatum::Keywords"
+                        (map #(hash-map % (links/keyword-term context %))
+                             (map :id (-> response :body :value)))
+
+                        "MetaDatum::People"
+                        ;; For People, provide BOTH person links (old way using 'id') and meta-datum-person links (new way using 'meta-data-people-id')
+                        (concat
+                         ;; Old way: direct person links
+                         (map #(hash-map % (links/person context %))
+                              (map :id (-> response :body :value)))
+                         ;; New way: meta-datum-person links
+                         (map #(hash-map % (links/meta-datum-person context %))
+                              (map :meta-data-people-id (-> response :body :value))))))}})))))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

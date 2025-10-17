@@ -90,7 +90,12 @@
                      "MetaDatum::JSON" (:json meta-datum)
                      "MetaDatum::Text" (:string meta-datum)
                      "MetaDatum::TextDate" (:string meta-datum)
-                     (map #(select-keys % [:id :position])
+                     (map #(if (= meta-datum-type "MetaDatum::People")
+                             ;; For People, include both person_id as 'id' (old way) and meta_data_people.id as 'meta-data-people-id' (new way)
+                             {:id (:person_id %)
+                              :meta-data-people-id (:id %)
+                              :position (:position %)}
+                             (select-keys % [:id :position]))
                           ((case meta-datum-type
                              "MetaDatum::Groups" groups-with-ids
                              "MetaDatum::Keywords" keywords

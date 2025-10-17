@@ -49,25 +49,48 @@ describe "generated runs" do
               end
 
               context "if the response is 200" do
-                it "it holds the proper uuid array value" do
+                it "it holds the proper uuid array value with both old and new fields" do
                   if response.status == 200
-                    value.map { |v| v["id"] }.each do |mtr_id|
+                    value.each do |v|
+                      # New way: meta-data-people-id should reference MetaDatum::Person record
+                      expect(v).to have_key("meta-data-people-id")
                       expect(MetaDatum::Person.find_by(meta_datum_id: resource.data["id"],
-                                                       id: mtr_id)).to be
+                                                       id: v["meta-data-people-id"])).to be
+
+                      # Old way: id should reference person_id for backwards compatibility
+                      expect(v).to have_key("id")
+                      meta_datum_person = MetaDatum::Person.find_by(meta_datum_id: resource.data["id"],
+                                                                    id: v["meta-data-people-id"])
+                      expect(meta_datum_person.person_id).to eq(v["id"])
                     end
                   end
                 end
 
-                context "MetaDatum::Person resource" do
+                context "MetaDatum::Person resource (new way)" do
                   let(:root) { authenticated_json_roa_client.get }
 
-                  it "provides valid relations" do
+                  it "provides valid relations via meta-data-people-id" do
                     if response.status == 200
                       resource.data["value"].each do |v|
-                        meta_data_person = root.relation("meta-datum-person").get("id" => v["id"])
+                        meta_data_person = root.relation("meta-datum-person").get("id" => v["meta-data-people-id"])
 
                         expect(meta_data_person.relation("meta-datum").get.response.status).to be == 200
                         expect(meta_data_person.relation("person").get.response.status).to be == 200
+                      end
+                    end
+                  end
+                end
+
+                context "Person resource (old way - backwards compatibility)" do
+                  let(:root) { authenticated_json_roa_client.get }
+
+                  it "provides valid person relations via id field" do
+                    if response.status == 200
+                      resource.data["value"].each do |v|
+                        person = root.relation("person").get("id" => v["id"])
+
+                        expect(person.response.status).to be == 200
+                        expect(person.data["id"]).to eq(v["id"])
                       end
                     end
                   end
@@ -76,9 +99,14 @@ describe "generated runs" do
 
               it "it provides valid collection and relations" do
                 if response.status == 200
+                  # Collection should contain both person links (old way) and meta-datum-person links (new way)
+                  person_ids = value.map { |v| v["id"] }
+                  meta_data_people_ids = value.map { |v| v["meta-data-people-id"] }
+                  all_ids = person_ids + meta_data_people_ids
+
                   resource.collection.each do |c_entry|
                     expect(c_entry.get.response.status).to be == 200
-                    expect(value.map { |v| v["id"] }).to include c_entry.get.data["id"]
+                    expect(all_ids).to include c_entry.get.data["id"]
                   end
 
                   expect(resource.relation("meta-key").get.response.status).to be == 200
