@@ -29,22 +29,23 @@
   [{{collection-id :id} :params
     context :context
     :as request}
-   {responsible-delegation-id :responsible_delegation_id
-    responsible-user-id :responsible_user_id
+   {{responsible-delegation-id :responsible_delegation_id
+     responsible-user-id :responsible_user_id} :body
     :as response}]
   {:name "Collection"
    :self-relation (links/collection context collection-id)
    :relations
-   {:root (links/root context)
-    :meta-data (links/collection-meta-data context collection-id)
-    :media-entries (links/media-entries context {:collection_id collection-id})
-    (if responsible-user-id
-      {:user (links/user context responsible-user-id)} {})
-    (if responsible-delegation-id
-      {:delegation (links/delegation context responsible-delegation-id)} {})
-    :collection-media-entry-arcs (links/collection-media-entry-arcs
-                                  context {:collection_id collection-id})
-    :collections (links/collections context {:collection_id collection-id})}})
+   (merge
+    {:root (links/root context)
+     :meta-data (links/collection-meta-data context collection-id)
+     :media-entries (links/media-entries context {:collection_id collection-id})
+     :collection-media-entry-arcs (links/collection-media-entry-arcs
+                                   context {:collection_id collection-id})
+     :collections (links/collections context {:collection_id collection-id})}
+    (when responsible-user-id
+      {:user (links/user context responsible-user-id)})
+    (when responsible-delegation-id
+      {:delegation (links/delegation context responsible-delegation-id)}))})
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

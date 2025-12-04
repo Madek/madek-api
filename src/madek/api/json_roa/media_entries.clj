@@ -41,8 +41,8 @@
   [{context :context
     {media-entry-id :id}
     :params :as request}
-   {responsible-delegation-id :responsible_delegation_id
-    responsible-user-id :responsible_user_id
+   {{responsible-delegation-id :responsible_delegation_id
+     responsible-user-id :responsible_user_id} :body
     :as response}]
   {:name "Media-Entry"
    :self-relation (links/media-entry context media-entry-id)
