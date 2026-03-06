@@ -1,6 +1,5 @@
 madek_api_dir: "{{madek_server_dir}}/api"
 madek_api_service_name: "{{madek_base_name}}_api"
-madek_api_dir: /madek/server/api
 madek_api_user: madek-api
 
 madek_api_docs_dir: "{{madek_api_dir}}/docs"
