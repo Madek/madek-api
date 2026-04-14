@@ -5,12 +5,18 @@
    [logbug.debug :as debug]
    [madek.api.utils.sql :as sql]))
 
+(def ^:private safe-identifier-pattern #"^[a-zA-Z_][a-zA-Z0-9_]*$")
+
 (defn- sql-merge-where-media-file-spec [sqlmap media-file-spec]
-  (-> sqlmap
-      (sql/merge-where
-       [:=
-        (keyword (str "media_files." (:key media-file-spec)))
-        (:value media-file-spec)])))
+  (let [k (:key media-file-spec)]
+    (if (and (string? k) (re-matches safe-identifier-pattern k))
+      (-> sqlmap
+          (sql/merge-where
+           [:=
+            (keyword (str "media_files." k))
+            (:value media-file-spec)]))
+      (throw (ex-info (str "Invalid media_files filter key: " k)
+                      {:status 422})))))
 
 (defn sql-filter-by [sqlmap media-file-specs]
   (if-not (empty? media-file-specs)

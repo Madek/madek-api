@@ -17,8 +17,8 @@ describe "advanced filtering of media entries" do
     it "returns 200 with correct result" do
       20.times do
         FactoryBot.create \
-          [:media_entry_with_image_media_file,
-           :media_entry_with_audio_media_file].sample,
+          %i[media_entry_with_image_media_file
+             media_entry_with_audio_media_file].sample,
           :fat
       end
 
@@ -29,6 +29,14 @@ describe "advanced filtering of media entries" do
       fetched_media_entries = get_media_entries("filter_by" => filter.deep_stringify_keys.to_json)
       expect(fetched_media_entries.size).to be == 1
       expect(fetched_media_entries.first["id"]).to be == media_entry.id
+    end
+  end
+
+  context "filtering by media_files with an unsafe key" do
+    it "returns 422" do
+      filter = { media_files: [{ key: "invalid-key; DROP TABLE users--", value: "abc" }] }
+      response = media_entries_relation.get("filter_by" => filter.deep_stringify_keys.to_json)
+      expect(response.response.status).to be == 422
     end
   end
 
