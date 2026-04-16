@@ -75,7 +75,7 @@
     (Integer. ps)))
 
 (defn- create-c3p0-datasources [db-conf]
-  (logging/info create-c3p0-datasources [db-conf])
+  (logging/debug create-c3p0-datasources (dissoc db-conf :password :pg-password))
   (reset! ds
           {:datasource
            (doto (ComboPooledDataSource.)
@@ -92,7 +92,7 @@
               (or (:max-idle-time-exess-connections db-conf) (* 10 60))))}))
 
 (defn initialize [db-conf]
-  (logging/info initialize [db-conf])
+  (logging/debug initialize (dissoc db-conf :password :pg-password))
   (create-c3p0-datasources db-conf)
   (.addShutdownHook (Runtime/getRuntime)
                     (Thread. (fn []

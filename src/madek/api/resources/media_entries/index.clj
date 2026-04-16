@@ -15,8 +15,7 @@
    [madek.api.resources.media-entries.advanced-filter.permissions :as permissions :refer [filter-by-query-params]]
    [madek.api.resources.shared :as shared]
    [madek.api.utils.rdbms :as rdbms]
-   [madek.api.utils.sql :as sql]
-   [taoensso.timbre :as timbre :refer [spy debug info warn error]]))
+   [madek.api.utils.sql :as sql]))
 
 ;### collection_id ############################################################
 
@@ -154,7 +153,7 @@
         sql/format)))
 
 (defn- query-index-resources [request]
-  (jdbc/query (rdbms/get-ds) (spy (build-query request))))
+  (jdbc/query (rdbms/get-ds) (build-query request)))
 
 ;### index ####################################################################
 
@@ -162,7 +161,6 @@
   (catcher/with-logging {}
     (try
       (let [data (query-index-resources request)]
-        (debug 'data data)
         {:body
          (merge
           {:media-entries (->> data

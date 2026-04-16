@@ -5,11 +5,11 @@
    [honey.sql :refer [format] :rename {format sql-format}]
    [honey.sql.helpers :as sql]
    [madek.api.utils.rdbms :as rdbms]
-   [taoensso.timbre :refer [debug info spy]]))
+   [taoensso.timbre :refer [debug spy]]))
 
 (defn delegation
   [{{delegation-id :id} :route-params :as request}]
-  (info "delegation" delegation-id request)
+  (debug "delegation" delegation-id (select-keys request [:uri :request-method]))
   (if-let [delegation (-> (sql/select :*)
                           (sql/from :delegations)
                           (sql/where [:= :delegations.id delegation-id])

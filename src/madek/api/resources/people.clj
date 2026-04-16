@@ -15,7 +15,7 @@
    [madek.api.utils.rdbms :as rdbms]
    [madek.api.utils.sql :as sql]
    [ring.util.codec :refer [url-decode]]
-   [taoensso.timbre :as timbre :refer [debug info spy]]))
+   [taoensso.timbre :as timbre :refer [debug spy]]))
 
 (defn id-where-clause
   [id]
@@ -88,7 +88,7 @@
   [{{id-or-institutinal-person-id :id} :route-params
     {admin :admin_scope_read} :authenticated-entity
     :as request}]
-  (info "get-person" request)
+  (debug "get-person" (select-keys request [:uri :request-method]))
   (if-let [person
            (->>
             id-or-institutinal-person-id

@@ -48,7 +48,7 @@
   (String. (.decode (Base64/getDecoder) encoded)))
 
 (defn extract [request]
-  (logging/debug 'extract request)
+  (logging/debug 'extract (select-keys request [:uri :request-method]))
   (try (when-let [auth-header (-> request :headers :authorization)]
          (when (re-matches #"(?i)^basic\s+.+$" auth-header)
            (let [decoded-val (base64-decode (last (re-find #"(?i)^basic (.*)$" auth-header)))

@@ -130,7 +130,7 @@
           {:status 403})
         {:status 401}))
     (let [response {:status 500 :body "No media-resource in request."}]
-      (logging/warn 'authorize-request-for-handler response [request handler])
+      (logging/warn 'authorize-request-for-handler response (select-keys request [:uri :request-method]))
       response)))
 
 (defn- dispatch-authorize [request handler]

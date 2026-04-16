@@ -45,7 +45,7 @@
                             (fn [current-config params]
                               (deep-merge current-config params))
                             params)]
-      (logging/info "config changed to " new-config))))
+      (logging/debug "config changed to " new-config))))
 
 (defn slurp-and-merge [config slurpable]
   (->> (slurp slurpable)
