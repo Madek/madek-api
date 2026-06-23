@@ -17,4 +17,4 @@ case "$TOOL_VERSIONS_MANAGER" in
     ;;
 esac
 
-clojure -Moutdated -a outdated
+clojure -M:outdated "$@"

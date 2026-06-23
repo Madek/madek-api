@@ -1,53 +1,56 @@
 {:paths ["src" "resources"]
- :deps {aleph/aleph {:mvn/version "0.9.5"}
-        camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.2"}
-        cheshire/cheshire {:mvn/version "5.13.0"}
-        cider-ci/open-session {:mvn/version "2.0.0-beta.1"} ; upgrade will break
-        cider/cider-nrepl {:mvn/version "0.56.0"}
-        clj-http/clj-http {:mvn/version "3.12.3"}
+ :deps {aleph/aleph {:mvn/version "0.9.9"}
+        camel-snake-kebab/camel-snake-kebab {:mvn/version "0.4.3"}
+        cheshire/cheshire {:mvn/version "6.2.0"}
+        cider-ci/open-session {:mvn/version "2.0.0-beta.1"
+                               :exclusions [org.bouncycastle/bcprov-jdk15on]}
+        cider/cider-nrepl {:mvn/version "0.59.0"}
+        clj-http/clj-http {:mvn/version "3.13.1"}
         clj-pid/clj-pid {:mvn/version "0.1.2"}
         clj-yaml/clj-yaml {:mvn/version "0.4.0"}
         clojure-humanize/clojure-humanize {:mvn/version "0.2.2"}
         com.fzakaria/slf4j-timbre {:mvn/version "0.3.21"}
         com.github.mfornos/humanize-slim {:mvn/version "1.2.2"}
-        com.github.seancorfield/honeysql {:mvn/version "2.4.1066"}
-        com.mchange/c3p0 {:mvn/version "0.12.0"}
+        com.github.seancorfield/honeysql {:mvn/version "2.7.1389"}
+        com.google.guava/guava {:mvn/version "32.0.0-jre"} ; transitive dependency of com.github.mfornos/humanize-slim; several CVEs
+        com.mchange/c3p0 {:mvn/version "0.14.1"}
         com.taoensso/timbre {:mvn/version "5.1.2"}
-        compojure/compojure {:mvn/version "1.6.2"}
+        compojure/compojure {:mvn/version "1.7.2"}
         drtom/clj-uuid {:mvn/version "0.1.7"}
         environ/environ {:mvn/version "1.2.0"}
         honeysql/honeysql {:mvn/version "1.0.461"}
-        inflections/inflections {:mvn/version "0.13.2"}
-        io.github.tonsky/clj-reload {:mvn/version "0.9.8"}
+        inflections/inflections {:mvn/version "0.15.0"}
+        io.github.tonsky/clj-reload {:mvn/version "1.0.0"}
         json-roa/clj-utils {:mvn/version "1.0.0"}
         logbug/logbug {:mvn/version "5.0.0"}
         me.raynes/fs {:mvn/version "1.4.6"
                       :exclusions [org.apache.commons/commons-compress]}
-        nrepl/nrepl {:mvn/version "1.3.1"}
-        org.apache.commons/commons-compress #:mvn{:version "1.28.0"}
+        nrepl/nrepl {:mvn/version "1.7.0"}
+        org.apache.commons/commons-compress {:mvn/version "1.28.0"}
         org.apache.commons/commons-lang3 {:mvn/version "3.20.0"}
+        org.bouncycastle/bcpkix-jdk18on {:mvn/version "1.84"} ; transitive dependency of from cryptohash-clj, cider-ci/open-session; several CVEs
         org.clojars.hozumi/clj-commons-exec {:mvn/version "1.2.0"}
-        org.clojure/clojure {:mvn/version "1.11.4"}
-        org.clojure/core.match {:mvn/version "1.0.0"}
-        org.clojure/data.codec {:mvn/version "0.1.1"}
+        org.clojure/clojure {:mvn/version "1.12.5"}
+        org.clojure/core.match {:mvn/version "1.1.1"}
+        org.clojure/data.codec {:mvn/version "0.2.1"}
         org.clojure/java.jdbc {:mvn/version "0.7.12"}
         org.clojure/tools.cli {:mvn/version "1.0.206"}
-        org.clojure/tools.logging {:mvn/version "1.2.1"}
-        org.postgresql/postgresql {:mvn/version "42.6.2"}
-        org.yaml/snakeyaml {:mvn/version "2.2"}
+        org.clojure/tools.logging {:mvn/version "1.3.1"}
+        org.postgresql/postgresql {:mvn/version "42.7.11"}
+        org.yaml/snakeyaml {:mvn/version "2.6"}
         pg-types/pg-types {:mvn/version "3.0.0"}
-        ring-basic-authentication/ring-basic-authentication {:mvn/version "1.1.1"}
+        ring-basic-authentication/ring-basic-authentication {:mvn/version "1.2.0"}
         ring-cors/ring-cors {:mvn/version "0.1.13"}
-        ring/ring-core {:mvn/version "1.15.2"}
-        ring/ring-jetty-adapter {:mvn/version "1.15.2"}
+        ring/ring-core {:mvn/version "1.15.4"}
+        ring/ring-jetty-adapter {:mvn/version "1.15.4"}
         ring/ring-json {:mvn/version "0.5.1"}
-        spootnik/signal {:mvn/version "0.2.4"}
-        uritemplate-clj/uritemplate-clj {:mvn/version "1.3.1"}}
+        spootnik/signal {:mvn/version "0.2.5"}
+        uritemplate-clj/uritemplate-clj {:mvn/version "1.4.0"}}
  :aliases
  {;
   :cljfmt {:extra-deps {io.github.weavejester/cljfmt
-                        {:git/tag "0.11.2"
-                         :sha "fb26b22f569724b05c93eb2502592dfc2de898c3"}}
+                        {:git/tag "0.16.4"
+                         :sha "389e7cafc7cd5d435ccd83ab931913449b807479"}}
            :main-opts ["-m" "cljfmt.main"]}
   :depstar {:extra-deps {seancorfield/depstar {:mvn/version "2.0.216"}}}
   :graph {:extra-deps
@@ -56,9 +59,9 @@
             :git/url "https://github.com/DrTom/tools.deps.graph.git"
             :sha "809d5981b6c6ec7267328b74f8dd61630df01daf"}}
           :main-opts ["-m" "clojure.tools.deps.graph"]}
-  :nREPL {:extra-deps {nrepl/nrepl {:mvn/version "1.3.1"}}}
-  :outdated {:extra-deps {olical/depot {:mvn/version "2.3.0"}}
-             :main-opts ["-m" "depot.outdated.main"]}
+  :nREPL {:extra-deps {nrepl/nrepl {:mvn/version "1.7.0"}}}
+  :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}}
+             :main-opts ["-m" "antq.core"]}
   :resources {:extra-paths ["resources"]}
   :test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner

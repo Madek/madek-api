@@ -17,5 +17,5 @@ case "$TOOL_VERSIONS_MANAGER" in
     ;;
 esac
 
-clojure -Moutdated -a outdated --update
+clojure -M:outdated --upgrade "$@"
 $(dirname "$0")/clj-deps-graph

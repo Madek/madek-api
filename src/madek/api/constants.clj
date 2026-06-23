@@ -24,7 +24,7 @@
   {:min-level [[#{; "madek.api.authentication.*"
                   ; "madek.api.resources.media-entries.*"
                   ;  "madek.api.resources.meta-data.meta-datum"
-                  }:debug]
+                  } :debug]
                [#{"madek.api.*"} :info]
                [#{"*"} :warn]]
    :log-level nil})
