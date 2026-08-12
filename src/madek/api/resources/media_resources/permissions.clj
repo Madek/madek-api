@@ -17,12 +17,35 @@
                  [:= perm-name true])
       (sql/format)))
 
+(defn delegation-ids-subquery [user_id]
+  {:union
+   [(-> (sql/select :delegation_id)
+        (sql/from :delegations_groups)
+        (sql/where [:in :delegations_groups.group_id
+                    (-> (sql/select :group_id)
+                        (sql/from :groups_users)
+                        (sql/where [:= :groups_users.user_id user_id]))]))
+    (-> (sql/select :delegation_id)
+        (sql/from :delegations_users)
+        (sql/where [:= :delegations_users.user_id user_id]))]})
+
+(defn user-or-delegation-subject-condition
+  "Match *_user_permissions rows granted to the user or to a delegation they belong to."
+  [user-id & {:keys [table-alias]}]
+  (let [col (fn [name]
+              (if table-alias
+                (keyword (str table-alias "." name))
+                (keyword name)))]
+    [:or
+     [:= (col "user_id") user-id]
+     [:in (col "delegation_id") (delegation-ids-subquery user-id)]]))
+
 (defn- build-user-permissions-query
   [media-resource-id user-id perm-name & {:keys [mr-type]}]
   (-> (sql/select :*)
       (sql/from (keyword (str mr-type "_user_permissions")))
       (sql/where [:= (keyword (str mr-type "_id")) media-resource-id]
-                 [:= :user_id user-id]
+                 (user-or-delegation-subject-condition user-id)
                  [:= perm-name true])
       (sql/format)))
 
@@ -49,16 +72,8 @@
 ; ============================================================
 
 (defn- delegation-ids [user_id]
-  (let [query {:union [(-> (sql/select :delegation_id)
-                           (sql/from :delegations_groups)
-                           (sql/where [:in :delegations_groups.group_id (->
-                                                                         (sql/select :group_id)
-                                                                         (sql/from :groups_users)
-                                                                         (sql/where [:= :groups_users.user_id user_id]))]))
-                       (-> (sql/select :delegation_id)
-                           (sql/from :delegations_users)
-                           (sql/where [:= :delegations_users.user_id user_id]))]}]
-    (map #(:delegation_id %) (jdbc/query (rdbms/get-ds) (sql/format query)))))
+  (map #(:delegation_id %)
+       (jdbc/query (rdbms/get-ds) (sql/format (delegation-ids-subquery user_id)))))
 
 (defn- query-api-client-permissions
   [resource api-client-id perm-name & {:keys [mr-type]}]

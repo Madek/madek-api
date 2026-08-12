@@ -68,6 +68,46 @@ describe "filtering collections" do
           end
         end
 
+        it "200 for responsible delegation user membership" do
+          delegation = FactoryBot.create(:delegation)
+          delegation.users << user
+          created_ids = 10.times.map {
+            FactoryBot.create(:collection,
+                              responsible_user: nil,
+                              responsible_delegation_id: delegation.id,
+                              get_metadata_and_previews: false).id
+          }
+
+          collections = get_collections("me_get_metadata_and_previews" => "true")
+          expect(collections).not_to be_empty
+          expect(collections.map { |c| c["id"] }).to include(*created_ids)
+          collections.each do |c|
+            collection = Collection.unscoped.find(c["id"])
+            expect(collection.responsible_delegation_id).to be == delegation.id
+          end
+        end
+
+        it "200 for responsible delegation group membership" do
+          delegation = FactoryBot.create(:delegation)
+          group = FactoryBot.create(:group)
+          delegation.groups << group
+          group.users << user
+          created_ids = 10.times.map {
+            FactoryBot.create(:collection,
+                              responsible_user: nil,
+                              responsible_delegation_id: delegation.id,
+                              get_metadata_and_previews: false).id
+          }
+
+          collections = get_collections("me_get_metadata_and_previews" => "true")
+          expect(collections).not_to be_empty
+          expect(collections.map { |c| c["id"] }).to include(*created_ids)
+          collections.each do |c|
+            collection = Collection.unscoped.find(c["id"])
+            expect(collection.responsible_delegation_id).to be == delegation.id
+          end
+        end
+
         it "200 for user permission" do
           10.times do
             FactoryBot.create \
@@ -81,6 +121,28 @@ describe "filtering collections" do
             .each do |c|
             collection = Collection.unscoped.find(c["id"])
             expect(collection.user_permissions.first.user).to be == user
+          end
+        end
+
+        it "200 for delegation permission" do
+          delegation = FactoryBot.create(:delegation)
+          delegation.users << user
+          created_ids = 10.times.map do
+            FactoryBot.create(
+              :collection_delegation_permission,
+              collection: FactoryBot.create(:collection,
+                                            get_metadata_and_previews: false),
+              delegation: delegation,
+              get_metadata_and_previews: true,
+            ).collection_id
+          end
+
+          collections = get_collections("me_get_metadata_and_previews" => "true")
+          expect(collections).not_to be_empty
+          expect(collections.map { |c| c["id"] }).to include(*created_ids)
+          collections.each do |c|
+            collection = Collection.unscoped.find(c["id"])
+            expect(collection.user_permissions.first.delegation_id).to be == delegation.id
           end
         end
 

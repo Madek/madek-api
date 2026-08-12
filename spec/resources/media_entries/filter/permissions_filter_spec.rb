@@ -261,6 +261,48 @@ describe "filtering media entries" do
           end
         end
 
+        it "200 for responsible delegation user membership" do
+          delegation = FactoryBot.create(:delegation)
+          delegation.users << user
+          created_ids = 10.times.map {
+            FactoryBot.create(:media_entry,
+                              responsible_user: nil,
+                              responsible_delegation_id: delegation.id,
+                              get_metadata_and_previews: false,
+                              get_full_size: false).id
+          }
+
+          media_entries = get_media_entries("me_get_full_size" => "true")
+          expect(media_entries).not_to be_empty
+          expect(media_entries.map { |me| me["id"] }).to include(*created_ids)
+          media_entries.each do |me|
+            media_entry = MediaEntry.unscoped.find(me["id"])
+            expect(media_entry.responsible_delegation_id).to be == delegation.id
+          end
+        end
+
+        it "200 for responsible delegation group membership" do
+          delegation = FactoryBot.create(:delegation)
+          group = FactoryBot.create(:group)
+          delegation.groups << group
+          group.users << user
+          created_ids = 10.times.map {
+            FactoryBot.create(:media_entry,
+                              responsible_user: nil,
+                              responsible_delegation_id: delegation.id,
+                              get_metadata_and_previews: false,
+                              get_full_size: false).id
+          }
+
+          media_entries = get_media_entries("me_get_full_size" => "true")
+          expect(media_entries).not_to be_empty
+          expect(media_entries.map { |me| me["id"] }).to include(*created_ids)
+          media_entries.each do |me|
+            media_entry = MediaEntry.unscoped.find(me["id"])
+            expect(media_entry.responsible_delegation_id).to be == delegation.id
+          end
+        end
+
         it "200 for user permission" do
           10.times do
             FactoryBot.create \
@@ -275,6 +317,30 @@ describe "filtering media entries" do
             .each do |me|
             media_entry = MediaEntry.unscoped.find(me["id"])
             expect(media_entry.user_permissions.first.user).to be == user
+          end
+        end
+
+        it "200 for delegation permission" do
+          delegation = FactoryBot.create(:delegation)
+          delegation.users << user
+          created_ids = 10.times.map do
+            FactoryBot.create(
+              :media_entry_delegation_permission,
+              media_entry: FactoryBot.create(:media_entry,
+                                             get_metadata_and_previews: false,
+                                             get_full_size: false),
+              delegation: delegation,
+              get_metadata_and_previews: true,
+              get_full_size: true,
+            ).media_entry_id
+          end
+
+          media_entries = get_media_entries("me_get_full_size" => "true")
+          expect(media_entries).not_to be_empty
+          expect(media_entries.map { |me| me["id"] }).to include(*created_ids)
+          media_entries.each do |me|
+            media_entry = MediaEntry.unscoped.find(me["id"])
+            expect(media_entry.user_permissions.first.delegation_id).to be == delegation.id
           end
         end
 

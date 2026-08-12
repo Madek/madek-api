@@ -98,6 +98,58 @@ describe "Getting a media-entry resource with authentication" do
     end
   end
 
+  context :check_allowed_if_delegation_permission do
+    before do
+      delegation = create(:delegation)
+      delegation.users << @entity
+      @media_entry.user_permissions << FactoryBot.create(
+        :media_entry_delegation_permission,
+        get_metadata_and_previews: true,
+        delegation: delegation,
+        media_entry: @media_entry,
+      )
+    end
+
+    it "is allowed 200" do
+      expect(response.status).to be == 200
+    end
+  end
+
+  context :check_allowed_if_delegation_permission_via_group_membership do
+    before do
+      delegation = create(:delegation)
+      group = create(:group)
+      delegation.groups << group
+      group.users << @entity
+      @media_entry.user_permissions << FactoryBot.create(
+        :media_entry_delegation_permission,
+        get_metadata_and_previews: true,
+        delegation: delegation,
+        media_entry: @media_entry,
+      )
+    end
+
+    it "is allowed 200" do
+      expect(response.status).to be == 200
+    end
+  end
+
+  context :check_forbidden_if_delegation_permission_without_membership do
+    before do
+      delegation = create(:delegation)
+      @media_entry.user_permissions << FactoryBot.create(
+        :media_entry_delegation_permission,
+        get_metadata_and_previews: true,
+        delegation: delegation,
+        media_entry: @media_entry,
+      )
+    end
+
+    it "is forbidden 403" do
+      expect(response.status).to be == 403
+    end
+  end
+
   context :check_allowed_if_group_permission do
     before :example do
       group = FactoryBot.create(:group)

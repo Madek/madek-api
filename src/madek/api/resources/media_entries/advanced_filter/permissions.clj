@@ -3,6 +3,7 @@
    [clojure.tools.logging :as logging]
    [logbug.catcher :as catcher]
    [logbug.debug :as debug]
+   [madek.api.resources.media-resources.permissions :as mr-permissions]
    [madek.api.utils.sql :as sql]))
 
 (defn- api-client-authorized-condition [perm id]
@@ -26,7 +27,8 @@
                (sql/from [:media_entry_user_permissions :meup])
                (sql/merge-where [:= :meup.media_entry_id :media_entries.id])
                (sql/merge-where [:= (keyword (str "meup." perm)) true])
-               (sql/merge-where [:= :meup.user_id id]))])
+               (sql/merge-where (mr-permissions/user-or-delegation-subject-condition
+                                 id :table-alias "meup")))])
 
 (defn- group-permission-for-user-exists-condition [perm id]
   [:exists (-> (sql/select true)
@@ -40,11 +42,11 @@
                (sql/merge-where [:= :gu.user_id id]))])
 
 (defn- user-authorized-condition [perm id]
-  ; (println (sql/format (delegation-ids-subquery id)))
   [:or
    [:= (keyword (str "media_entries." perm)) true]
    [:= :media_entries.responsible_user_id id]
-   ; [:in :media_entries.responsible_delegation_id (delegation-ids-subquery id)]
+   [:in :media_entries.responsible_delegation_id
+    (mr-permissions/delegation-ids-subquery id)]
    (user-permission-exists-condition perm id)
    (group-permission-for-user-exists-condition perm id)])
 
@@ -67,7 +69,8 @@
                          (sql/from [:media_entry_user_permissions :meup])
                          (sql/merge-where [:= :meup.media_entry_id :media_entries.id])
                          (sql/merge-where [:= (keyword (str "meup." perm)) query-param-value])
-                         (sql/merge-where [:= :meup.user_id id]))])
+                         (sql/merge-where (mr-permissions/user-or-delegation-subject-condition
+                                           id :table-alias "meup")))])
     "ApiClient" (sql/merge-where
                  sqlmap
                  [:exists (-> (sql/select true)

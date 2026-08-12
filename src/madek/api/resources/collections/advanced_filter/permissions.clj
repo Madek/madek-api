@@ -3,6 +3,7 @@
    [clojure.tools.logging :as logging]
    [logbug.catcher :as catcher]
    [logbug.debug :as debug]
+   [madek.api.resources.media-resources.permissions :as mr-permissions]
    [madek.api.utils.sql :as sql]))
 
 (defn- api-client-authorized-condition [perm id]
@@ -26,7 +27,8 @@
                (sql/from [:collection_user_permissions :cup])
                (sql/merge-where [:= :cup.collection_id :collections.id])
                (sql/merge-where [:= (keyword (str "cup." perm)) true])
-               (sql/merge-where [:= :cup.user_id id]))])
+               (sql/merge-where (mr-permissions/user-or-delegation-subject-condition
+                                 id :table-alias "cup")))])
 
 (defn- group-permission-for-user-exists-condition [perm id]
   [:exists (-> (sql/select true)
@@ -43,6 +45,8 @@
   [:or
    [:= (keyword (str "collections." perm)) true]
    [:= :collections.responsible_user_id id]
+   [:in :collections.responsible_delegation_id
+    (mr-permissions/delegation-ids-subquery id)]
    (user-permission-exists-condition perm id)
    (group-permission-for-user-exists-condition perm id)])
 
@@ -65,7 +69,8 @@
                          (sql/from [:collection_user_permissions :cup])
                          (sql/merge-where [:= :cup.collection_id :collections.id])
                          (sql/merge-where [:= (keyword (str "cup." perm)) query-param-value])
-                         (sql/merge-where [:= :cup.user_id id]))])
+                         (sql/merge-where (mr-permissions/user-or-delegation-subject-condition
+                                           id :table-alias "cup")))])
     "ApiClient" (sql/merge-where
                  sqlmap
                  [:exists (-> (sql/select true)
