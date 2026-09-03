@@ -3,6 +3,7 @@
    [clojure.tools.logging :as logging]
    [logbug.catcher :as catcher]
    [logbug.debug :as debug]
+   [madek.api.resources.media-resources.advanced-filter.permissions :as shared]
    [madek.api.utils.sql :as sql]))
 
 (defn- api-client-authorized-condition [perm id]
@@ -114,48 +115,14 @@
       (filter-by-dedicated-permission-for-auth-entity
        authenticated-entity "get_full_size" me_download_dedicated))))
 
-(defn- sql-merge-where-permission-spec [sqlmap permission-spec]
-  (case (:key permission-spec)
-    "public"
-    (-> sqlmap
-        (sql/merge-where
-         [:=
-          :media_entries.get_metadata_and_previews
-          (case (:value permission-spec)
-            "true" true
-            "false" false
-            :else (throw
-                   (ex-info
-                    (str "Invalid filter for \"public\" permission!")
-                    {:status 422})))]))
-
-    "responsible_user"
-    (-> sqlmap
-        (sql/merge-where [:=
-                          :media_entries.responsible_user_id
-                          (:value permission-spec)]))
-
-    "entrusted_to_user"
-    (-> sqlmap
-        (sql/merge-where
-         [:or
-          (user-permission-exists-condition "get_metadata_and_previews"
-                                            (:value permission-spec))
-          (group-permission-for-user-exists-condition "get_metadata_and_previews"
-                                                      (:value permission-spec))]))
-
-    "entrusted_to_group"
-    (-> sqlmap
-        (sql/merge-where
-         (group-permission-exists-condition "get_metadata_and_previews"
-                                            (:value permission-spec))))))
-
 (defn sql-filter-by [sqlmap permission-specs]
-  (if-not (empty? permission-specs)
-    (reduce sql-merge-where-permission-spec
-            sqlmap
-            permission-specs)
-    sqlmap))
+  (shared/sql-filter-by
+   "media_entries"
+   {:user-permission-exists user-permission-exists-condition
+    :group-permission-for-user-exists group-permission-for-user-exists-condition
+    :group-permission-exists group-permission-exists-condition}
+   sqlmap
+   permission-specs))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

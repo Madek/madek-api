@@ -40,6 +40,14 @@ describe "advanced filtering of media entries" do
     end
   end
 
+  context "filtering by permissions with an invalid public value" do
+    it "returns 422" do
+      filter = { permissions: [{ key: "public", value: "invalid" }] }
+      response = media_entries_relation.get("filter_by" => filter.deep_stringify_keys.to_json)
+      expect(response.response.status).to be == 422
+    end
+  end
+
   context "searching a string through all meta data" do
     include_context "search in all meta data shared context"
 
