@@ -135,6 +135,12 @@
                           :media_entries.responsible_user_id
                           (:value permission-spec)]))
 
+    "responsible_delegation"
+    (-> sqlmap
+        (sql/merge-where [:=
+                          :media_entries.responsible_delegation_id
+                          (:value permission-spec)]))
+
     "entrusted_to_user"
     (-> sqlmap
         (sql/merge-where
