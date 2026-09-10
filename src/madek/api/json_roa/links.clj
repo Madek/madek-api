@@ -218,6 +218,7 @@
 
 (def collections-path-query-template-keys
   #{:collection_id
+    :filter_by
     :me_get_metadata_and_previews
     :me_get_metadata_and_previews_dedicated
     :order

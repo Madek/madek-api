@@ -100,6 +100,55 @@
        authenticated-entity "get_metadata_and_previews"
        me_get_metadata_and_previews_dedicated))))
 
+(defn- sql-merge-where-permission-spec [sqlmap permission-spec]
+  (case (:key permission-spec)
+    "public"
+    (-> sqlmap
+        (sql/merge-where
+         [:=
+          :collections.get_metadata_and_previews
+          (case (:value permission-spec)
+            "true" true
+            "false" false
+            :else (throw
+                   (ex-info
+                    (str "Invalid filter for \"public\" permission!")
+                    {:status 422})))]))
+
+    "responsible_user"
+    (-> sqlmap
+        (sql/merge-where [:=
+                          :collections.responsible_user_id
+                          (:value permission-spec)]))
+
+    "responsible_delegation"
+    (-> sqlmap
+        (sql/merge-where [:=
+                          :collections.responsible_delegation_id
+                          (:value permission-spec)]))
+
+    "entrusted_to_user"
+    (-> sqlmap
+        (sql/merge-where
+         [:or
+          (user-permission-exists-condition "get_metadata_and_previews"
+                                            (:value permission-spec))
+          (group-permission-for-user-exists-condition "get_metadata_and_previews"
+                                                      (:value permission-spec))]))
+
+    "entrusted_to_group"
+    (-> sqlmap
+        (sql/merge-where
+         (group-permission-exists-condition "get_metadata_and_previews"
+                                            (:value permission-spec))))))
+
+(defn sql-filter-by [sqlmap permission-specs]
+  (if-not (empty? permission-specs)
+    (reduce sql-merge-where-permission-spec
+            sqlmap
+            permission-specs)
+    sqlmap))
+
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)
 ;(debug/wrap-with-log-debug #'filter-by-permissions)
