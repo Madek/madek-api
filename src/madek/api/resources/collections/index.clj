@@ -6,7 +6,7 @@
    [logbug.catcher :as catcher]
    [logbug.debug :as debug]
    [madek.api.pagination :as pagination]
-   [madek.api.resources.collections.advanced-filter.permissions :as permissions :refer [filter-by-query-params]]
+   [madek.api.resources.collections.advanced-filter.permissions :as permissions]
    [madek.api.utils.rdbms :as rdbms]
    [madek.api.utils.sql :as sql]))
 
@@ -41,6 +41,7 @@
         (filter-by-collection-id query-params)
         (permissions/filter-by-query-params query-params
                                             authenticated-entity)
+        (permissions/sql-filter-by (:permissions (:filter_by query-params)))
         (pagination/add-offset-for-honeysql query-params)
         sql/format)))
 

@@ -19,6 +19,13 @@ describe "filtering collections" do
           .response
         expect(response.status).to be == 422
       end
+
+      it "returns 422 for filter_by permissions with invalid public value" do
+        filter = { permissions: [{ key: "public", value: "invalid" }] }
+        response = collections_relation.get("filter_by" => filter.deep_stringify_keys.to_json)
+          .response
+        expect(response.status).to be == 422
+      end
     end
   end
 

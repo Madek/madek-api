@@ -3,6 +3,7 @@
    [clojure.tools.logging :as logging]
    [logbug.catcher :as catcher]
    [logbug.debug :as debug]
+   [madek.api.resources.media-resources.advanced-filter.permissions :as shared]
    [madek.api.utils.sql :as sql]))
 
 (defn- api-client-authorized-condition [perm id]
@@ -99,6 +100,15 @@
       (filter-by-dedicated-permission-for-auth-entity
        authenticated-entity "get_metadata_and_previews"
        me_get_metadata_and_previews_dedicated))))
+
+(defn sql-filter-by [sqlmap permission-specs]
+  (shared/sql-filter-by
+   "collections"
+   {:user-permission-exists user-permission-exists-condition
+    :group-permission-for-user-exists group-permission-for-user-exists-condition
+    :group-permission-exists group-permission-exists-condition}
+   sqlmap
+   permission-specs))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)
