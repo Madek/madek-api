@@ -41,6 +41,7 @@
         (filter-by-collection-id query-params)
         (permissions/filter-by-query-params query-params
                                             authenticated-entity)
+        (permissions/sql-filter-by (:permissions (:filter_by query-params)))
         (pagination/add-offset-for-honeysql query-params)
         sql/format)))
 
