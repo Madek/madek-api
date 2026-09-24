@@ -146,12 +146,14 @@
    (sql/select :id)
    (sql/from :people)
    (sql/order-by [:id :asc])
-   (pagination/add-offset-for-honeysql query-params)
+   (pagination/add-offset-with-lookahead-for-honeysql query-params)
    sql/format))
 
 (defn index
   [request]
-  {:body {:people (jdbc/query (rdbms/get-ds) (build-index-query request))}})
+  (pagination/paginated-response
+   :people
+   {:people (jdbc/query (rdbms/get-ds) (build-index-query request))}))
 
 ;### routes ###################################################################
 

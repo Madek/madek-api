@@ -9,6 +9,27 @@
 
 (def LIMIT 100)
 
+(defn paginated-response
+  "Pair with `add-offset-with-lookahead-for-honeysql`: the query must fetch
+  LIMIT+1 rows. Trim the collection at `primary-key` (and any other
+  sequential body values) to LIMIT, and set `::has-next-page?` from that
+  key so JSON-ROA `next` is emitted only when a following page exists."
+  [primary-key body]
+  (let [items (get body primary-key)]
+    {:body (into {}
+                 (map (fn [[k v]]
+                        [k (if (sequential? v)
+                             (vec (take LIMIT v))
+                             v)])
+                      body))
+     ::has-next-page? (> (count items) LIMIT)}))
+
+(defn has-next-page?
+  "True when the index handler built the response with `paginated-response`
+  after a lookahead query and more than LIMIT rows were available."
+  [response]
+  (::has-next-page? response))
+
 (defn page-number [params]
   (or (-> params keywordize-keys :page)
       0))
@@ -17,11 +38,11 @@
   (let [page (page-number params)]
     (* LIMIT page)))
 
-(defn add-offset-for-honeysql [query params]
+(defn add-offset-with-lookahead-for-honeysql [query params]
   (let [off (compute-offset params)]
     (-> query
         (sql/offset off)
-        (sql/limit LIMIT))))
+        (sql/limit (inc LIMIT)))))
 
 (defn next-page-query-query-params [query-params]
   (let [query-params (keywordize-keys query-params)

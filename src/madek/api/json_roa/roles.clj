@@ -30,7 +30,7 @@
                      [(+ 1 i (pagination/compute-offset query-params))
                       (links/role context id)])
                    ids))}
-        (when (seq ids)
+        (when (pagination/has-next-page? response)
           (links/next-link links/roles-path context query-params)))})))
 
 ;### Debug ####################################################################

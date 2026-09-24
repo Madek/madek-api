@@ -4,6 +4,7 @@
    [clojure.tools.logging :as logging]
    [logbug.debug :as debug]
    [madek.api.json-roa.collection-media-entry-arcs.links :as collection-media-entry-arcs.links]
+   [madek.api.json-roa.query-params :refer [generate-query-string]]
    [madek.api.pagination :as pagination]
    [ring.util.codec :refer [form-encode]]
    [uritemplate-clj.core :refer [uritemplate]]))
@@ -190,7 +191,7 @@
      (str (media-entries-path-base prefix)
           (if (empty? query-params)
             (str "{?" template-params "}")
-            (str "?" (http-client/generate-query-string query-params)
+            (str "?" (generate-query-string query-params)
                  "{&" template-params "}"))))))
 
 (defn media-entries
@@ -234,7 +235,7 @@
      (str (collections-path-base prefix)
           (if (empty? query-params)
             (str "{?" template-params "}")
-            (str "?" (http-client/generate-query-string query-params)
+            (str "?" (generate-query-string query-params)
                  "{&" template-params "}"))))))
 
 (defn collections

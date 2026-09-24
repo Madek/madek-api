@@ -22,7 +22,7 @@
                      [(+ 1 i (pagination/compute-offset query-params))
                       (links/collection context id)])
                    ids))}
-        (when (seq ids)
+        (when (pagination/has-next-page? response)
           (links/next-link links/collections-path context query-params)))})))
 
 (defn collection

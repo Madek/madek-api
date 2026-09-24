@@ -30,7 +30,7 @@
                      [(+ 1 i (pagination/compute-offset query-params))
                       (links/user context id)])
                    ids))}
-        (when (seq ids)
+        (when (pagination/has-next-page? response)
           (links/next-link links/users-path context query-params)))})))
 
 ;### Debug ####################################################################
