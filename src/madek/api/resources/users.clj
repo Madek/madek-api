@@ -97,12 +97,12 @@
       (sql/from :users)
       (sql/merge-where (sql/raw "now() <= users.active_until"))
       (sql/order-by [:id :asc])
-      (pagination/add-offset-for-honeysql query-params)
+      (pagination/add-offset-with-lookahead-for-honeysql query-params)
       sql/format))
 
 (defn index [request]
-  {:body
-   {:users (jdbc/query (rdbms/get-ds) (build-index-query request))}})
+  (pagination/paginated-response
+   {:users (jdbc/query (rdbms/get-ds) (build-index-query request))}))
 
 ;### routes ###################################################################
 

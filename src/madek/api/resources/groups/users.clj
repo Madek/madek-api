@@ -70,7 +70,7 @@
       (sql/merge-join :groups [:= :groups.id :groups_users.group_id])
       (sql/order-by [:users.id :asc])
       (groups/sql-merge-where-id group-id)
-      (pagination/add-offset-for-honeysql (:query-params request))
+      (pagination/add-offset-with-lookahead-for-honeysql (:query-params request))
       sql/format))
 
 (defn group-users [group-id request]
@@ -78,7 +78,8 @@
               (group-users-query group-id request)))
 
 (defn get-group-users [group-id request]
-  {:body {:users (group-users group-id request)}})
+  (pagination/paginated-response
+   {:users (group-users group-id request)}))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

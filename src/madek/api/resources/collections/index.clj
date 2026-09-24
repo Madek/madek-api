@@ -42,7 +42,7 @@
         (permissions/filter-by-query-params query-params
                                             authenticated-entity)
         (permissions/sql-filter-by (:permissions (:filter_by query-params)))
-        (pagination/add-offset-for-honeysql query-params)
+        (pagination/add-offset-with-lookahead-for-honeysql query-params)
         sql/format)))
 
 (defn- query-index-resources [request]
@@ -52,9 +52,8 @@
 
 (defn get-index [request]
   (catcher/with-logging {}
-    {:body
-     {:collections
-      (query-index-resources request)}}))
+    (pagination/paginated-response
+     {:collections (query-index-resources request)})))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

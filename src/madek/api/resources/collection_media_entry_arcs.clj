@@ -31,13 +31,14 @@
             (sql/merge-where % [:= :collection_id collection-id]) %))
         (#(if media-entry-id
             (sql/merge-where % [:= :media_entry_id media-entry-id]) %))
-        (pagination/add-offset-for-honeysql query-params)
+        (pagination/add-offset-with-lookahead-for-honeysql query-params)
         sql/format)))
 
 (defn arcs [request]
-  {:body {:collection-media-entry-arcs
-          (jdbc/query (rdbms/get-ds)
-                      (arcs-query (:query-params request)))}})
+  (pagination/paginated-response
+   {:collection-media-entry-arcs
+    (jdbc/query (rdbms/get-ds)
+                (arcs-query (:query-params request)))}))
 
 (def routes
   (cpj/routes

@@ -1,8 +1,8 @@
 (ns madek.api.json-roa.collection-media-entry-arcs.links
   (:require
+   [clj-http.client :as http-client]
    [clojure.tools.logging :as logging]
-   [logbug.debug :as debug]
-   [madek.api.json-roa.query-params :refer [generate-query-string]]))
+   [logbug.debug :as debug]))
 
 (defn collection-media-entry-arcs-path-base
   ([prefix] (str prefix "/collection-media-entry-arcs/")))
@@ -19,7 +19,7 @@
    (collection-media-entry-arcs-path-base prefix {}))
   ([prefix query-params]
    (str (collection-media-entry-arcs-path-base prefix)
-        "?" (generate-query-string query-params)
+        "?" (http-client/generate-query-string query-params)
         (when-let [utp (seq (unbound-template-params
                              arcs-query-template-params
                              query-params))]

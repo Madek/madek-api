@@ -149,7 +149,7 @@
         (permissions/filter-by-query-params query-params
                                             authenticated-entity)
         (advanced-filter/filter-by (:filter_by query-params))
-        (pagination/add-offset-for-honeysql query-params)
+        (pagination/add-offset-with-lookahead-for-honeysql query-params)
         sql/format)))
 
 (defn- query-index-resources [request]
@@ -161,7 +161,7 @@
   (catcher/with-logging {}
     (try
       (let [data (query-index-resources request)]
-        {:body
+        (pagination/paginated-response
          (merge
           {:media-entries (->> data
                                (map #(select-keys % [:media_entry_id :media_entry_created_at]))
@@ -174,7 +174,7 @@
                                               :arc_order :order
                                               :arc_position :position
                                               :arc_created_at :created_at
-                                              :arc_updated_at :updated_at})))}))})
+                                              :arc_updated_at :updated_at})))}))))
       (catch Exception e (merge (ex-data e) {:body {:message (.getMessage e)}})))))
 
 ;### Debug ####################################################################

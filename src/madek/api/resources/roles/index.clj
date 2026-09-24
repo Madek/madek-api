@@ -12,15 +12,14 @@
   (-> (sql/select :roles.*)
       (sql/from :roles)
       (sql/order-by [:roles.id :asc])
-      (pagination/add-offset-for-honeysql query-params)
+      (pagination/add-offset-with-lookahead-for-honeysql query-params)
       (sql/format)))
 
 (defn get-index
   [request]
   (let [query-params (-> request :query-params)]
-    {:body
-     {:roles
-      (jdbc/query (rdbms/get-ds) (query query-params))}}))
+    (pagination/paginated-response
+     {:roles (jdbc/query (rdbms/get-ds) (query query-params))})))
 
 ;### Debug ####################################################################
 ;(debug/debug-ns *ns*)

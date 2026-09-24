@@ -102,6 +102,20 @@ describe "JSON-ROA pagination of media-entries" do
         20.times { create_public_media_entry! }
       end
 
+      it "does not offer a next relation" do
+        response = media_entries_relation.get(filter_params)
+        expect(response.response.status).to be == 200
+        expect(response.data["media-entries"].size).to be == 100
+        expect(response.json_roa_data.fetch("collection")).not_to have_key("next")
+      end
+    end
+
+    context "when filtered results exceed a full page" do
+      before do
+        101.times { create_matching_media_entry! }
+        create_public_media_entry!
+      end
+
       it "preserves JSON filter_by on the next href and keeps filtering" do
         first_page = media_entries_relation.get(filter_params)
         expect(first_page.response.status).to be == 200
@@ -120,7 +134,7 @@ describe "JSON-ROA pagination of media-entries" do
 
         second_page = get_by_href(next_href)
         expect(second_page.status).to be == 200
-        expect(second_page.body["media-entries"]).to eq([])
+        expect(second_page.body["media-entries"].size).to be == 1
       end
     end
   end

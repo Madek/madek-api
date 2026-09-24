@@ -24,7 +24,7 @@
                      [(+ 1 i (pagination/compute-offset query-params))
                       (links/media-entry context id)])
                    ids))}
-        (when (pagination/full-page? ids)
+        (when (pagination/has-next-page? response)
           (links/next-link links/media-entries-path context query-params)))})))
 
 (defn get-first-media-file-id [media-entry-id]

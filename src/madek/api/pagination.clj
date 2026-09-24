@@ -9,8 +9,13 @@
 
 (def LIMIT 100)
 
-(defn full-page? [items]
-  (= (count items) LIMIT))
+(defn paginated-response [body]
+  (let [items (-> body first val)]
+    {:body (update-vals body #(vec (take LIMIT %)))
+     ::has-next-page? (> (count items) LIMIT)}))
+
+(defn has-next-page? [response]
+  (::has-next-page? response))
 
 (defn page-number [params]
   (or (-> params keywordize-keys :page)
@@ -25,6 +30,12 @@
     (-> query
         (sql/offset off)
         (sql/limit LIMIT))))
+
+(defn add-offset-with-lookahead-for-honeysql [query params]
+  (let [off (compute-offset params)]
+    (-> query
+        (sql/offset off)
+        (sql/limit (inc LIMIT)))))
 
 (defn next-page-query-query-params [query-params]
   (let [query-params (keywordize-keys query-params)
