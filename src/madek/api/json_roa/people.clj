@@ -29,7 +29,7 @@
                      [(+ 1 i (pagination/compute-offset query-params))
                       (links/person context id)])
                    ids))}
-        (when (seq ids)
+        (when (pagination/full-page? ids)
           (links/next-link links/people-path context query-params)))})))
 
 ;### Debug ####################################################################

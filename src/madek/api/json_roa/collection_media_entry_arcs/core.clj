@@ -26,7 +26,7 @@
        :collection
        (conj
         {:relations (collection-relations context query-params ids)}
-        (when (seq ids)
+        (when (pagination/full-page? ids)
           (json-roa.links/next-link
            links/collection-media-entry-arcs-path context query-params)))})))
 

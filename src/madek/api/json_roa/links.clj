@@ -1,9 +1,9 @@
 (ns madek.api.json-roa.links
   (:require
-   [clj-http.client :as http-client]
    [clojure.tools.logging :as logging]
    [logbug.debug :as debug]
    [madek.api.json-roa.collection-media-entry-arcs.links :as collection-media-entry-arcs.links]
+   [madek.api.json-roa.query-params :refer [generate-query-string]]
    [madek.api.pagination :as pagination]
    [ring.util.codec :refer [form-encode]]
    [uritemplate-clj.core :refer [uritemplate]]))
@@ -40,7 +40,7 @@
 ;### delegations ##################################################################
 
 (defn delegations-path [prefix query-params]
-  (str prefix "/delegations/?" (http-client/generate-query-string query-params)))
+  (str prefix "/delegations/?" (generate-query-string query-params)))
 
 (defn delegation
   ([prefix]
@@ -66,7 +66,7 @@
 ;### groups #######################################################################
 
 (defn groups-path [prefix query-params]
-  (str prefix "/groups/?" (http-client/generate-query-string query-params)))
+  (str prefix "/groups/?" (generate-query-string query-params)))
 
 (defn group
   ([prefix]
@@ -107,7 +107,7 @@
 
 (defn group-users-path [prefix query-params]
   (str prefix "/groups/{group_id}/users/?"
-       (http-client/generate-query-string query-params)))
+       (generate-query-string query-params)))
 
 (defn group-users
   ([prefix & {:keys [group-id]
@@ -190,7 +190,7 @@
      (str (media-entries-path-base prefix)
           (if (empty? query-params)
             (str "{?" template-params "}")
-            (str "?" (http-client/generate-query-string query-params)
+            (str "?" (generate-query-string query-params)
                  "{&" template-params "}"))))))
 
 (defn media-entries
@@ -234,7 +234,7 @@
      (str (collections-path-base prefix)
           (if (empty? query-params)
             (str "{?" template-params "}")
-            (str "?" (http-client/generate-query-string query-params)
+            (str "?" (generate-query-string query-params)
                  "{&" template-params "}"))))))
 
 (defn collections
@@ -326,7 +326,7 @@
    (str prefix "/meta-keys/"
         (if (empty? query-params)
           (str "{?vocabulary}")
-          (str "?" (http-client/generate-query-string query-params))))))
+          (str "?" (generate-query-string query-params))))))
 
 (defn meta-keys
   ([prefix]
@@ -340,7 +340,7 @@
 ;### people and person #########################################################
 
 (defn people-path [prefix query-params]
-  (str prefix "/people/?" (http-client/generate-query-string query-params)))
+  (str prefix "/people/?" (generate-query-string query-params)))
 
 (defn person
   ([prefix]
@@ -368,7 +368,7 @@
 ;### users #######################################################################
 
 (defn users-path [prefix query-params]
-  (str prefix "/users/?" (http-client/generate-query-string query-params)))
+  (str prefix "/users/?" (generate-query-string query-params)))
 
 (defn user
   ([prefix]
@@ -421,7 +421,7 @@
    (str prefix "/vocabularies/"
         (if (empty? query-params)
           (str "")
-          (str "?" (http-client/generate-query-string query-params))))))
+          (str "?" (generate-query-string query-params))))))
 
 (defn vocabularies
   ([prefix]
@@ -435,7 +435,7 @@
 ;### role(s) ################################################################
 
 (defn roles-path [prefix query-params]
-  (str prefix "/roles/?" (http-client/generate-query-string query-params)))
+  (str prefix "/roles/?" (generate-query-string query-params)))
 
 (defn role
   ([prefix]

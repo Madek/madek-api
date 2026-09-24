@@ -24,7 +24,7 @@
                    [(+ 1 i (pagination/compute-offset query-params))
                     (links/user context id)])
                  ids))}
-      (when (seq ids)
+      (when (pagination/full-page? ids)
         {:next {:href
                 (-> (links/group-users-path
                      context

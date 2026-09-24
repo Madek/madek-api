@@ -9,6 +9,9 @@
 
 (def LIMIT 100)
 
+(defn full-page? [items]
+  (= (count items) LIMIT))
+
 (defn page-number [params]
   (or (-> params keywordize-keys :page)
       0))
