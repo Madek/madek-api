@@ -5,9 +5,19 @@ PROJECT_DIR="$(cd -- "$(dirname "${BASH_SOURCE}")" ; cd .. > /dev/null 2>&1 && p
 cd $PROJECT_DIR
 ./bin/env/ruby-setup
 
-# clean-up the mess the ruby geckodriver gem might have created by placing it in ruby/bin/geckodriver
-rm -rf ~/.asdf/installs/ruby/$(asdf current ruby | awk '{print $2; }')/bin/gecko*
-asdf reshim
+# clean-up the mess the ruby geckodriver gem might have created by placing it
+# in ruby/bin/geckodriver (per tool versions manager, see bin/env/ruby-setup)
+source ./bin/env/select-tool-versions-manager > /dev/null
+case "$TOOL_VERSIONS_MANAGER" in
+  asdf|asdf-vm)
+    rm -rf ~/.asdf/installs/ruby/$(asdf current ruby | awk '{print $2; }')/bin/gecko*
+    asdf reshim
+    ;;
+  mise)
+    rm -rf "$(mise where ruby)"/bin/gecko*
+    mise reshim
+    ;;
+esac
 
 ruby -S bundle --quiet
 
