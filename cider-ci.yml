@@ -70,6 +70,7 @@ jobs:
     priority: 999 # "empty" job = high priority
     depends_on: &ALL_TEST_DEPENDS
       rspec tests: { type: job, job_key: rspec-tests, states: [passed]}
+      lint: {job_key: lint, type: job, states: [passed]}
       all-tests of the datalayer: {job_key: all-tests, type: job, submodule: [datalayer], states: [passed]}
     run_when: *ALL_TEST_DEPENDS
     context:
