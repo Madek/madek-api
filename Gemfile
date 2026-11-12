@@ -1,6 +1,8 @@
 eval_gemfile 'datalayer/Gemfile'
 
-gem 'addressable'
+# stay on patched rack 2.2.x
+gem 'rack', '~> 2.2.25'
+
 gem 'faraday'
 gem 'git'
 # gem 'json_roa-client', path: '/Users/thomas/Programming/JSON-ROA/ruby_client' # '= 2.0.0.pre.beta.2'
