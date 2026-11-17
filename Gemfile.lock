@@ -306,23 +306,19 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  addressable (>= 2.9.1)
   base32-crockford
   bcrypt (~> 3.1.22)
   chronic_duration
-  crass (>= 1.0.8)
   factory_bot
   faker
   faraday
   git
   hashdiff
-  json (>= 2.15.2.1, < 3)
+  json (< 3)
   json_roa-client (= 2.0.0)
   liquid
   listen
   mimemagic
-  multi_json (>= 1.16)
-  nokogiri (>= 1.19.5)
   pg
   pg_tasks!
   pry
@@ -330,7 +326,7 @@ DEPENDENCIES
   pry-rails
   psych (< 4)
   rack (~> 2.2.25)
-  rails (~> 8.1.4.1)
+  rails (~> 8.1, >= 8.1.4.1)
   rest-client
   rspec
   rspec-rails (~> 7)
