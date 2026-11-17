@@ -326,7 +326,7 @@ DEPENDENCIES
   pry-rails
   psych (< 4)
   rack (~> 2.2.25)
-  rails (~> 8.1, >= 8.1.4.1)
+  rails (~> 8.1.4, >= 8.1.4.1)
   rest-client
   rspec
   rspec-rails (~> 7)
