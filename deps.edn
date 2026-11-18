@@ -13,7 +13,7 @@
         com.fzakaria/slf4j-timbre {:mvn/version "0.4.1"}
         com.github.mfornos/humanize-slim {:mvn/version "1.2.2"}
         com.github.seancorfield/honeysql {:mvn/version "2.7.1437"}
-        com.google.guava/guava {:mvn/version "33.6.0-jre"} ; transitive dependency of com.github.mfornos/humanize-slim; several CVE
+        com.google.guava/guava {:mvn/version "33.8.0-jre"} ; transitive dependency of com.github.mfornos/humanize-slim; GHSA-xxph-c9ww-hj94 fixed in 33.7.2
         com.mchange/c3p0 {:mvn/version "0.14.1"}
         com.taoensso/timbre {:mvn/version "6.8.0"}
         compojure/compojure {:mvn/version "1.7.2"}
